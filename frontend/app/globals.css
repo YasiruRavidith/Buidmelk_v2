@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+}
+
+:root {
+  --background: #FCFAF7; 
+  --foreground: #4A4A4A; 
+  --color-terracotta: #8B4434;
+  --color-base: #FCFAF7;
+  --color-blush: #FAEBE7;
+  --color-text: #4A4A4A;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-inter);
+  --font-serif: var(--font-playfair);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #1c1917;
+    --foreground: #FCFAF7;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-inter), sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+@layer components {
+  /* Minimal Quiet Luxury Utilities overridden */
+  .btn-primary {
+    @apply bg-[#8B4434] text-[#FCFAF7] px-8 py-4 text-[10px] tracking-[0.2em] uppercase font-semibold hover:bg-[#6c3426] transition-colors shadow-none rounded-none;
+  }
+  .btn-secondary {
+    @apply border border-[#8B4434] text-[#8B4434] bg-transparent px-8 py-4 text-[10px] tracking-[0.2em] uppercase font-semibold hover:bg-[#8B4434]/5 transition-colors shadow-none rounded-none;
+  }
+  .card-luxury {
+    @apply bg-[#FCFAF7] rounded-none shadow-none p-8 border border-[#8B4434]/10 transition-all hover:border-[#8B4434]/30;
+  }
+}

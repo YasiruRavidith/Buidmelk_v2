@@ -1,0 +1,1390 @@
+INTRODUCTION
+0702805881 chirathdinuka20030627@gmail.com
+Building a house in Sri Lanka is a complex and stressful process.
+In Sri Lanka, building a house is one of the biggest dreams in a person’s life,
+but at the same time, it is one of the most difficult and stressful processes
+that people face. Many people already have land, but they do not know how
+to start building their dream home. They are confused about where to go first,
+whether they should meet an architect, engineer, contractor, or a lawyer. Even
+if they start the process, they do not have a clear idea about the total cost,
+the quality of materials, the labor charges, or the time required to complete
+the construction. Because of this lack of knowledge and guidance, many
+people end up spending more money than expected, choosing the wrong
+workers, or facing delays and legal issues. There is also no single platform in
+Sri Lanka that connects all these services together in one place. People have
+to go to many different places to get information, compare prices, and find
+professionals. This creates a big gap in the construction industry. Therefore,
+there is a strong need for a smart, simple, and centralized system that can
+guide people from the beginning of their construction journey until the final
+completion of their home. BuildMe.lk is designed to solve this problem by
+creating a complete digital solution where users can plan, manage, and build
+their dream home easily using their mobile phone or computer.
+Most people have land but they don’t know:
+Not knowing the total cost
+Not understanding materials and quality
+Not finding trusted workers
+Not knowing legal procedures
+Difficulty in managing time and construction process
+Lack of transparency in pricing
+PROJECT IDEA
+0702805881 chirathdinuka20030627@gmail.com
+BuildMe.lk is a smart digital platform (website + mobile app) that connects
+everything needed to build a house into one system
+The idea of BuildMe.lk starts from a very simple real-life situation: a person
+has land and a dream to build a house, but they do not know how to begin.
+Instead of going to different people and wasting time and money, they open
+the BuildMe.lk website or mobile app. They log in easily using their Telegram or
+email account, and then they upload a simple sketch of their dream house or
+enter basic details such as the number of rooms, floors, and size. The system
+then automatically generates a rough estimation, including total cost,
+required materials like cement, sand, steel, and wires, and even the estimated
+time to complete the project. After that, the user can publish their project,
+and instantly, all registered professionals such as contractors, architects,
+plumbers, electricians, and engineers receive a notification that a new project
+is available. These professionals can then start bidding on the project by
+offering their price and services, just like a tender system. One contractor may
+offer 10 million rupees, another may offer 9.5 million, and another may offer
+9.2 million, creating a competitive environment where the customer can
+choose the best option based on price, quality, and ratings. At the same time,
+the platform also provides additional services such as legal advice, worker
+hiring, material purchasing, and transportation booking. Even if a construction
+site suddenly needs workers in the morning, they can post a job, and available
+workers can accept it instantly. This system acts like a “Google for
+construction in Sri Lanka,” where everything related to building a house is
+available in one place. The goal is to make the entire construction process
+simple, fast, transparent, and affordable for everyone.
+👉
+ It is a Construction Hub for Sri Lanka
+Receive competitive bids
+Hire workers
+Arrange transport
+Handle everything from mobile
+Users can:
+Plan their dream house
+Get cost estimation
+Get material details
+Find professionals
+ MAIN OBJECTIVES
+0702805881 chirathdinuka20030627@gmail.com
+The main objective of BuildMe.lk is to create a complete digital ecosystem that
+solves all problems related to building a house in Sri Lanka. One of the key
+goals is to make construction simple for ordinary people who do not have
+technical knowledge. Many users do not understand engineering terms,
+material quality, or cost calculations, so the platform will provide clear and
+easy explanations for everything. Another important objective is to create
+transparency in pricing by showing real-time material costs, labor charges,
+and total budget estimates. This will help users avoid being overcharged. The
+platform also aims to introduce a competitive bidding system where
+professionals compete to provide the best service at the best price, helping
+customers save money. Additionally, BuildMe.lk aims to connect all
+construction-related services into one platform, including architects, lawyers,
+engineers, workers, suppliers, and transport providers. By doing this, the
+platform reduces the need to visit multiple places and makes the entire
+process faster and more efficient. Finally, the project aims to support the Sri
+Lankan economy by creating job opportunities for workers and helping small
+businesses grow.
+1. Solve Common Problems
+Help people understand:
+Budget
+Materials
+Labor
+Legal process
+2. Create Transparency
+Show:
+Real prices
+Material quality
+Labor charges
+3. Introduce Bidding System
+Allow professionals to compete → lower cost for users
+ MAIN OBJECTIVES
+0702805881 chirathdinuka20030627@gmail.com
+4. Build a Full Ecosystem
+Connect:
+Customers
+Contractors
+Workers
+Suppliers
+5. Save Time & Money
+Make construction:
+ 
+✔
+ Faster
+ 
+✔
+ Easier
+ 
+✔
+ More affordable
+COMPLETE SYSTEM COMPONENTS
+0702805881 chirathdinuka20030627@gmail.com
+Smart Estimation System
+Open Bidding System (MAIN FEATURE)
+Ticket Access System
+Worker Marketplace
+Legal & Professional Services
+Material Marketplace
+Transport System
+Payment System
+Communication System
+DETAILED FEATURES
+SMART HOUSE ESTIMATION SYSTEM
+User Inputs
+Land size
+Floors (1 / 2 / 3)
+Rooms
+Bathrooms
+Kitchen
+Special features
+User can also
+Upload sketch
+Draw simple plan
+0702805881 chirathdinuka20030627@gmail.com
+System Outputs:
+💰
+ Budget Estimation
+Total cost (example: LKR 8M – 12M)
+🧱
+ Material Calculation
+Cement (Tokyo, Ultratech, Holcim)
+Sand
+Metal
+Bricks
+Steel rods (10mm, 12mm, 16mm, 20mm)
+⚡
+ Electrical System
+Wire sizes
+Wire types
+Quantity
+🚿
+ Plumbing System
+Pipes
+Fittings
+Water system estimation
+⏱
+ Time Estimation
+Example: 6–10 months
+👉
+ This gives users a clear understanding before
+starting
+Process:
+Step 1: User Login
+User logs in using:
+Telegram
+Email
+Step 2: Upload Project
+User:
+Uploads sketch
+Gets estimation
+Step 3: Publish Project
+Project is visible to all professionals
+Step 4: Notification System
+Contractors receive:
+ 👉
+ “New project available – Start bidding”
+Step 5: Bidding Starts
+Example:
+Contractor A → LKR 10,000,000
+Contractor B → LKR 9,500,000
+Contractor C → LKR 9,200,000
+0702805881 chirathdinuka20030627@gmail.com
+OPEN BIDDING SYSTEM 
+0702805881 chirathdinuka20030627@gmail.com
+Important:
+Contractors compete by:
+Lower price
+Better quality
+Faster completion
+Step 6: Comparison
+User sees:
+Price
+Ratings 
+⭐ Experience
+Previous work
+Step 7: Selection
+User chooses best contractor
+The bidding system is the core feature and biggest innovation of
+BuildMe.lk. This system works like an open tender process where
+multiple professionals compete for a project. After a user publishes
+their project, all registered contractors and service providers receive
+a notification. They can then submit their bids by offering a price and
+explaining their services. This creates a competitive environment
+where professionals try to offer better prices and better quality to
+win the project. The user can view all bids in a clear format and
+compare them based on price, ratings, experience, and past work.
+Instead of choosing only the lowest price, the user can select the
+best overall option. This system helps reduce construction costs and
+improves service quality because professionals must compete to win
+projects. It also increases transparency and trust between customers
+and service providers.
+0702805881 chirathdinuka20030627@gmail.com
+To prevent users from bypassing the platform and contacting
+professionals directly, BuildMe.lk uses a ticket-based system. Before
+accessing full details or contacting contractors, users must purchase
+a ticket. This ticket acts as a secure access key that allows users to
+view bids, communicate with professionals, and proceed with the
+project. This system ensures that all transactions happen within the
+platform, which helps maintain fairness and also generates revenue
+for the company.
+TICKET SYSTEM
+Problem:
+Users may bypass platform and contact contractors
+directly
+Solution:
+Users must buy a ticket before:
+Viewing bids
+Contacting professionals
+Unlocking project details
+Benefits:
+✔
+ Secure system
+ 
+✔
+ Revenue generation
+ 
+✔
+ Fair usage
+Problem:
+Users may bypass platform and contact contractors
+directly
+Solution:
+Users must buy a ticket before:
+Viewing bids
+Contacting professionals
+Unlocking project details
+Benefits:
+✔
+ Secure system
+ 
+✔
+ Revenue generation
+ 
+✔
+ Fair usage
+0702805881 chirathdinuka20030627@gmail.com
+To prevent users from bypassing the platform and contacting
+professionals directly, BuildMe.lk uses a ticket-based system.
+Before accessing full details or contacting contractors, users must
+purchase a ticket. This ticket acts as a secure access key that allows
+users to view bids, communicate with professionals, and proceed
+with the project. This system ensures that all transactions happen
+within the platform, which helps maintain fairness and also
+generates revenue for the company.
+TICKET SYSTEM
+Daily Job System:
+Site managers post:
+“Need 2 painters today”
+“Need plumber”
+“Need 3 workers”
+Workers can:
+Find jobs
+Accept instantly
+Work daily
+👉
+ Solves:
+Worker shortage
+Daily employment
+0702805881 chirathdinuka20030627@gmail.com
+The worker marketplace is designed to solve daily labor problems in
+construction sites. Sometimes, site managers urgently need workers
+such as painters, plumbers, or electricians. Through BuildMe.lk, they
+can post their requirements in the morning, and available workers
+can accept the job instantly using the mobile app. This system helps
+workers find jobs easily and ensures that construction projects do
+not get delayed due to lack of labor.
+WORKER MARKETPLACE
+Vehicles:
+Tuk-tuk
+Bolero
+Lorry
+Truck
+Drivers:
+Register on platform
+Accept delivery jobs
+👉
+ Special Advantage:
+ Helps remote & mountain areas
+0702805881 chirathdinuka20030627@gmail.com
+BuildMe.lk also includes a transport and material system where users
+can order materials and arrange transportation easily. Many people in
+Sri Lanka face difficulties when transporting materials like sand,
+cement, or bricks, especially in rural or mountain areas. The platform
+allows vehicle owners (tuk-tuks, Boleros, lorries, trucks) to register
+and provide transport services. Users can book these vehicles
+directly through the app. At the same time, hardware suppliers can
+list their products, allowing users to compare prices and order
+materials from one place.
+TRANSPORT & MATERIAL HUB
+Available Experts:
+Lawyers:
+Land approval
+Legal agreements
+Architects:
+Design houses
+Create plans
+Quantity Surveyors (QS):
+Verify costs
+Estimate budgets
+👉
+ Ensures:
+ 
+✔
+ Safe construction
+ 
+✔
+ Legal protection
+0702805881 chirathdinuka20030627@gmail.com
+The platform connects users with professionals such as lawyers,
+architects, and quantity surveyors. Lawyers help with legal approvals
+and agreements, architects help design the house, and quantity
+surveyors verify cost estimates. This ensures that the construction
+process is safe, legal, and well-planned.
+LEGAL & PROFESSIONAL SERVICES
+1. Registration Fees
+Contractors
+Lawyers
+Workers
+2. Annual Subscription
+All professionals pay yearly fee
+3. Ticket System
+Customers pay to access services
+4. Commission
+% from successful deals
+5. Advertisements
+Hardware suppliers promote products
+0702805881 chirathdinuka20030627@gmail.com
+BuildMe.lk will generate revenue through multiple methods.
+Professionals such as contractors, lawyers, and workers must pay a
+registration fee and an annual subscription fee to use the platform.
+Customers must purchase tickets to access services like bidding and
+communication. The platform will also take a small commission from
+successful deals. In addition, hardware suppliers can pay for
+advertisements to promote their products. This combination of
+revenue streams ensures that the business is sustainable and
+profitable.
+BUSINESS MODEL
+Step 1:
+User logs in
+Step 2:
+User enters details / uploads sketch
+Step 3:
+System generates estimation
+Step 4:
+User publishes project
+Step 5:
+Professionals bid
+Step 6:
+User selects contractor
+Step 7:
+Construction starts
+Step 8:
+User tracks progress
+0702805881 chirathdinuka20030627@gmail.com
+SYSTEM WORKFLOW
+0702805881 chirathdinuka20030627@gmail.com
+Team, our goal is not to create only a website or mobile
+application. Our goal is to create the largest
+construction ecosystem and smart construction hub in
+Sri Lanka. We want to build a platform where anyone can
+handle their dream home from their mobile phone or
+computer without confusion. This platform must
+connect customers, contractors, architects, lawyers,
+workers, hardware shops, transport providers, and
+suppliers into one digital system.
+Our biggest innovation is the open bidding system,
+where multiple professionals can compete and offer
+their best prices and services to customers. This will
+create transparency, lower prices, and better quality for
+Sri Lankan people.
+0702805881 chirathdinuka20030627@gmail.com
+CEO Vision & Development
+Instructions
+Backend developers must focus on making the platform:
+Smart
+Fast
+Secure
+Scalable
+AI-supported
+We want BuildMe.lk to become:
+The “Google of Construction” in Sri Lanka
+A complete construction hub
+A trusted platform for home building
+A smart bidding and estimation platform
+A daily worker marketplace
+A material and transport marketplace
+0702805881 chirathdinuka20030627@gmail.com
+Main Vision of BuildMe.lk
+Instructions for Backend Developers
+Smart Estimation Engine
+This is one of the most important systems.
+The backend team must create a system where:
+User uploads a sketch or enters house details
+System calculates:
+1.Material quantities
+2.Labor charges
+3.Electrical systems
+4.Plumbing systems
+5.Construction timeline
+The system should calculate:
+Cement bags
+Sand quantity
+Metal quantity
+Wire sizes
+Pipe systems
+Steel rod sizes
+0702805881 chirathdinuka20030627@gmail.com
+Dynamic Material Price System
+ 
+In Sri Lanka, material prices change daily.
+Example:
+Cement prices go up/down
+Steel prices change
+Wood prices change
+Transport charges change
+So we cannot manually update everything every day
+.
+💡
+ CEO Suggestion for Backend Team
+We should use:
+AI systems
+Smart APIs
+Data scraping systems
+LLM models like:
+Llama
+Open-source AI models
+Goal:
+The AI should:
+Collect material prices from trusted websites
+Analyze market prices
+Give average trusted prices
+Update our database automatically
+Example:
+User asks:
+“What is the current wood price in Kandy?”
+AI system should:
+Search trusted sources
+Compare prices
+Give updated answer
+0702805881 chirathdinuka20030627@gmail.com
+AI Chatbot System
+We should create a smart assistant for users.
+The chatbot should answer:
+House budget questions
+Material questions
+Construction time questions
+Legal questions
+Worker availability questions
+Example Questions:
+“How much for a 2-story house?”
+“What is best cement?”
+“How many months to build?”
+The chatbot must answer in:
+Simple English
+Sinhala
+Tamil (future)
+0702805881 chirathdinuka20030627@gmail.com
+Smart Filtering System
+This is VERY IMPORTANT.
+Not all projects need all workers.
+Example:
+Some users only need plumbers
+Some users only need electricians
+Some users only need painters
+Backend Team Must Create:
+A filtering and routing system.
+Example:
+If user selects:
+ 
+✔
+ “Need only electrician”
+Then:
+Notification only goes to electricians
+Not to contractors or plumbers
+This System Must:
+Save time
+Reduce spam
+Improve user experience
+0702805881 chirathdinuka20030627@gmail.com
+Daily Worker Marketplace System
+Backend must create a simple worker system.
+Because many workers in Sri Lanka:
+Are not highly educated
+Need simple interfaces
+Site Managers Should:
+Add workers quickly using:
+One button
+Simple form
+Example:
+“Need 2 painters today”
+Workers nearby receive notification.
+0702805881 chirathdinuka20030627@gmail.com
+Location-Based System
+Backend must create a simple worker system.
+Because many workers in Sri Lanka:
+Are not highly educated
+Need simple interfaces
+Site Managers Should:
+Add workers quickly using:
+One button
+Simple form
+Example:
+“Need 2 painters today”
+Workers nearby receive notification.
+0702805881 chirathdinuka20030627@gmail.com
+Hardware & Supplier System
+We want all hardware shops in Sri Lanka inside
+BuildMe.lk.
+Hardware Shops Should:
+Register accounts
+Upload materials
+Give offers
+Join bidding
+Example:
+One hardware says:
+“I can provide all cement cheaper.”
+Another says:
+“I give transport free.”
+This creates healthy competition.
+0702805881 chirathdinuka20030627@gmail.com
+Instructions for Frontend Developers &
+UI Designers
+Frontend and UI team must make the system:
+Modern
+Clean
+Very simple
+Mobile-friendly
+Easy for Sri Lankan users
+🔹
+ 1. Simple UI/UX
+Many users:
+Are not technical
+Are older people
+Need simple navigation
+So UI Must Have:
+Large buttons
+Simple forms
+Sinhala-friendly structure
+Minimal confusion
+🔹
+ 2. Beautiful Login System
+CEO Vision:
+ We need:
+Creative login page
+Modern animations
+Telegram login
+Google login
+0702805881 chirathdinuka20030627@gmail.com
+3. Mobile First Design
+Most Sri Lankan users use:
+Android phones
+So mobile app experience is VERY important.
+🔹
+ 4. Smart Dashboard
+User dashboard should show:
+Estimation
+Bids
+Messages
+Worker updates
+Material updates
+Everything in one place.
+🔹
+ 5. Worker-Friendly Interface
+Worker pages should be:
+Extremely simple
+One-click job accepting
+🔹
+ 6. Real-Time Notifications
+Need:
+Popups
+Alerts
+Live updates
+Example:
+“New project available”
+0702805881 chirathdinuka20030627@gmail.com
+7. Material Marketplace UI
+Need:
+Product cards
+Price comparisons
+Offer highlights
+🔹
+ 8. Construction Progress UI
+Customers should track:
+Construction status
+Budget usage
+Timeline
+🔐
+ Security Instructions
+Backend team must focus on:
+Secure login
+OTP verification
+Anti-fraud systems
+Data privacy
+💰
+ Business System Instructions
+The platform earns through:
+Registration fees
+Annual subscriptions
+Ticket system
+Ads
+Commission
+Backend must track all payments correctly.
+0702805881 chirathdinuka20030627@gmail.com
+  Final CEO Vision
+Team, BuildMe.lk is not just another website.
+We are building:
+A construction ecosystem
+A digital construction economy
+A national platform for Sri Lanka
+Our platform should help people:
+Save money
+Save time
+Build better homes
+Find trusted workers
+Manage everything from mobile phones
+If we build this correctly, BuildMe.lk can become The
+largest construction technology platform in Sri Lanka.
+.
+0702805881 chirathdinuka20030627@gmail.com
+ BuildMe.lk vs ChatGPT
+Why People Should Choose BuildMe.lk Instead of Only Using
+AI Tools
+Many people may ask:
+“Why should we use BuildMe.lk if we can already ask ChatGPT
+or AI tools about house plans and construction ideas?”
+This is a very important question, and the answer is simple:
+👉
+ ChatGPT gives information.
+ 👉
+ BuildMe.lk gives a complete real-world construction
+solution.
+🧠
+ What ChatGPT Can Do
+AI tools like ChatGPT can:
+Give rough ideas
+Suggest house plans
+Explain materials
+Give basic cost estimation
+Answer construction questions
+Example:
+ A user uploads a simple sketch and asks:
+“How much for this house?”
+. 0702805881 chirathdinuka20030627@gmail.com
+ Limitations of ChatGPT for Real
+Construction
+ChatGPT cannot directly:
+Connect users with real contractors
+Give real-time Sri Lankan market prices
+Send bids from construction companies
+Provide verified workers
+Arrange transportation
+Manage construction progress
+Handle legal approvals
+Provide real hardware shop offers
+Give island-wide worker hiring
+Track projects
+Provide trusted company ratings
+ChatGPT is not a full construction ecosystem.
+0702805881 chirathdinuka20030627@gmail.com
+ What BuildMe.lk Does Differently
+BuildMe.lk is not only an AI system.
+It is:
+ 
+✅
+ A construction marketplace
+ 
+✅
+ A bidding platform
+ 
+✅
+ A material hub
+ 
+✅
+ A worker marketplace
+ 
+✅
+ A transport system
+ 
+✅
+ A legal & professional service platform
+0702805881 chirathdinuka20030627@gmail.com
+Why BuildMe.lk Is More Powerful
+BuildMe.lk connects users with:
+Real architects
+Real contractors
+Real electricians
+Real plumbers
+Real welders
+Real lawyers
+Real quantity surveyors (QS)
+ChatGPT cannot provide real human construction teams
+directly.
+Why People Should Choose
+BuildMe.lk
+People should choose BuildMe.lk because:
+✅
+ Real services
+ 
+✅
+ Real professionals
+ 
+✅
+ Real-time bidding
+ 
+✅
+ Real market prices
+ 
+✅
+ Full project management
+ 
+✅
+ Trusted workers
+ 
+✅
+ Material marketplace
+ 
+✅
+ Transportation support
+ 
+✅
+ Sri Lankan-focused system
+0702805881 chirathdinuka20030627@gmail.com
+ Trust & Verification
+BuildMe.lk includes:
+Verified profiles
+Ratings
+Reviews
+Portfolios
+Users can check:
+Past work
+Famous projects
+Customer feedback
+This builds trust.
+.
+Feature ChatGPT BuildMe.lk
+Rough Estimation
+✅ ✅
+Real Contractors
+❌ ✅
+Open Bidding
+❌ ✅
+Hardware Marketplace
+❌ ✅
+Worker Hiring
+❌ ✅
+Transport Services
+❌ ✅
+Project Tracking
+❌ ✅
+Legal Services
+❌ ✅
+Sri Lankan Price System Limited
+✅
+Full Construction Ecosystem
+❌ ✅
+0702805881 chirathdinuka20030627@gmail.com
+Final Comparison
+0702805881 chirathdinuka20030627@gmail.com
+BuildMe.lk Professional Profile System
+Complete Profile & Rating System Plan
+This is one of the most important systems in BuildMe.lk because users
+must trust the people they hire. Before choosing a contractor, lawyer,
+engineer, hardware owner, or worker, customers want to see:
+Who they are
+What work they did before
+Their ratings
+Reviews from previous customers
+Prices
+Experience level
+So BuildMe.lk must create a professional profile ecosystem where every
+service provider has a detailed profile page.
+Common Professional Profile Structure for
+BuildMe.lk
+This is the common profile structure that can be used for:
+Contractors
+Engineers
+Lawyers
+Architects
+QS
+Hardware Owners
+Workers
+Electricians
+Plumbers
+Welders
+Painters
+This common structure helps the frontend and backend team create one
+professional profile system for everyone
+0702805881 chirathdinuka20030627@gmail.com
+Common Profile Details
+Basic Information
+Every profile should include:
+Full Name
+Profile Photo
+Cover Photo
+Profession / Category
+Company Name (Optional)
+Location
+Phone Number
+Email
+Languages
+Years of Experience
+Professional Information
+Service Category
+Example:
+Contractor
+Architect
+Electrician
+Lawyer
+Hardware Owner
+QS
+0702805881 chirathdinuka20030627@gmail.com
+Common Profile Details
+Basic Information
+Every profile should include:
+Full Name
+Profile Photo
+Cover Photo
+Profession / Category
+Company Name (Optional)
+Location
+Phone Number
+Email
+Languages
+Years of Experience
+Professional Information
+Service Category
+Example:
+Contractor
+Architect
+Electrician
+Lawyer
+Hardware Owner
+QS
+Skills & Specialization
+Example:
+Luxury Homes
+Plumbing
+Electrical Systems
+Legal Approvals
+Steel Welding
+Description / About Section
+A small paragraph about:
+Experience
+Skills
+Services
+Example:
+“I have 10 years of experience in home construction and electrical systems
+in Sri Lanka.”
+⭐
+ Rating & Review System
+5. Ratings
+Users can rate:
+Quality
+Communication
+Speed
+Trust
+Pricing
+Example:
+ 
+⭐⭐⭐⭐⭐
+ 4.8/5
+6. Customer Reviews
+Previous customers can write reviews.
+Example:
+“Very professional and completed work on time.”
+0702805881 chirathdinuka20030627@gmail.com
+Past Work Section
+7. Portfolio / Gallery
+Users can upload:
+Photos
+Videos
+Completed projects
+Example:
+House projects
+Plumbing works
+Electrical systems
+Painting works
+💰
+ Pricing Information
+8. Charges & Pricing
+Example:
+Daily charges
+Per project pricing
+Per square foot pricing
+📅
+ Availability System
+9. Availability Status
+Example:
+Available
+Busy
+Fully booked
+📍
+ Service Areas
+10. Working Locations
+Example:
+Colombo
+Kandy
+Galle
+Island-wide
+0702805881 chirathdinuka20030627@gmail.com
+🏆
+ Verification System
+11. Verification Badge
+Platform verifies:
+NIC
+Certificates
+Licenses
+Business registration
+Example:
+ 
+✅
+ Verified Professional
+📞
+ Communication System
+12. Contact Features
+Users can:
+Message
+Call
+Request quotation
+Invite to project
+📊
+ Performance Statistics
+13. Profile Statistics
+Example:
+Projects completed
+Total customers
+Response rate
+Success rate
+🤖
+ Smart Matching System
+14. AI Recommendation
+System recommends professionals based on:
+Ratings
+Area
+Price
+Skills
+Availability
+0702805881 chirathdinuka20030627@gmail.com
+Research About Similar Websites & Applications for
+BuildMe.lk
+0702805881 chirathdinuka20030627@gmail.com
+Before building BuildMe.lk, it is very important to research existing
+platforms and understand:
+What systems already exist
+What features they provide
+Their strengths
+Their weaknesses
+How BuildMe.lk can become different and better
+This research helps your team:
+ 
+✅
+ Get ideas
+ 
+✅
+ Avoid mistakes
+ 
+✅
+ Find market gaps
+ 
+✅
+ Create unique features
+International Similar Platforms
+Houzz
+BuildZoom
+HomeAdvisor
+BuildMarketLK
+Blu.lk
+Surplus.lk
+IdealHome.lk
+ConstructionLK
+NestroHub
+Upwork
+Fiverr
+Thumbtack
+TaskRabbit
+Angi
+Porch
+Bark
+Buildertrend
+Procore
+CoConstruct
+ConstructConnect
+0702805881 chirathdinuka20030627@gmail.com
+What It Is
+Houzz is a global home design and renovation platform.
+Users can:
+Find architects
+Find contractors
+View house designs
+Get ideas for interiors
+Main Features
+Professional profiles
+Ratings & reviews
+Past project galleries
+Design inspiration
+Product marketplace
+Strengths
+✅
+ Beautiful UI
+ 
+✅
+ Strong portfolio system
+ 
+✅
+ Large professional network
+Weaknesses
+❌
+ No Sri Lankan focus
+ 
+❌
+ No live bidding system
+ 
+❌
+ No worker marketplace
+ 
+❌
+ No transport integration
+What BuildMe.lk Can Learn
+Portfolio system
+Review system
+Professional profiles
+Houzz
+ BuildZoom
+0702805881 chirathdinuka20030627@gmail.com
+What It Is
+A platform connecting homeowners with contractors.
+Main Features
+Contractor search
+Reviews
+Project history
+Licensing information
+Strengths
+✅
+ Contractor verification
+ 
+✅
+ Project tracking
+Weaknesses
+❌
+ Limited construction ecosystem
+ 
+❌
+ No transport system
+ 
+❌
+ No hardware marketplace
+ 
+❌
+ No island-wide bidding system
+What BuildMe.lk Can Improve
+BuildMe.lk can become much larger by combining:
+Materials
+Workers
+Hardware
+Transport
+AI estimation
+ BuildMarketLK
+0702805881 chirathdinuka20030627@gmail.com
+What It Is
+One of the closest Sri Lankan platforms to your idea.
+It includes:
+Construction prices
+Professional directory
+Projects
+Material information
+Main Features
+Material price tracking
+Professionals hub
+Supplier listings
+Investor information
+Strengths
+✅
+ Sri Lankan market focus
+ 
+✅
+ Construction data
+ 
+✅
+ Professional network
+Weaknesses
+❌
+ No strong open bidding system
+ 
+❌
+ No worker marketplace
+ 
+❌
+ No live transport integration
+ 
+❌
+ No AI estimation system
+ 
+❌
+ No daily labor hiring system
+Biggest Difference
+BuildMe.lk focuses on:
+Live bidding
+Full ecosystem
+Workers
+AI estimation
+Transport
+Daily labor system
+ BuildMarketLK
+0702805881 chirathdinuka20030627@gmail.com
+What It Is
+One of the closest Sri Lankan platforms to your idea.
+It includes:
+Construction prices
+Professional directory
+Projects
+Material information
+Main Features
+Material price tracking
+Professionals hub
+Supplier listings
+Investor information
+Strengths
+✅
+ Sri Lankan market focus
+ 
+✅
+ Construction data
+ 
+✅
+ Professional network
+Weaknesses
+❌
+ No strong open bidding system
+ 
+❌
+ No worker marketplace
+ 
+❌
+ No live transport integration
+ 
+❌
+ No AI estimation system
+ 
+❌
+ No daily labor hiring system
+Biggest Difference
+BuildMe.lk focuses on:
+Live bidding
+Full ecosystem
+Workers
+AI estimation
+Transport
+Daily labor system
+What It Is
+A Sri Lankan service marketplace.
+Main Features
+Find workers
+Book services
+Worker ratings
+Job posting
+Services
+Plumbers
+Painters
+Electricians
+Carpenters
+Strengths
+✅
+ Worker-focused system
+ 
+✅
+ Mobile-friendly
+ 
+✅
+ Easy job posting
+Weaknesses
+❌
+ Not focused on full house construction
+ 
+❌
+ No AI estimation
+ 
+❌
+ No material marketplace
+ 
+❌
+ No bidding system
+What BuildMe.lk Can Learn
+Simple worker system
+Easy UI for workers
+Blu.lk
+0702805881 chirathdinuka20030627@gmail.com
+ IdealHome.lk
+0702805881 chirathdinuka20030627@gmail.com
+What It Is
+Home products and professional marketplace
+.
+Features
+Home products
+Contractors
+Architects
+Inspiration gallery
+Weaknesses
+❌
+ No bidding system
+ 
+❌
+ No worker marketplace
+ 
+❌
+ No estimation engine
+What BuildMe.lk Can Learn
+Product showcase
+Inspiration section
+Platform Estimatio
+n
+Bidding Workers Materials Transport AI Sri Lanka
+Focus
+Houzz
+❌ ❌ ❌
+Partial
+❌ ❌ ❌
+BuildZoo
+m
+Partial
+❌ ❌ ❌ ❌ ❌ ❌
+Blu.lk
+❌ ❌ ✅ ❌ ❌ ❌ ✅
+BuildMark
+etLK
+Partial
+❌ ❌ ✅ ❌ ❌ ✅
+Surplus.lk
+❌ ❌ ❌ ✅ ❌ ❌ ✅
+BuildMe.lk
+✅ ✅ ✅ ✅ ✅ ✅ ✅
+0702805881 chirathdinuka20030627@gmail.com
+Final Research Conclusion
+After researching similar platforms, it is clear that:
+Many platforms provide only one service
+Some focus only on workers
+Some focus only on materials
+Some focus only on professionals
+But there is no platform in Sri Lanka that combines:
+ 
+✅
+ AI estimation
+ 
+✅
+ Open bidding
+ 
+✅
+ Worker marketplace
+ 
+✅
+ Hardware marketplace
+ 
+✅
+ Transport system
+ 
+✅
+ Legal services
+ 
+✅
+ Full construction ecosystem
+into one complete platform.
+That is the biggest opportunity for BuildMe.lk.
+Research Summary Table
+0702805881 chirathdinuka20030627@gmail.com
+1. Open Bidding System
+This is your strongest innovation.
+2. Sri Lankan Construction Focus
+Localized pricing and labor systems.
+3. Full Ecosystem
+Everything in one platform.
+4. AI + Real Services Combination
+Not only AI — real workers and companies.
+5. Daily Worker Marketplace
+Very useful for Sri Lankan construction industry.
+0702805881 chirathdinuka20030627@gmail.com
+What is Included in Estimation?
+1. Building Details
+Land size
+House size
+Number of floors
+Rooms
+Bathrooms
+Kitchen
+Garage
+Balcony
+🧱
+ 2. Material Estimation
+Cement
+Cement quantity
+Cement brands
+SLS certified cement
+Sand
+River sand
+Manufactured sand
+Metal
+1/2 metal
+3/4 metal
+Bricks / Blocks
+Brick quantity
+Block quantity
+
+What is Steel Rods
+10mm rods
+12mm rods
+16mm rods
+20mm rods
+⚡
+ 3. Electrical Estimation
+Wires
+1.5mm
+2.5mm
+4mm
+6mm
+Electrical Items
+Switches
+Lights
+DB boards
+CCTV
+Fans
+🚿
+ 4. Plumbing Estimation
+Pipes
+Water systems
+Bathroom fittings
+Drainage systems
+
+🏠
+ 5. Roofing Estimation
+Roofing sheets
+Roof tiles
+Timber
+Steel structures
+🎨
+ 6. Interior Estimation
+Furniture
+Paint
+Curtains
+Cupboards
+Decorations
+TV
+Air conditioner
+👷
+ 7. Labor Estimation
+Mason charges
+Electrician charges
+Painter charges
+Plumber charges
+Welder charges
+🚛
+ 8. Transport Estimation
+Material delivery charges
+Vehicle charges
+Mountain area extra costs
+9. Legal & Approval Estimation
+Lawyer fees
+Plan approval charges
+Municipality charges
+⏱
+ 10. Timeline Estimation
+Foundation time
+Wall construction time
+Roofing time
+Finishing time
+Total construction duration
