@@ -44,7 +44,7 @@ export default function Navbar() {
   }, [menuOpen]);
 
   return (
-    <nav className="fixed top-0 left-0 w-full z-50 px-6 sm:px-12 h-24 flex justify-between items-center bg-[#FCFAF7]/10 backdrop-blur-3xl border-b border-[#8B4434]/10 ">
+    <nav className="fixed top-0 left-0 w-full z-50 px-6 sm:px-12 h-24 flex justify-between items-center bg-[#f5f3f0]/100 backdrop-blur-3xl border-b border-[#8B4434]/20 ">
       {/* Brand logo */}
       <Link href="/" className="flex items-center gap-3">
         <Image src="/logo.png" alt="BuildMe.lk" width={140} height={36} className="object-contain" priority/>
