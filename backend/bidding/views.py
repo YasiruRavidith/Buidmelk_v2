@@ -21,9 +21,18 @@ class ProjectPostViewSet(viewsets.ModelViewSet):
         serializer.save(client=self.request.user)
 
 class BidViewSet(viewsets.ModelViewSet):
-    queryset = Bid.objects.all().order_by('-created_at')
+    queryset = Bid.objects.none()
     serializer_class = BidSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_authenticated:
+            if user.role == 'PROFESSIONAL':
+                return Bid.objects.filter(professional=user).order_by('-created_at')
+            elif user.role == 'CLIENT':
+                return Bid.objects.filter(project__client=user).order_by('-created_at')
+        return Bid.objects.none()
 
     def perform_create(self, serializer):
         serializer.save(professional=self.request.user)

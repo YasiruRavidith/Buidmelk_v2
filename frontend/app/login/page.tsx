@@ -29,11 +29,23 @@ export default function LoginPage() {
 
   const requiresVerification = !!user && !loading && !user.emailVerified;
 
+  const [redirectUrl, setRedirectUrl] = useState("/onboarding");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const red = params.get("redirect");
+      if (red) {
+        setRedirectUrl(red);
+      }
+    }
+  }, []);
+
   useEffect(() => {
     if (user && !loading && user.emailVerified) {
-      router.push("/onboarding");
+      router.push(redirectUrl);
     }
-  }, [user, loading, router]);
+  }, [user, loading, router, redirectUrl]);
 
   useEffect(() => {
     setFormError("");
@@ -113,7 +125,7 @@ export default function LoginPage() {
     setIsRefreshingVerification(false);
 
     if (verified) {
-      router.push("/onboarding");
+      router.push(redirectUrl);
     }
   };
 
