@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useParams } from "next/navigation";
 import { ArrowLeft, CalendarDays, Car, CheckCircle2, Clock3, MapPin, Phone, ShoppingBag, Star } from "lucide-react";
 import { useAuth } from "../../../hooks/useAuth";
+import { API_BASE_URL } from "@/lib/api";
 
 interface HardwareShopImage {
   image_url?: string;
@@ -58,7 +59,7 @@ export default function ShopDetailPage() {
     async function fetchShop() {
       if (!id) return;
       try {
-        const res = await fetch(`http://localhost:8000/api/users/shops/${id}/`);
+        const res = await fetch(`${API_BASE_URL}/users/shops/${id}/`);
         if (res.ok) {
           const data = await res.json();
           setShop(data);
@@ -77,7 +78,7 @@ export default function ShopDetailPage() {
     async function fetchReviews() {
       if (!id) return;
       try {
-        const res = await fetch(`http://localhost:8000/api/marketplace/reviews/?target_type=shop&target_id=${id}`);
+        const res = await fetch(`${API_BASE_URL}/marketplace/reviews/?target_type=shop&target_id=${id}`);
         if (res.ok) {
           const data = await res.json();
           setReviews(data || []);
@@ -120,7 +121,7 @@ export default function ShopDetailPage() {
     setReviewSaving(true);
     try {
       const token = await user.getIdToken();
-      const response = await fetch('http://localhost:8000/api/marketplace/reviews/', {
+      const response = await fetch(`${API_BASE_URL}/marketplace/reviews/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token, target_type: 'shop', target_id: id, rating: reviewRating, comment: reviewComment }),
@@ -151,7 +152,7 @@ export default function ShopDetailPage() {
     setCartSavingId(itemId);
     try {
       const token = await user.getIdToken();
-      const response = await fetch('http://localhost:8000/api/marketplace/cart/', {
+      const response = await fetch(`${API_BASE_URL}/marketplace/cart/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token, product_type: 'hardware_shop_item', product_id: itemId, quantity: 1 }),

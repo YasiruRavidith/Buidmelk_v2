@@ -3,6 +3,7 @@
 import { useState, useEffect, use } from "react";
 import Link from "next/link";
 import { useAuth } from "../../../hooks/useAuth";
+import { API_BASE_URL } from "@/lib/api";
 import {
   ArrowLeft, MapPin, Calendar, Users, Zap, Clock,
   CheckCircle2, Send, Briefcase, AlertCircle
@@ -44,7 +45,7 @@ export default function JobDetailPage({ params }: { params: Promise<{ jobId: str
 
   const fetchJob = async () => {
     try {
-      const res = await fetch(`http://localhost:8000/api/workers/jobs/${jobId}/`);
+      const res = await fetch(`${API_BASE_URL}/workers/jobs/${jobId}/`);
       if (res.ok) setJob(await res.json());
     } finally {
       setLoading(false);
@@ -55,7 +56,7 @@ export default function JobDetailPage({ params }: { params: Promise<{ jobId: str
     if (!user) return;
     try {
       const token = await user.getIdToken();
-      const res = await fetch(`http://localhost:8000/api/workers/jobs/${jobId}/my_application/`, {
+      const res = await fetch(`${API_BASE_URL}/workers/jobs/${jobId}/my_application/`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) {
@@ -80,7 +81,7 @@ export default function JobDetailPage({ params }: { params: Promise<{ jobId: str
     setApplyError("");
     try {
       const token = await user.getIdToken();
-      const res = await fetch(`http://localhost:8000/api/workers/jobs/${jobId}/apply/`, {
+      const res = await fetch(`${API_BASE_URL}/workers/jobs/${jobId}/apply/`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -108,7 +109,7 @@ export default function JobDetailPage({ params }: { params: Promise<{ jobId: str
     try {
       const token = await user.getIdToken();
       const res = await fetch(
-        `http://localhost:8000/api/workers/applications/${applicationId}/accept/`,
+        `${API_BASE_URL}/workers/applications/${applicationId}/accept/`,
         { method: "POST", headers: { Authorization: `Bearer ${token}` } }
       );
       if (res.ok) fetchJob();
@@ -121,7 +122,7 @@ export default function JobDetailPage({ params }: { params: Promise<{ jobId: str
     if (!user) return;
     try {
       const token = await user.getIdToken();
-      await fetch(`http://localhost:8000/api/workers/applications/${applicationId}/reject/`, {
+      await fetch(`${API_BASE_URL}/workers/applications/${applicationId}/reject/`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
       });

@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useAuth } from "../../../hooks/useAuth";
+import { API_BASE_URL } from "@/lib/api";
 
 interface MaterialDetailData {
   id: number;
@@ -40,7 +41,7 @@ export default function MaterialDetail() {
       if (!materialId) return;
 
       try {
-        const res = await fetch(`http://localhost:8000/api/marketplace/materials/${materialId}/`);
+        const res = await fetch(`${API_BASE_URL}/marketplace/materials/${materialId}/`);
         if (res.ok) {
           const data = await res.json();
           setMaterial(data);
@@ -60,7 +61,7 @@ export default function MaterialDetail() {
       if (!material?.category_name || !material?.id) return;
 
       try {
-        const res = await fetch("http://localhost:8000/api/marketplace/materials/");
+        const res = await fetch(`${API_BASE_URL}/marketplace/materials/`);
         if (res.ok) {
           const data = await res.json();
           const related = (data || [])
@@ -81,7 +82,7 @@ export default function MaterialDetail() {
       if (!material?.id) return;
 
       try {
-        const res = await fetch(`http://localhost:8000/api/marketplace/reviews/?target_type=material&target_id=${material.id}`);
+        const res = await fetch(`${API_BASE_URL}/marketplace/reviews/?target_type=material&target_id=${material.id}`);
         if (res.ok) {
           const data = await res.json();
           setReviews(data || []);
@@ -127,7 +128,7 @@ export default function MaterialDetail() {
     setCartSaving(true);
     try {
       const token = await user.getIdToken();
-      const response = await fetch("http://localhost:8000/api/marketplace/cart/", {
+      const response = await fetch(`${API_BASE_URL}/marketplace/cart/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token, product_type: "material", product_id: material.id, quantity: 1 }),
@@ -156,7 +157,7 @@ export default function MaterialDetail() {
     setReviewSaving(true);
     try {
       const token = await user.getIdToken();
-      const response = await fetch("http://localhost:8000/api/marketplace/reviews/", {
+      const response = await fetch(`${API_BASE_URL}/marketplace/reviews/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

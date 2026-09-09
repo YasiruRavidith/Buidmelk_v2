@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "../../hooks/useAuth";
 import { Ticket, CheckCircle2, Clock, Package, ArrowRight, ShieldCheck } from "lucide-react";
+import { API_BASE_URL } from "@/lib/api";
 
 interface Bundle {
   id: number;
@@ -37,10 +38,10 @@ export default function MyTicketsPage() {
     try {
       const token = await user.getIdToken();
       const [bundleRes, unlockedRes] = await Promise.all([
-        fetch("http://localhost:8000/api/bidding/tickets/my/", {
+        fetch(`${API_BASE_URL}/bidding/tickets/my/`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        fetch("http://localhost:8000/api/bidding/tickets/unlocked/", {
+        fetch(`${API_BASE_URL}/bidding/tickets/unlocked/`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
       ]);
@@ -67,7 +68,7 @@ export default function MyTicketsPage() {
     setPurchaseSuccess(false);
     try {
       const token = await user.getIdToken();
-      const res = await fetch("http://localhost:8000/api/bidding/tickets/purchase/", {
+      const res = await fetch(`${API_BASE_URL}/bidding/tickets/purchase/`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

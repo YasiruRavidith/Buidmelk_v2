@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../../hooks/useAuth";
+import { API_BASE_URL } from "@/lib/api";
 import { ArrowLeft, AlertCircle, MapPin, Calendar, Users, Banknote } from "lucide-react";
 
 const WORKER_TYPES = [
@@ -58,7 +59,7 @@ export default function PostJobPage() {
       };
       if (form.daily_rate) payload.daily_rate = form.daily_rate;
 
-      const res = await fetch("http://localhost:8000/api/workers/jobs/", {
+      const res = await fetch(`${API_BASE_URL}/workers/jobs/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

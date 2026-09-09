@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { SlidersHorizontal, X, User, CheckCircle2, BadgeCheck } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
+import { API_BASE_URL } from "@/lib/api";
 
 interface ProfessionalProfile {
   profession_type: string;
@@ -45,7 +46,7 @@ export default function FindProfessionalsPage() {
   useEffect(() => {
     async function fetchProfessionals() {
       try {
-        const res = await fetch("http://localhost:8000/api/users/professionals/");
+        const res = await fetch(`${API_BASE_URL}/users/professionals/`);
         if (!res.ok) throw new Error("Failed to fetch professionals");
         const data = await res.json();
         setProfessionals(data);

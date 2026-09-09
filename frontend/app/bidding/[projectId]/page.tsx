@@ -3,6 +3,7 @@
 import { useState, useEffect, use } from "react";
 import Link from "next/link";
 import { useAuth } from "../../../hooks/useAuth";
+import { API_BASE_URL } from "@/lib/api";
 import { Lock, Ticket, ShieldCheck, ArrowRight, AlertCircle } from "lucide-react";
 
 export default function ProjectDetail({ params }: { params: Promise<{ projectId: string }> }) {
@@ -40,7 +41,7 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
 
   const fetchProject = async () => {
     try {
-      const res = await fetch(`http://localhost:8000/api/bidding/projects/${projectId}/`);
+      const res = await fetch(`${API_BASE_URL}/bidding/projects/${projectId}/`);
       if (res.ok) {
         const data = await res.json();
         setProject(data);
@@ -56,7 +57,7 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
     if (!user) return;
     try {
       const token = await user.getIdToken();
-      const res = await fetch(`http://localhost:8000/api/bidding/tickets/check/${projectId}/`, {
+      const res = await fetch(`${API_BASE_URL}/bidding/tickets/check/${projectId}/`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) setTicketStatus(await res.json());
@@ -69,7 +70,7 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
     setTicketError("");
     try {
       const token = await user.getIdToken();
-      const res = await fetch(`http://localhost:8000/api/bidding/tickets/unlock/${projectId}/`, {
+      const res = await fetch(`${API_BASE_URL}/bidding/tickets/unlock/${projectId}/`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -92,7 +93,7 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
     try {
       const token = await user.getIdToken();
       // 1. Purchase a new bundle
-      const buyRes = await fetch("http://localhost:8000/api/bidding/tickets/purchase/", {
+      const buyRes = await fetch(`${API_BASE_URL}/bidding/tickets/purchase/`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
         body: JSON.stringify({ transaction_ref: "MOCK_PAYMENT" }),
@@ -102,7 +103,7 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
         return;
       }
       // 2. Immediately spend one unlock credit
-      const unlockRes = await fetch(`http://localhost:8000/api/bidding/tickets/unlock/${projectId}/`, {
+      const unlockRes = await fetch(`${API_BASE_URL}/bidding/tickets/unlock/${projectId}/`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -128,7 +129,7 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
     setAcceptingBidId(bidId);
     try {
       const token = await user.getIdToken();
-      const res = await fetch(`http://localhost:8000/api/bidding/bids/${bidId}/accept/`, {
+      const res = await fetch(`${API_BASE_URL}/bidding/bids/${bidId}/accept/`, {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -160,7 +161,7 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
     
     try {
       const token = await user.getIdToken();
-      const res = await fetch("http://localhost:8000/api/bidding/bids/", {
+      const res = await fetch(`${API_BASE_URL}/bidding/bids/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

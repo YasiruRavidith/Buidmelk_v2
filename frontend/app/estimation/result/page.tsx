@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../../hooks/useAuth";
+import { API_BASE_URL, BACKEND_ROOT_URL } from "@/lib/api";
 
 export default function EstimationResult() {
   const { user } = useAuth();
@@ -20,33 +21,30 @@ export default function EstimationResult() {
   const [errorMsg, setErrorMsg] = useState("");
 
   useEffect(() => {
-    const raw = sessionStorage.getItem("latest_estimate");
+    const raw = sessionStorage.getItem("latestEstimation");
     if (!raw) {
       router.push("/estimation");
-    } else {
-      const parsed = JSON.parse(raw);
-      setData(parsed);
-      
-      // Prefill fields for publishing
-      setTitle(parsed.project_title || "My Dream Home");
-      setBudgetRange(`LKR ${new Intl.NumberFormat('en-LK').format(parsed.total_estimated_cost)}`);
-      
-      const details = parsed.project_details_json || {};
-      const rec = parsed.design_recommendation_json || {};
-      const desc = `Project Title: ${parsed.project_title || "My Dream Home"}
-Total Area: ${parsed.total_area_sqft} SQFT
-Number of Floors: ${parsed.number_of_floors} | Quality Finish: ${parsed.quality_level}
+      return;
+    }
+    const parsed = JSON.parse(raw);
+    setData(parsed);
+    setTitle(parsed.project_title || "My Construction Project");
+    setLocation(parsed.inputs?.location || "Colombo");
+    setBudgetRange(`LKR ${parsed.grand_total_min} - LKR ${parsed.grand_total_max}`);
 
-AI Design Summary:
-- Style: ${rec.design_title || "Modern Family Residence"}
-- Style Details: ${rec.style_summary || ""}
-
-Inputs:
+    if (parsed.inputs) {
+      const details = parsed.inputs;
+      const desc = `I'm planning a construction project with the following requirements:
 - Land Size: ${details.land_size || "N/A"}
 - House Size: ${details.house_size || "N/A"}
-- Rooms: ${details.number_of_rooms || "N/A"}
+- Total Area: ${details.sqft || details.total_area_sqft || "N/A"} sqft
+- Floors: ${details.floors || details.number_of_floors || "1"}
+- Rooms: ${details.rooms || details.number_of_rooms || "N/A"}
 - Bathrooms: ${details.bathrooms || "N/A"}
-- Kitchens: ${details.kitchen_count || "N/A"}
+- Quality Standard: ${details.quality || "STANDARD"}
+- Structure Type: ${details.structure_type || "N/A"}
+- Wall Material: ${details.wall_type || "N/A"}
+- Metal Type: ${details.metal_type || "N/A"}
 - Cement Brand: ${details.cement_brand || "N/A"}
 - Roof Type: ${details.roof_type || "N/A"}
 
@@ -63,7 +61,7 @@ Looking for verified professionals to bid on this construction project. We have 
 
     try {
       const token = await user.getIdToken();
-      const res = await fetch("http://localhost:8000/api/bidding/projects/", {
+      const res = await fetch(`${API_BASE_URL}/bidding/projects/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -118,7 +116,7 @@ Looking for verified professionals to bid on this construction project. We have 
   if (!data) return <div className="min-h-screen bg-stone-50 flex items-center justify-center">Loading...</div>;
 
   const fmt = (num: string | number) => new Intl.NumberFormat('en-LK', { style: 'currency', currency: 'LKR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(Number(num));
-  const pdfUrl = data?.pdf_url ? `http://localhost:8000${data.pdf_url}` : data?.id ? `http://localhost:8000/api/estimations/${data.id}/pdf/` : null;
+  const pdfUrl = data?.pdf_url ? (data.pdf_url.startsWith('http') ? data.pdf_url : `${BACKEND_ROOT_URL}${data.pdf_url}`) : data?.id ? `${API_BASE_URL}/estimations/${data.id}/pdf/` : null;
 
   return (
     <div className="min-h-screen bg-stone-50 py-16 px-6">

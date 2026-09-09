@@ -10,6 +10,7 @@ import {
   Phone, Building2
 } from "lucide-react";
 import { useAuth } from "../../../hooks/useAuth";
+import { API_BASE_URL } from "@/lib/api";
 
 interface ProfessionalProfile {
   profession_type: string;
@@ -80,7 +81,7 @@ export default function ProfessionalProfilePage() {
     if (!id) return;
     async function fetchProfessional() {
       try {
-        const res = await fetch(`http://localhost:8000/api/users/professionals/${id}/`);
+        const res = await fetch(`${API_BASE_URL}/users/professionals/${id}/`);
         if (!res.ok) throw new Error(res.status === 404 ? "Professional not found" : "Failed to fetch");
         setProf(await res.json());
       } catch (err: unknown) {
@@ -96,7 +97,7 @@ export default function ProfessionalProfilePage() {
     if (!id) return;
     async function fetchReviews() {
       try {
-        const res = await fetch(`http://localhost:8000/api/marketplace/reviews/?target_type=professional&target_id=${id}`);
+        const res = await fetch(`${API_BASE_URL}/marketplace/reviews/?target_type=professional&target_id=${id}`);
         if (res.ok) setReviews((await res.json()) || []);
       } catch { /* silent */ }
     }
@@ -112,7 +113,7 @@ export default function ProfessionalProfilePage() {
       if (!user) return;
       try {
         const token = await user.getIdToken();
-        const res = await fetch("http://localhost:8000/api/bidding/tickets/my/", {
+        const res = await fetch(`${API_BASE_URL}/bidding/tickets/my/`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (res.ok) {
@@ -135,7 +136,7 @@ export default function ProfessionalProfilePage() {
       // We use a proxy: unlock "project 0" for this professional's contact
       // Actually we'll just decrement credits locally for UX — in production this would be a real endpoint
       // For now: use the purchase-and-reveal approach
-      const res = await fetch("http://localhost:8000/api/bidding/tickets/my/", {
+      const res = await fetch(`${API_BASE_URL}/bidding/tickets/my/`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) {
@@ -155,7 +156,7 @@ export default function ProfessionalProfilePage() {
     setPurchasing(true);
     try {
       const token = await user.getIdToken();
-      const res = await fetch("http://localhost:8000/api/bidding/tickets/purchase/", {
+      const res = await fetch(`${API_BASE_URL}/bidding/tickets/purchase/`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
         body: JSON.stringify({ transaction_ref: "MOCK_PAYMENT" }),
@@ -174,7 +175,7 @@ export default function ProfessionalProfilePage() {
     setReviewSaving(true);
     try {
       const token = await user.getIdToken();
-      const response = await fetch("http://localhost:8000/api/marketplace/reviews/", {
+      const response = await fetch(`${API_BASE_URL}/marketplace/reviews/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token, target_type: "professional", target_id: id, rating: reviewRating, comment: reviewComment }),

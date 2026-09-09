@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "../../../hooks/useAuth";
+import { API_BASE_URL } from "@/lib/api";
 import { useRouter } from "next/navigation";
 import { Briefcase, Send, Plus, ArrowRight, Clock, Users, MapPin, CheckCircle2 } from "lucide-react";
 
@@ -33,10 +34,10 @@ export default function MyWorkerJobsPage() {
     try {
       const token = await user.getIdToken();
       const [postedRes, appsRes] = await Promise.all([
-        fetch("http://localhost:8000/api/workers/jobs/my_posted/", {
+        fetch(`${API_BASE_URL}/workers/jobs/my_posted/`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        fetch("http://localhost:8000/api/workers/applications/", {
+        fetch(`${API_BASE_URL}/workers/applications/`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
       ]);

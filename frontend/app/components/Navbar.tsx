@@ -6,6 +6,7 @@ import { useRouter, usePathname } from 'next/navigation'
 import { useState, useRef, useEffect, useMemo, useCallback } from 'react'
 import { ShoppingCart, Menu, X, ChevronRight, Trash2, Plus, Minus, User } from 'lucide-react'
 import { useAuth } from '../../hooks/useAuth'
+import { API_BASE_URL } from '../../lib/api'
 
 type CartItem = {
   id: number;
@@ -60,7 +61,7 @@ export default function Navbar() {
     const fetch_ = async () => {
       try {
         const token = await user.getIdToken();
-        const res = await fetch('http://localhost:8000/api/bidding/tickets/my/', {
+        const res = await fetch(`${API_BASE_URL}/bidding/tickets/my/`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (res.ok) {
@@ -112,7 +113,7 @@ export default function Navbar() {
     setCartLoading(true);
     try {
       const token = await user.getIdToken();
-      const res = await fetch(`http://localhost:8000/api/marketplace/cart/?token=${encodeURIComponent(token)}`);
+      const res = await fetch(`${API_BASE_URL}/marketplace/cart/?token=${encodeURIComponent(token)}`);
       if (res.ok) setCart(await res.json());
     } catch { /* silent */ } finally { setCartLoading(false); }
   }, [user]);
@@ -135,7 +136,7 @@ export default function Navbar() {
     setBusyItemId(itemId);
     try {
       const token = await user.getIdToken();
-      const res = await fetch('http://localhost:8000/api/marketplace/cart/update/', {
+      const res = await fetch(`${API_BASE_URL}/marketplace/cart/update/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token, item_id: itemId, quantity }),
@@ -149,7 +150,7 @@ export default function Navbar() {
     setBusyItemId(itemId);
     try {
       const token = await user.getIdToken();
-      const res = await fetch('http://localhost:8000/api/marketplace/cart/remove/', {
+      const res = await fetch(`${API_BASE_URL}/marketplace/cart/remove/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token, item_id: itemId }),

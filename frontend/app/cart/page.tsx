@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useAuth } from "../../hooks/useAuth";
+import { API_BASE_URL } from "@/lib/api";
 
 type CartItem = {
   id: number;
@@ -35,7 +36,7 @@ export default function CartPage() {
 
       try {
         const token = await user.getIdToken();
-        const response = await fetch(`http://localhost:8000/api/marketplace/cart/?token=${encodeURIComponent(token)}`);
+        const response = await fetch(`${API_BASE_URL}/marketplace/cart/?token=${encodeURIComponent(token)}`);
         if (response.ok) {
           const data = await response.json();
           setCart(data);
@@ -53,7 +54,7 @@ export default function CartPage() {
   const refreshCart = async () => {
     if (!user) return;
     const token = await user.getIdToken();
-    const response = await fetch(`http://localhost:8000/api/marketplace/cart/?token=${encodeURIComponent(token)}`);
+    const response = await fetch(`${API_BASE_URL}/marketplace/cart/?token=${encodeURIComponent(token)}`);
     if (response.ok) {
       const data = await response.json();
       setCart(data);
@@ -65,7 +66,7 @@ export default function CartPage() {
     setBusyItemId(itemId);
     try {
       const token = await user.getIdToken();
-      const response = await fetch('http://localhost:8000/api/marketplace/cart/update/', {
+      const response = await fetch(`${API_BASE_URL}/marketplace/cart/update/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token, item_id: itemId, quantity }),
@@ -85,7 +86,7 @@ export default function CartPage() {
     setBusyItemId(itemId);
     try {
       const token = await user.getIdToken();
-      const response = await fetch('http://localhost:8000/api/marketplace/cart/remove/', {
+      const response = await fetch(`${API_BASE_URL}/marketplace/cart/remove/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token, item_id: itemId }),

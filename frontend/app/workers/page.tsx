@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "../../hooks/useAuth";
+import { API_BASE_URL } from "@/lib/api";
 import {
   Search, SlidersHorizontal, X, MapPin, Calendar, Users,
   Zap, Clock, ArrowRight, Plus, Briefcase
@@ -86,7 +87,7 @@ export default function WorkersPage() {
     if (location) params.append("location", location);
 
     try {
-      const res = await fetch(`http://localhost:8000/api/workers/jobs/?${params}`);
+      const res = await fetch(`${API_BASE_URL}/workers/jobs/?${params}`);
       if (res.ok) {
         const data = await res.json();
         setJobs(data.results ?? data);

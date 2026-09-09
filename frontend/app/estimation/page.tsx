@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../hooks/useAuth";
 import { Building2, Hammer, Layers, Clock, Sparkles } from "lucide-react";
+import { API_BASE_URL } from "@/lib/api";
 
 /* ─── Shared Input/Select Styles ─────────────────────────────── */
 const input = "w-full border-b border-[#c9b8b0] bg-transparent px-0 py-3 text-[#281713] placeholder:text-[#8B4434]/30 focus:outline-none focus:border-[#8B4434] transition-colors text-sm";
@@ -62,7 +63,7 @@ export default function SmartEstimation() {
     setLoading(true);
     try {
       const token = user ? await user.getIdToken() : null;
-      const response = await fetch("http://localhost:8000/api/estimations/calculate/", {
+      const response = await fetch(`${API_BASE_URL}/estimations/calculate/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

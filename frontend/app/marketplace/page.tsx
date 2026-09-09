@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useAuth } from "../../hooks/useAuth";
 import { SlidersHorizontal, X } from "lucide-react";
+import { API_BASE_URL } from "@/lib/api";
 
 interface Material {
   id: number;
@@ -51,7 +52,7 @@ export default function MarketplaceFeed() {
   useEffect(() => {
     async function fetchMaterials() {
       try {
-        const res = await fetch("http://localhost:8000/api/marketplace/materials/");
+        const res = await fetch(`${API_BASE_URL}/marketplace/materials/`);
         if (res.ok) {
           const data = await res.json();
           setMaterials(data);
@@ -124,7 +125,7 @@ export default function MarketplaceFeed() {
     setCartBusyId(material.id);
     try {
       const token = await user.getIdToken();
-      const response = await fetch("http://localhost:8000/api/marketplace/cart/", {
+      const response = await fetch(`${API_BASE_URL}/marketplace/cart/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token, product_type: "material", product_id: material.id, quantity: 1 }),

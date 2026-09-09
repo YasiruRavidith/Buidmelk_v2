@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../../hooks/useAuth";
+import { API_BASE_URL } from "../../lib/api";
 import {
   Sparkles,
   X,
@@ -104,7 +105,7 @@ export default function AiAssistantWidget() {
         token = await user.getIdToken();
       }
 
-      const res = await fetch("http://localhost:8000/api/marketplace/assistant/", {
+      const res = await fetch(`${API_BASE_URL}/marketplace/assistant/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -156,7 +157,7 @@ export default function AiAssistantWidget() {
     setAddedItemIds((prev) => ({ ...prev, [mat.id]: true }));
     try {
       const token = await user.getIdToken();
-      const res = await fetch("http://localhost:8000/api/marketplace/cart/add/", {
+      const res = await fetch(`${API_BASE_URL}/marketplace/cart/add/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -188,7 +189,7 @@ export default function AiAssistantWidget() {
     try {
       const token = await user.getIdToken();
       for (const mat of materials) {
-        const res = await fetch("http://localhost:8000/api/marketplace/cart/add/", {
+        const res = await fetch(`${API_BASE_URL}/marketplace/cart/add/`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

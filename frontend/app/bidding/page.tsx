@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "../../hooks/useAuth";
+import { API_BASE_URL } from "@/lib/api";
 
 interface Project {
   id: number;
@@ -32,7 +33,7 @@ export default function BiddingFeed() {
   useEffect(() => {
     async function fetchProjects() {
       try {
-        const res = await fetch("http://localhost:8000/api/bidding/projects/");
+        const res = await fetch(`${API_BASE_URL}/bidding/projects/`);
         if (res.ok) {
           const data = await res.json();
           setProjects(data);

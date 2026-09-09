@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, Building2, MapPin, Phone, Search, Star } from "lucide-react";
+import { API_BASE_URL } from "@/lib/api";
 
 interface HardwareShopImage {
   image_url?: string;
@@ -38,7 +39,7 @@ export default function ShopsPage() {
   useEffect(() => {
     async function fetchShops() {
       try {
-        const res = await fetch("http://localhost:8000/api/users/shops/");
+        const res = await fetch(`${API_BASE_URL}/users/shops/`);
         if (res.ok) {
           const data = await res.json();
           setShops(data || []);
