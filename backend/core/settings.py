@@ -1,30 +1,38 @@
 import os
+import json
 import firebase_admin
 from firebase_admin import credentials
 from dotenv import load_dotenv
+from pathlib import Path
 
 load_dotenv() # Load variables from .env
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-cred_path = os.path.join(BASE_DIR, os.getenv('FIREBASE_CREDENTIALS_PATH', 'firebase-key.json'))
-if not firebase_admin._apps:
-    cred = credentials.Certificate(cred_path)
-    firebase_admin.initialize_app(cred)
-from pathlib import Path
-
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
+# Safe Firebase Admin initialization (supports JSON string env var or key file)
+if not firebase_admin._apps:
+    firebase_json = os.getenv('FIREBASE_CREDENTIALS_JSON')
+    cred_path = os.path.join(BASE_DIR, os.getenv('FIREBASE_CREDENTIALS_PATH', 'firebase-key.json'))
+    
+    try:
+        if firebase_json:
+            cred_dict = json.loads(firebase_json)
+            cred = credentials.Certificate(cred_dict)
+            firebase_admin.initialize_app(cred)
+        elif os.path.exists(cred_path):
+            cred = credentials.Certificate(cred_path)
+            firebase_admin.initialize_app(cred)
+        else:
+            # Fallback to default app initialization if no key provided yet
+            firebase_admin.initialize_app()
+    except Exception as e:
+        print(f"Warning: Firebase Admin initialization note: {e}")
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRET_KEY')
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-buildmelk-production-secret-key-change-in-prod')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG') == 'True'
+DEBUG = os.getenv('DEBUG', 'False').lower() in ('true', '1', 't')
 
 def env_or_default(name, default):
     value = os.getenv(name)
@@ -33,11 +41,12 @@ def env_or_default(name, default):
 
 OPENROUTER_API_KEY = env_or_default('OPENROUTER_API_KEY', '')
 OPENROUTER_MODEL = env_or_default('OPENROUTER_MODEL', 'openai/gpt-4o-mini')
-OPENROUTER_SITE_URL = env_or_default('OPENROUTER_SITE_URL', 'http://localhost:8000')
+OPENROUTER_SITE_URL = env_or_default('OPENROUTER_SITE_URL', 'https://buildmelk-backend.vercel.app')
 OPENROUTER_APP_NAME = env_or_default('OPENROUTER_APP_NAME', 'BuildMe.lk')
 OPENROUTER_REFRESH_INTERVAL_HOURS = int(env_or_default('OPENROUTER_REFRESH_INTERVAL_HOURS', '24'))
 
-ALLOWED_HOSTS = []
+allowed_hosts_env = os.getenv('ALLOWED_HOSTS', '*')
+ALLOWED_HOSTS = [h.strip() for h in allowed_hosts_env.split(',') if h.strip()] if allowed_hosts_env != '*' else ['*']
 
 
 # Application definition
@@ -112,17 +121,19 @@ try:
             )
         }
     else:
+        db_path = '/tmp/db.sqlite3' if os.getenv('VERCEL') else BASE_DIR / 'db.sqlite3'
         DATABASES = {
             'default': {
                 'ENGINE': 'django.db.backends.sqlite3',
-                'NAME': BASE_DIR / 'db.sqlite3',
+                'NAME': db_path,
             }
         }
 except ImportError:
+    db_path = '/tmp/db.sqlite3' if os.getenv('VERCEL') else BASE_DIR / 'db.sqlite3'
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
+            'NAME': db_path,
         }
     }
 
