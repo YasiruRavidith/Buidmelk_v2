@@ -1,20 +1,8 @@
 """
 URL configuration for core project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/6.0/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 import traceback
+import sys
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
@@ -23,18 +11,44 @@ from django.http import JsonResponse
 
 
 def health_check(request):
-    """Diagnostic endpoint to test DB connectivity and app health."""
-    result = {"status": "ok", "debug": settings.DEBUG, "db": None, "error": None}
+    """Diagnostic endpoint - returns exact error info from DB + app state."""
+    result = {
+        "status": "ok",
+        "python": sys.version,
+        "django_debug": settings.DEBUG,
+        "on_vercel": bool(settings.DEBUG),
+        "db_engine": None,
+        "db": None,
+        "error": None,
+        "installed_apps": list(settings.INSTALLED_APPS),
+    }
+
+    try:
+        result["db_engine"] = settings.DATABASES.get("default", {}).get("ENGINE", "unknown")
+    except Exception:
+        pass
+
     try:
         from django.db import connection
         with connection.cursor() as cursor:
             cursor.execute("SELECT 1")
+            cursor.fetchone()
         result["db"] = "connected"
-    except Exception as e:
-        result["db"] = "error"
+    except Exception:
+        result["db"] = "ERROR"
         result["error"] = traceback.format_exc()
-        result["status"] = "error"
-    return JsonResponse(result)
+        result["status"] = "db_error"
+
+    if result["db"] == "connected":
+        try:
+            from bidding.models import ProjectPost
+            count = ProjectPost.objects.count()
+            result["projects_count"] = count
+        except Exception:
+            result["projects_error"] = traceback.format_exc()
+            result["status"] = "query_error"
+
+    return JsonResponse(result, json_dumps_params={"indent": 2})
 
 
 urlpatterns = [
