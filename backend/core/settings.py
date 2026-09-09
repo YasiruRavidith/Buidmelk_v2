@@ -1,13 +1,12 @@
 import os
 import json
+from pathlib import Path
 import firebase_admin
 from firebase_admin import credentials
 from dotenv import load_dotenv
-from pathlib import Path
-
-load_dotenv() # Load variables from .env
-
 BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / '.env')
+load_dotenv() # Fallback for root env
 
 # Safe Firebase Admin initialization (supports JSON string env var or key file)
 if not firebase_admin._apps:
