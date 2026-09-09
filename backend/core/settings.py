@@ -1,37 +1,45 @@
 import os
 import json
 from pathlib import Path
-import firebase_admin
-from firebase_admin import credentials
 from dotenv import load_dotenv
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / '.env')
-load_dotenv() # Fallback for root env
+load_dotenv()  # Fallback for root env
 
-# Safe Firebase Admin initialization (supports JSON string env var or key file)
-if not firebase_admin._apps:
-    firebase_json = os.getenv('FIREBASE_CREDENTIALS_JSON')
-    cred_path = os.path.join(BASE_DIR, os.getenv('FIREBASE_CREDENTIALS_PATH', 'firebase-key.json'))
-    
+# Safe Firebase Admin initialization
+# Supports: FIREBASE_CREDENTIALS_JSON env var (JSON string) OR local firebase-key.json
+def _init_firebase():
     try:
+        import firebase_admin
+        from firebase_admin import credentials
+        if firebase_admin._apps:
+            return  # Already initialised
+        firebase_json = os.getenv('FIREBASE_CREDENTIALS_JSON')
+        cred_path = os.path.join(BASE_DIR, os.getenv('FIREBASE_CREDENTIALS_PATH', 'firebase-key.json'))
         if firebase_json:
             cred_dict = json.loads(firebase_json)
             cred = credentials.Certificate(cred_dict)
             firebase_admin.initialize_app(cred)
+            print("Firebase initialised from FIREBASE_CREDENTIALS_JSON env var.")
         elif os.path.exists(cred_path):
             cred = credentials.Certificate(cred_path)
             firebase_admin.initialize_app(cred)
+            print(f"Firebase initialised from {cred_path}.")
         else:
-            # Fallback to default app initialization if no key provided yet
-            firebase_admin.initialize_app()
+            print("WARNING: No Firebase credentials found. Authentication will not work.")
     except Exception as e:
-        print(f"Warning: Firebase Admin initialization note: {e}")
+        print(f"WARNING: Firebase init failed: {e}. Authentication will not work.")
+
+_init_firebase()
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-buildmelk-production-secret-key-change-in-prod')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', 'True').lower() in ('true', '1', 't')
+# On Vercel, default to False unless explicitly overridden
+_on_vercel = bool(os.getenv('VERCEL') or os.getenv('VERCEL_ENV'))
+DEBUG = os.getenv('DEBUG', 'False' if _on_vercel else 'True').lower() in ('true', '1', 't')
 
 def env_or_default(name, default):
     value = os.getenv(name)
@@ -70,6 +78,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Serve static files on Vercel
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -83,7 +92,10 @@ AUTH_USER_MODEL = 'users.CustomUser'
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "https://buildmelk.vercel.app",
+    "https://buildme-lk.vercel.app",
 ]
+CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'core.urls'
 
@@ -172,11 +184,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = '/tmp/staticfiles' if os.getenv('VERCEL') else BASE_DIR / 'staticfiles'
+STATIC_ROOT = '/tmp/staticfiles' if _on_vercel else BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 # Media files (user uploads)
+# NOTE: Vercel filesystem is ephemeral. For persistent media, configure Supabase Storage.
 MEDIA_URL = '/media/'
-MEDIA_ROOT = '/tmp/media' if os.getenv('VERCEL') else BASE_DIR / 'media'
+MEDIA_ROOT = '/tmp/media' if _on_vercel else BASE_DIR / 'media'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
