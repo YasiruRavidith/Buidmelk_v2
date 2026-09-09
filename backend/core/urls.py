@@ -14,12 +14,31 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+import traceback
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
+from django.http import JsonResponse
+
+
+def health_check(request):
+    """Diagnostic endpoint to test DB connectivity and app health."""
+    result = {"status": "ok", "debug": settings.DEBUG, "db": None, "error": None}
+    try:
+        from django.db import connection
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT 1")
+        result["db"] = "connected"
+    except Exception as e:
+        result["db"] = "error"
+        result["error"] = traceback.format_exc()
+        result["status"] = "error"
+    return JsonResponse(result)
+
 
 urlpatterns = [
+    path('health/', health_check, name='health_check'),
     path('admin/', admin.site.urls),
     path('api/users/', include('users.urls')),
     path('api/estimations/', include('estimations.urls')),
