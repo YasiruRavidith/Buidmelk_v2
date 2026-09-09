@@ -39,7 +39,9 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-buildmelk-production-secre
 # SECURITY WARNING: don't run with debug turned on in production!
 # On Vercel, default to False unless explicitly overridden
 _on_vercel = bool(os.getenv('VERCEL') or os.getenv('VERCEL_ENV'))
-DEBUG = os.getenv('DEBUG', 'False' if _on_vercel else 'True').lower() in ('true', '1', 't')
+DEBUG = os.getenv('DEBUG', 'True').lower() in ('true', '1', 't')
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 def env_or_default(name, default):
     value = os.getenv(name)
@@ -185,7 +187,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = '/tmp/staticfiles' if _on_vercel else BASE_DIR / 'staticfiles'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+# Only use whitenoise storage if we are NOT on Vercel (Vercel has no pre-collected files)
+if not _on_vercel:
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
 # Media files (user uploads)
 # NOTE: Vercel filesystem is ephemeral. For persistent media, configure Supabase Storage.
