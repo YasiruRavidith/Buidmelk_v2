@@ -11,7 +11,7 @@ class CustomUser(AbstractUser):
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, null=True, blank=True)
     is_email_verified = models.BooleanField(default=False)
     phone_number = models.CharField(max_length=15, blank=True, null=True)
-    profile_image = models.URLField(max_length=500, blank=True, null=True)
+    profile_image = models.FileField(upload_to='profiles/', max_length=500, blank=True, null=True)
 
     def __str__(self):
         return self.email or self.username

@@ -1,3 +1,4 @@
+import os
 from io import BytesIO
 import json
 from urllib import error, request
@@ -128,6 +129,38 @@ def _generate_design_brief(sqft, floors, rooms, quality, details=None):
     }
 
 
+def _draw_pdf_watermark(canvas, document):
+    logo_path = os.path.join(settings.BASE_DIR, 'media', 'logo.png')
+    if not os.path.exists(logo_path):
+        logo_path = os.path.join(settings.BASE_DIR, '..', 'frontend', 'public', 'logo.png')
+
+    if os.path.exists(logo_path):
+        canvas.saveState()
+        try:
+            canvas.setFillAlpha(0.12)
+            canvas.setStrokeAlpha(0.12)
+
+            width, height = A4
+            wm_width = 145 * mm
+            wm_height = 50 * mm
+            x = (width - wm_width) / 2.0
+            y = (height - wm_height) / 2.0
+
+            canvas.drawImage(
+                logo_path,
+                x,
+                y,
+                width=wm_width,
+                height=wm_height,
+                mask='auto',
+                preserveAspectRatio=True,
+            )
+        except Exception as e:
+            print("Error adding watermark to estimation PDF:", e)
+        finally:
+            canvas.restoreState()
+
+
 def _build_pdf(estimation):
     buffer = BytesIO()
     document = SimpleDocTemplate(
@@ -222,7 +255,7 @@ def _build_pdf(estimation):
             story.append(Paragraph(f"- {item}", styles['BodySmall']))
         story.append(Spacer(1, 4))
 
-    document.build(story)
+    document.build(story, onFirstPage=_draw_pdf_watermark, onLaterPages=_draw_pdf_watermark)
     buffer.seek(0)
     return buffer
 
@@ -365,3 +398,19 @@ def download_estimation_pdf(request, estimation_id):
     buffer = _build_pdf(estimation)
     filename = f'estimation-{estimation.id}.pdf'
     return FileResponse(buffer, as_attachment=True, filename=filename, content_type='application/pdf')
+
+
+@api_view(['DELETE'])
+@permission_classes([AllowAny])
+def delete_user_estimation(request, estimation_id):
+    """Delete a saved estimation owned by the user."""
+    user, error_response = _get_user_from_request(request)
+    if error_response:
+        return error_response
+
+    try:
+        estimation = EstimationHistory.objects.get(id=estimation_id, user=user)
+        estimation.delete()
+        return Response({"message": "Estimation deleted successfully."}, status=status.HTTP_200_OK)
+    except EstimationHistory.DoesNotExist:
+        return Response({"error": "Estimation not found or not owned by you."}, status=status.HTTP_404_NOT_FOUND)

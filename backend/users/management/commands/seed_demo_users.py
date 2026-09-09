@@ -23,6 +23,8 @@ DEMO_USERS = [
         "password": "Demo@2026!Contractor",
         "first_name": "Demo",
         "last_name": "Contractor",
+        "rating": "4.80",
+        "projects_completed": 42,
     },
     {
         "slug": "engineer",
@@ -32,6 +34,8 @@ DEMO_USERS = [
         "password": "Demo@2026!Engineer",
         "first_name": "Demo",
         "last_name": "Engineer",
+        "rating": "4.60",
+        "projects_completed": 31,
     },
     {
         "slug": "lawyer",
@@ -41,6 +45,8 @@ DEMO_USERS = [
         "password": "Demo@2026!Lawyer",
         "first_name": "Demo",
         "last_name": "Lawyer",
+        "rating": "4.20",
+        "projects_completed": 18,
     },
     {
         "slug": "architect",
@@ -50,6 +56,8 @@ DEMO_USERS = [
         "password": "Demo@2026!Architect",
         "first_name": "Demo",
         "last_name": "Architect",
+        "rating": "4.90",
+        "projects_completed": 57,
     },
     {
         "slug": "qs",
@@ -59,6 +67,8 @@ DEMO_USERS = [
         "password": "Demo@2026!QS",
         "first_name": "Demo",
         "last_name": "QS",
+        "rating": "3.80",
+        "projects_completed": 12,
     },
     {
         "slug": "hardware",
@@ -68,6 +78,8 @@ DEMO_USERS = [
         "password": "Demo@2026!Hardware",
         "first_name": "Demo",
         "last_name": "Hardware",
+        "rating": "4.50",
+        "projects_completed": 25,
     },
     {
         "slug": "worker",
@@ -77,6 +89,8 @@ DEMO_USERS = [
         "password": "Demo@2026!Worker",
         "first_name": "Demo",
         "last_name": "Worker",
+        "rating": "3.50",
+        "projects_completed": 9,
     },
     {
         "slug": "plumber",
@@ -86,6 +100,8 @@ DEMO_USERS = [
         "password": "Demo@2026!Plumber",
         "first_name": "Demo",
         "last_name": "Plumber",
+        "rating": "4.10",
+        "projects_completed": 22,
     },
     {
         "slug": "welder",
@@ -95,6 +111,8 @@ DEMO_USERS = [
         "password": "Demo@2026!Welder",
         "first_name": "Demo",
         "last_name": "Welder",
+        "rating": "4.30",
+        "projects_completed": 16,
     },
     {
         "slug": "electrician",
@@ -104,6 +122,8 @@ DEMO_USERS = [
         "password": "Demo@2026!Electrician",
         "first_name": "Demo",
         "last_name": "Electrician",
+        "rating": "4.70",
+        "projects_completed": 38,
     },
     {
         "slug": "painter",
@@ -113,6 +133,8 @@ DEMO_USERS = [
         "password": "Demo@2026!Painter",
         "first_name": "Demo",
         "last_name": "Painter",
+        "rating": "5.00",
+        "projects_completed": 64,
     },
 ]
 
@@ -287,6 +309,9 @@ def upsert_professional_profile(user, data):
     if data["profession_type"] == "HARDWARE":
         company_name = "Demo Hardware Group"
 
+    demo_rating = data.get("rating", "0.00")
+    demo_projects = data.get("projects_completed", 0)
+
     profile, created = ProfessionalProfile.objects.get_or_create(
         user=user,
         defaults={
@@ -303,6 +328,8 @@ def upsert_professional_profile(user, data):
             "years_in_business": 5,
             "team_size": 10,
             "availability": "Weekdays",
+            "rating": demo_rating,
+            "projects_completed": demo_projects,
         },
     )
 
@@ -322,6 +349,9 @@ def upsert_professional_profile(user, data):
         profile.years_in_business = profile.years_in_business or 5
         profile.team_size = profile.team_size or 10
         profile.availability = profile.availability or "Weekdays"
+        # Always refresh demo ratings so re-seeding keeps them accurate
+        profile.rating = demo_rating
+        profile.projects_completed = demo_projects
         profile.save()
 
     return profile

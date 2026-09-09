@@ -1,56 +1,92 @@
 "use client";
 
-import { useState, useEffect, createContext, useContext } from 'react';
-import { 
-  signInWithPopup, 
-  signOut as firebaseSignOut, 
+import { useState, useEffect, createContext, useContext } from "react";
+import {
+  signInWithPopup,
+  signOut as firebaseSignOut,
   onIdTokenChanged,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   sendEmailVerification,
   updateProfile,
-  User as FirebaseUser
-} from 'firebase/auth';
-import { auth, googleProvider } from '../lib/firebase';
+  User as FirebaseUser,
+} from "firebase/auth";
+import { auth, googleProvider } from "../lib/firebase";
+
+export type BackendUser = {
+  id: number;
+  username: string;
+  email: string;
+  role: string | null;
+  phone_number: string | null;
+  profile_image?: string | null;
+  profile_image_url?: string | null;
+};
 
 interface AuthContextType {
   user: FirebaseUser | null;
+  backendUser: BackendUser | null;
+  profilePhoto: string | null;
   loading: boolean;
   signInWithGoogle: () => Promise<void>;
   signInWithEmail: (email: string, password: string) => Promise<void>;
   signUpWithEmail: (email: string, password: string, displayName?: string) => Promise<void>;
   sendVerificationEmail: () => Promise<void>;
   refreshUser: () => Promise<boolean>;
+  uploadProfilePhoto: (file: File) => Promise<string | null>;
   signOut: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
-const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000/api';
+const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000/api";
 
 const verifyTokenWithBackend = async (token: string) => {
   try {
     const response = await fetch(`${backendUrl}/users/auth/verify/`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token })
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token }),
     });
     return await response.json();
   } catch (error) {
-    console.error('Error verifying token with backend:', error);
+    console.error("Error verifying token with backend:", error);
   }
 };
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<FirebaseUser | null>(null);
+  const [backendUser, setBackendUser] = useState<BackendUser | null>(null);
+  const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedPhoto = localStorage.getItem("profilePhotoUrl");
+      if (storedPhoto) setProfilePhoto(storedPhoto);
+    }
+
     const unsubscribe = onIdTokenChanged(auth, async (currentUser) => {
       setUser(currentUser);
       if (currentUser) {
         const token = await currentUser.getIdToken();
-        await verifyTokenWithBackend(token);
+        const res = await verifyTokenWithBackend(token);
+        if (res?.user) {
+          setBackendUser(res.user);
+          const photoUrl = res.user.profile_image_url || res.user.profile_image || currentUser.photoURL || null;
+          if (photoUrl) {
+            setProfilePhoto(photoUrl);
+            if (typeof window !== "undefined") {
+              localStorage.setItem("profilePhotoUrl", photoUrl);
+            }
+          }
+        }
+      } else {
+        setBackendUser(null);
+        setProfilePhoto(null);
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("profilePhotoUrl");
+        }
       }
       setLoading(false);
     });
@@ -89,10 +125,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const sendVerificationEmail = async () => {
-    if (!auth.currentUser) {
-      return;
-    }
-
+    if (!auth.currentUser) return;
     try {
       await sendEmailVerification(auth.currentUser);
     } catch (error) {
@@ -102,10 +135,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const refreshUser = async () => {
-    if (!auth.currentUser) {
-      return false;
-    }
-
+    if (!auth.currentUser) return false;
     try {
       await auth.currentUser.reload();
       setUser(auth.currentUser);
@@ -116,21 +146,66 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const uploadProfilePhoto = async (file: File): Promise<string | null> => {
+    if (!auth.currentUser) return null;
+
+    try {
+      const token = await auth.currentUser.getIdToken();
+      const formData = new FormData();
+      formData.append("token", token);
+      formData.append("image", file);
+
+      const response = await fetch(`${backendUrl}/users/profile/image/`, {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to upload profile photo to backend");
+      }
+
+      const photoUrl = result.user?.profile_image_url || result.user?.profile_image;
+      if (photoUrl) {
+        setProfilePhoto(photoUrl);
+        setBackendUser(result.user);
+        if (typeof window !== "undefined") {
+          localStorage.setItem("profilePhotoUrl", photoUrl);
+        }
+        return photoUrl;
+      }
+      return null;
+    } catch (error) {
+      console.error("Error uploading profile photo to python database:", error);
+      throw error;
+    }
+  };
+
   const signOut = async () => {
     await firebaseSignOut(auth);
+    setProfilePhoto(null);
+    setBackendUser(null);
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("profilePhotoUrl");
+    }
   };
 
   return (
-    <AuthContext.Provider value={{
-      user,
-      loading,
-      signInWithGoogle,
-      signInWithEmail,
-      signUpWithEmail,
-      sendVerificationEmail,
-      refreshUser,
-      signOut
-    }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        backendUser,
+        profilePhoto,
+        loading,
+        signInWithGoogle,
+        signInWithEmail,
+        signUpWithEmail,
+        sendVerificationEmail,
+        refreshUser,
+        uploadProfilePhoto,
+        signOut,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

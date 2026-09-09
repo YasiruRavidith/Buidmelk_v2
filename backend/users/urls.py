@@ -6,6 +6,7 @@ urlpatterns = [
     path('profile/', views.get_user_profile, name='get_user_profile'),
     path('onboarding/', views.update_onboarding, name='update_onboarding'),
     path('profile/update/', views.update_profile, name='update_profile'),
+    path('profile/image/', views.upload_profile_image, name='upload_profile_image'),
     path('locations/', views.get_locations, name='get_locations'),
     path('profile/assets/', views.upload_professional_asset, name='upload_professional_asset'),
     path('shops/', views.list_public_hardware_shops, name='list_public_hardware_shops'),

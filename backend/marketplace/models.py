@@ -48,10 +48,74 @@ class Material(models.Model):
         brand_str = f" ({self.brand})" if self.brand else ""
         return f"{self.name}{brand_str} - Rs.{self.current_price}/{self.unit}"
 
+import io
+import math
+
+def add_watermark_to_file(image_field, text="BUILDME.LK"):
+    """Applies a 45-degree multi-row transparent watermark in memory before model save."""
+    if not image_field:
+        return
+    try:
+        from PIL import Image as PILImage, ImageDraw, ImageFont
+        from django.core.files.base import ContentFile
+
+        image_field.seek(0)
+        base = PILImage.open(image_field).convert("RGBA")
+        width, height = base.size
+
+        font_size = max(16, int(min(width, height) / 15))
+        try:
+            font = ImageFont.truetype("arial.ttf", font_size)
+        except Exception:
+            font = ImageFont.load_default()
+
+        # Tile grid large enough to cover 45 degree rotation
+        diagonal = int(math.sqrt(width ** 2 + height ** 2)) * 2
+        tile_img = PILImage.new("RGBA", (diagonal, diagonal), (255, 255, 255, 0))
+        tile_draw = ImageDraw.Draw(tile_img)
+
+        step_x = int(font_size * 7)
+        step_y = int(font_size * 3.5)
+
+        for y in range(0, diagonal, step_y):
+            for x in range(0, diagonal, step_x):
+                offset_x = (y // step_y) % 2 * (step_x // 2)
+                # Visible semi-transparent terracotta text
+                tile_draw.text((x + offset_x, y), text, fill=(139, 68, 52, 95), font=font)
+
+        rotated = tile_img.rotate(-45, resample=PILImage.BICUBIC, expand=False)
+        
+        rw, rh = rotated.size
+        left = (rw - width) // 2
+        top = (rh - height) // 2
+        cropped = rotated.crop((left, top, left + width, top + height))
+
+        watermarked = PILImage.alpha_composite(base, cropped)
+        watermarked_rgb = watermarked.convert("RGB")
+
+        buf = io.BytesIO()
+        watermarked_rgb.save(buf, format="JPEG", quality=92)
+        
+        raw_name = image_field.name if hasattr(image_field, 'name') and image_field.name else 'material.jpg'
+        clean_name = raw_name.rsplit('.', 1)[0] + '.jpg' if '.' in raw_name else raw_name + '.jpg'
+        
+        # Assign new watermarked content directly to file object without triggering extra model saves
+        image_field.file = ContentFile(buf.getvalue(), name=clean_name)
+        image_field.name = clean_name
+    except Exception as err:
+        print("Watermark generation error:", err)
+
+
 class MaterialImage(models.Model):
     material = models.ForeignKey(Material, on_delete=models.CASCADE, related_name="images")
     image = models.FileField(upload_to="materials/images/")
     is_main = models.BooleanField(default=False)
+
+    def save(self, *args, **kwargs):
+        if self.image and not getattr(self, '_watermark_applied', False):
+            add_watermark_to_file(self.image)
+            self._watermark_applied = True
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Image for {self.material.name}"

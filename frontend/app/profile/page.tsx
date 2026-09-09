@@ -1,8 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, useRef, ChangeEvent } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Camera, Upload, CheckCircle2, User } from "lucide-react";
 import DashboardShell from "../dashboard/components/DashboardShell";
 import { useAuth } from "../../hooks/useAuth";
 import { normalizeProfessionType } from "../dashboard/utils";
@@ -57,10 +58,14 @@ const normalizeMediaUrl = (baseUrl: string, value?: string) => {
 };
 
 export default function ProfilePage() {
-  const { user, loading } = useAuth();
+  const { user, loading, uploadProfilePhoto, profilePhoto } = useAuth();
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000/api";
   const backendBaseUrl = backendUrl.replace(/\/?api\/?$/, "");
   const pathname = usePathname();
+
+  const avatarInputRef = useRef<HTMLInputElement>(null);
+  const [photoUploading, setPhotoUploading] = useState(false);
+  const [photoMsg, setPhotoMsg] = useState("");
 
   const [role, setRole] = useState<"CLIENT" | "PROFESSIONAL" | "ADMIN" | null>(null);
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -87,6 +92,34 @@ export default function ProfilePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isLocationsLoading, setIsLocationsLoading] = useState(true);
+
+  const handleAvatarSelect = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      alert("Please select a valid image file.");
+      return;
+    }
+
+    setPhotoUploading(true);
+    setPhotoMsg("Saving photo to server database...");
+
+    try {
+      if (uploadProfilePhoto) {
+        const savedUrl = await uploadProfilePhoto(file);
+        if (savedUrl) {
+          setPhotoMsg("Profile picture saved to database successfully!");
+          setTimeout(() => setPhotoMsg(""), 4000);
+        }
+      }
+    } catch (err) {
+      console.error("Failed to save profile photo to database", err);
+      alert("Failed to upload profile photo to Python server database.");
+    } finally {
+      setPhotoUploading(false);
+    }
+  };
 
   const isHardware = role === "PROFESSIONAL" && normalizeProfessionType(professionType) === "HARDWARE";
 
@@ -352,16 +385,16 @@ export default function ProfilePage() {
 
   return (
     <DashboardShell navItems={navItems}>
-      <div className="min-h-screen bg-stone-50 py-12 px-6">
-        <div className="max-w-4xl mx-auto space-y-8">
-          <header className="flex flex-col gap-3">
-            <p className="text-[#8B4434] font-semibold tracking-widest uppercase text-sm">Profile</p>
-            <h1 className="font-serif text-4xl text-stone-900">Profile Details</h1>
-            <p className="text-stone-500">Keep your contact info and professional profile up to date.</p>
+      <div className="py-6 px-2 sm:px-4">
+        <div className="w-full max-w-5xl mx-auto space-y-8">
+          <header className="flex flex-col gap-2 border-b border-[#efe6df] pb-6">
+            <p className="text-[#8B4434] font-semibold tracking-widest uppercase text-xs">Profile Workspace</p>
+            <h1 className="font-serif text-3xl sm:text-4xl text-[#281713]">Profile Details</h1>
+            <p className="text-stone-500 text-sm">Keep your contact details, profile photo, and professional profile up to date.</p>
           </header>
 
           {role === null && (
-            <div className="bg-white border border-stone-200 rounded-2xl p-6 text-stone-600">
+            <div className="bg-white border border-stone-200 rounded-none p-6 text-stone-600">
               Your role is not set yet. Please complete onboarding first.
               <Link href="/onboarding" className="text-[#8B4434] font-semibold ml-2">
                 Complete onboarding
@@ -369,7 +402,60 @@ export default function ProfilePage() {
             </div>
           )}
 
-          <form onSubmit={handleSave} className="bg-white border border-stone-200 rounded-2xl p-8 space-y-10 shadow-sm">
+          <form onSubmit={handleSave} className="bg-white border border-[#efe6df] rounded-none p-6 sm:p-10 space-y-10 shadow-sm">
+            {/* Profile Picture Upload Section */}
+            <section className="p-6 bg-[#fcfaf9] border border-[#efe6df] rounded-none flex flex-col sm:flex-row items-center gap-6">
+              <input
+                type="file"
+                ref={avatarInputRef}
+                onChange={handleAvatarSelect}
+                accept="image/*"
+                className="hidden"
+              />
+              <div
+                onClick={() => avatarInputRef.current?.click()}
+                className="relative group cursor-pointer w-24 h-24 rounded-full overflow-hidden border-2 border-[#8B4434]/40 shrink-0 shadow-sm"
+              >
+                {profilePhoto || user?.photoURL ? (
+                  <img src={profilePhoto || user?.photoURL || ""} alt="Profile" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full bg-[#f3ebe4] flex items-center justify-center">
+                    <User className="w-10 h-10 text-[#8B4434]" />
+                  </div>
+                )}
+                <div className="absolute inset-0 bg-black/50 text-white opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-[10px] font-semibold uppercase tracking-wider gap-1">
+                  <Camera className="w-4 h-4" />
+                  <span>Change</span>
+                </div>
+                {photoUploading && (
+                  <div className="absolute inset-0 bg-black/60 text-white flex items-center justify-center">
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  </div>
+                )}
+              </div>
+
+              <div className="space-y-2 text-center sm:text-left flex-1">
+                <h3 className="font-serif text-xl font-semibold text-[#281713]">Profile Photo</h3>
+                <p className="text-xs text-[#606060] leading-relaxed">
+                  Upload a clear professional photo or business logo. JPG, PNG or WebP under 5MB.
+                </p>
+                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => avatarInputRef.current?.click()}
+                    className="btn-secondary text-xs px-4 py-2 flex items-center gap-2"
+                  >
+                    <Upload className="w-3.5 h-3.5" /> Select Image
+                  </button>
+                  {photoMsg && (
+                    <span className="text-xs text-[#8B4434] font-medium flex items-center gap-1">
+                      <CheckCircle2 className="w-3.5 h-3.5" /> {photoMsg}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </section>
+
             <section className="space-y-6">
               <div className="flex items-center justify-between">
                 <h2 className="font-serif text-2xl text-stone-900">Contact Details</h2>

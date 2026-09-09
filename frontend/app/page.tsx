@@ -1,4 +1,4 @@
-﻿import Link from 'next/link'
+import Link from 'next/link'
 import Image from 'next/image'
 
 export default function Home() {
@@ -6,7 +6,7 @@ export default function Home() {
     <div className="bg-[#FCFAF7] font-sans pb-0">
       
       {/* Hero Image Section */}
-      <section className="relative w-full h-[90vh] min-h-[500px] flex flex-col justify-end">
+      <section className="relative w-full h-[70vh] sm:h-[80vh] lg:h-[90vh] min-h-[480px] flex flex-col justify-end">
         <Image
           src="/1778355227728.png"
           alt="Hero Image"
@@ -18,17 +18,17 @@ export default function Home() {
         <div className="absolute inset-0 z-10 bg-[#303030]/10" />
         <div className="absolute inset-0 z-20 bg-gradient-to-t from-[#101010]/90 via-[#101010]/20 to-transparent" />
 
-        <div className="relative z-30 w-full max-w-7xl mx-auto px-6 sm:px-12 pb-16">
+        <div className="relative z-30 w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-12 pb-10 sm:pb-16">
           <p className="text-white/80 text-[10px] tracking-[0.2em] uppercase font-bold mb-3">Welcome to BuildMe.lk</p>
-          <h1 className="font-serif text-5xl md:text-7xl lg:text-[5rem] text-white leading-[1.05] tracking-tight">
-            Constructing <br className="hidden md:block"/>The Future
+          <h1 className="font-serif text-4xl sm:text-5xl md:text-7xl lg:text-[5rem] text-white leading-[1.05] tracking-tight">
+            Constructing <br className="hidden sm:block"/>The Future
           </h1>
         </div>
       </section>
 
       {/* Featured Projects */}
-      <section className="bg-[#FAEBE7] py-24 md:py-32 border-t border-[#8B4434]/10">
-        <div className="max-w-7xl mx-auto px-6 sm:px-12">
+      <section className="bg-[#FAEBE7] py-14 sm:py-24 md:py-32 border-t border-[#8B4434]/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12">
           <div className="flex items-end justify-between gap-6 mb-10 md:mb-12">
             <div>
               <p className="text-[9px] uppercase tracking-[0.2em] text-[#8B4434]/70 font-semibold mb-3">02 / 04</p>
@@ -112,29 +112,31 @@ export default function Home() {
       </section>
 
       {/* Content Section: Information & Features */}
-      <section className="bg-[#FCFAF7] max-w-7xl mx-auto px-6 sm:px-12 py-24 md:py-32 flex flex-col lg:flex-row gap-16 lg:gap-32">
+      <section className="bg-[#FCFAF7] max-w-7xl mx-auto px-4 sm:px-6 md:px-12 py-14 sm:py-24 md:py-32 flex flex-col lg:flex-row gap-10 lg:gap-32">
         {/* Sidebar Metadata */}
-        <aside className="lg:w-1/4 flex flex-col gap-10 lg:pl-0">
-          <div className="lg:border-l lg:border-[#8B4434]/20 lg:pl-6 lg:-ml-6 relative">
-            <h4 className="text-[#8B4434] text-[9px] uppercase tracking-[0.2em] font-semibold mb-2">Platform</h4>
-            <p className="text-[#8B4434] text-xs font-light">BuildMe.lk Platform Hub</p>
-          </div>
-          <div className="lg:border-l lg:border-[#8B4434]/20 lg:pl-6 lg:-ml-6 relative">
-            <h4 className="text-[#8B4434] text-[9px] uppercase tracking-[0.2em] font-semibold mb-2">Scope</h4>
-            <p className="text-[#8B4434] text-xs font-light">Estimation, Bidding & Marketplace</p>
-          </div>
-          <div className="lg:border-l lg:border-[#8B4434]/20 lg:pl-6 lg:-ml-6 relative">
-            <h4 className="text-[#8B4434] text-[9px] uppercase tracking-[0.2em] font-semibold mb-2">Network</h4>
-            <p className="text-[#8B4434] text-xs font-light">Thousands of Professionals</p>
-          </div>
-          <div className="lg:border-l lg:border-[#8B4434]/20 lg:pl-6 lg:-ml-6 relative">
-            <h4 className="text-[#8B4434] text-[9px] uppercase tracking-[0.2em] font-semibold mb-2">Services</h4>
-            <ul className="text-[#8B4434] text-xs font-light space-y-1.5 list-none">
-              <li>Project Estimations</li>
-              <li>Material Marketplace</li>
-              <li>Competitive Bidding</li>
-              <li>Professional Directory</li>
-            </ul>
+        <aside className="lg:w-1/4 flex flex-col gap-8 lg:gap-10 lg:pl-0">
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-1 gap-6 lg:gap-10">
+            <div className="lg:border-l lg:border-[#8B4434]/20 lg:pl-6 lg:-ml-6">
+              <h4 className="text-[#8B4434] text-[9px] uppercase tracking-[0.2em] font-semibold mb-2">Platform</h4>
+              <p className="text-[#8B4434] text-xs font-light">BuildMe.lk Platform Hub</p>
+            </div>
+            <div className="lg:border-l lg:border-[#8B4434]/20 lg:pl-6 lg:-ml-6">
+              <h4 className="text-[#8B4434] text-[9px] uppercase tracking-[0.2em] font-semibold mb-2">Scope</h4>
+              <p className="text-[#8B4434] text-xs font-light">Estimation, Bidding &amp; Marketplace</p>
+            </div>
+            <div className="lg:border-l lg:border-[#8B4434]/20 lg:pl-6 lg:-ml-6">
+              <h4 className="text-[#8B4434] text-[9px] uppercase tracking-[0.2em] font-semibold mb-2">Network</h4>
+              <p className="text-[#8B4434] text-xs font-light">Thousands of Professionals</p>
+            </div>
+            <div className="lg:border-l lg:border-[#8B4434]/20 lg:pl-6 lg:-ml-6">
+              <h4 className="text-[#8B4434] text-[9px] uppercase tracking-[0.2em] font-semibold mb-2">Services</h4>
+              <ul className="text-[#8B4434] text-xs font-light space-y-1 list-none">
+                <li>Project Estimations</li>
+                <li>Material Marketplace</li>
+                <li>Competitive Bidding</li>
+                <li>Professional Directory</li>
+              </ul>
+            </div>
           </div>
         </aside>
 

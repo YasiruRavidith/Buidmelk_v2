@@ -251,14 +251,29 @@ class ProfessionalProfileSerializer(serializers.ModelSerializer):
 
 class CustomUserSerializer(serializers.ModelSerializer):
     professional_profile = ProfessionalProfileSerializer(read_only=True)
+    profile_image_url = serializers.SerializerMethodField()
 
     class Meta:
         model = CustomUser
         fields = [
             'id', 'username', 'email', 'first_name', 'last_name', 
-            'role', 'phone_number', 'profile_image', 
+            'role', 'phone_number', 'profile_image', 'profile_image_url',
             'is_email_verified', 'professional_profile'
         ]
+
+    def get_profile_image_url(self, obj):
+        request = self.context.get('request')
+        if obj.profile_image and hasattr(obj.profile_image, 'url'):
+            if request:
+                return request.build_absolute_uri(obj.profile_image.url)
+            return obj.profile_image.url
+        elif isinstance(obj.profile_image, str) and obj.profile_image:
+            if obj.profile_image.startswith('http'):
+                return obj.profile_image
+            if request:
+                return request.build_absolute_uri(obj.profile_image)
+            return obj.profile_image
+        return None
 
 
 class OnboardingSerializer(serializers.Serializer):
@@ -287,6 +302,7 @@ class OnboardingSerializer(serializers.Serializer):
 class ProfileUpdateSerializer(serializers.Serializer):
     token = serializers.CharField()
     phone_number = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+    profile_image = serializers.CharField(required=False, allow_blank=True, allow_null=True)
     profession_type = serializers.ChoiceField(
         choices=ProfessionalProfile.PROFESSION_CHOICES,
         required=False,

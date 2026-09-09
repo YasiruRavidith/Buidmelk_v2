@@ -6,11 +6,25 @@ from estimations.serializers import EstimationHistorySerializer
 class BidSerializer(serializers.ModelSerializer):
     professional_details = CustomUserSerializer(source='professional', read_only=True)
     project_title = serializers.CharField(source='project.title', read_only=True)
-    
+    professional_rating = serializers.SerializerMethodField()
+    professional_projects_completed = serializers.SerializerMethodField()
+
     class Meta:
         model = Bid
         fields = '__all__'
         read_only_fields = ['professional', 'status']
+
+    def get_professional_rating(self, obj):
+        try:
+            return str(obj.professional.professional_profile.rating)
+        except Exception:
+            return None
+
+    def get_professional_projects_completed(self, obj):
+        try:
+            return obj.professional.professional_profile.projects_completed
+        except Exception:
+            return None
 
 class ProjectPostSerializer(serializers.ModelSerializer):
     client_name = serializers.CharField(source='client.get_full_name', read_only=True)

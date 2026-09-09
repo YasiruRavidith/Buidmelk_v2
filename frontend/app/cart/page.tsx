@@ -100,65 +100,85 @@ export default function CartPage() {
     }
   };
 
-  if (loading) return <div className="p-16 text-center">Loading cart...</div>;
-  if (!user) return <div className="p-16 text-center">Please log in to view your cart.</div>;
+  if (loading) return <div className="p-16 text-center text-[#606060]">Loading cart...</div>;
+  if (!user) return <div className="p-16 text-center text-[#606060]">Please log in to view your cart.</div>;
 
   return (
-    <div className="min-h-screen bg-stone-50 py-16 px-6">
-      <div className="max-w-5xl mx-auto space-y-8">
+    <div className="min-h-screen bg-[#FCFAF7] py-8 sm:py-16 px-4 sm:px-6">
+      <div className="max-w-5xl mx-auto space-y-6 sm:space-y-8">
         <div>
           <p className="text-[10px] uppercase tracking-[0.35em] text-[#8B4434]/70 font-semibold mb-3">Shopping Cart</p>
-          <h1 className="font-serif text-4xl text-stone-900">Your Cart</h1>
+          <h1 className="font-serif text-3xl sm:text-4xl text-[#281713]">Your Cart</h1>
         </div>
 
         {!cart || cart.items.length === 0 ? (
-          <div className="rounded-3xl border border-stone-200 bg-white p-10 text-center text-stone-600">
+          <div className="border border-[#e8ddd6] bg-white p-8 sm:p-10 text-center text-[#606060]">
             Your cart is empty.
-            <div className="mt-4 flex justify-center gap-3">
+            <div className="mt-6 flex flex-col sm:flex-row justify-center gap-3">
               <Link href="/marketplace" className="btn-primary px-5 py-3">Browse Materials</Link>
-              <Link href="/shops" className="btn-outline px-5 py-3">Browse Shops</Link>
+              <Link href="/shops" className="btn-secondary px-5 py-3 text-center">Browse Shops</Link>
             </div>
           </div>
         ) : (
-          <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
-            <div className="space-y-4">
+          <div className="grid gap-6 lg:grid-cols-[1fr_300px]">
+            <div className="space-y-3 sm:space-y-4">
               {cart.items.map((item) => (
-                <div key={item.id} className="rounded-3xl border border-stone-200 bg-white p-5 flex gap-4">
-                  <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-2xl bg-stone-100">
+                <div key={item.id} className="border border-[#e8ddd6] bg-white p-4 sm:p-5 flex gap-3 sm:gap-4">
+                  <div className="relative h-20 w-20 sm:h-24 sm:w-24 shrink-0 overflow-hidden bg-[#f3ebe4]">
                     {item.product_image ? <Image src={item.product_image} alt={item.product_name} fill unoptimized className="object-cover" /> : null}
                   </div>
-                  <div className="flex-1 space-y-2">
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <h2 className="font-serif text-2xl text-stone-900">{item.product_name}</h2>
-                        <p className="text-xs uppercase tracking-wide text-stone-500">{item.product_type.replace(/_/g, ' ')}</p>
+                  <div className="flex-1 min-w-0 space-y-2">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <h2 className="font-serif text-lg sm:text-2xl text-[#281713] leading-tight">{item.product_name}</h2>
+                        <p className="text-xs uppercase tracking-wide text-[#8B4434]/60 mt-0.5">{item.product_type.replace(/_/g, ' ')}</p>
                       </div>
-                      <p className="text-stone-700 font-semibold">Rs. {item.unit_price}</p>
+                      <p className="text-[#281713] font-semibold text-sm sm:text-base shrink-0">Rs. {item.unit_price}</p>
                     </div>
 
-                    <div className="flex items-center gap-3 flex-wrap">
-                      <button className="rounded-full border border-stone-300 px-3 py-1 text-sm" onClick={() => updateItem(item.id, Math.max(1, item.quantity - 1))} disabled={busyItemId === item.id}>-</button>
-                      <span className="text-sm text-stone-700">Qty {item.quantity}</span>
-                      <button className="rounded-full border border-stone-300 px-3 py-1 text-sm" onClick={() => updateItem(item.id, item.quantity + 1)} disabled={busyItemId === item.id}>+</button>
-                      <button className="text-sm text-orange-600 hover:underline" onClick={() => removeItem(item.id)} disabled={busyItemId === item.id}>Remove</button>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <button
+                        className="h-8 w-8 border border-[#e8ddd6] flex items-center justify-center text-[#8B4434] text-base hover:bg-[#8B4434] hover:text-white transition-colors"
+                        onClick={() => updateItem(item.id, Math.max(1, item.quantity - 1))}
+                        disabled={busyItemId === item.id}
+                      >
+                        −
+                      </button>
+                      <span className="text-sm text-[#606060] min-w-[2.5rem] text-center">Qty {item.quantity}</span>
+                      <button
+                        className="h-8 w-8 border border-[#e8ddd6] flex items-center justify-center text-[#8B4434] text-base hover:bg-[#8B4434] hover:text-white transition-colors"
+                        onClick={() => updateItem(item.id, item.quantity + 1)}
+                        disabled={busyItemId === item.id}
+                      >
+                        +
+                      </button>
+                      <button
+                        className="ml-2 text-sm text-[#8B4434]/60 hover:text-[#8B4434] transition-colors underline"
+                        onClick={() => removeItem(item.id)}
+                        disabled={busyItemId === item.id}
+                      >
+                        Remove
+                      </button>
                     </div>
                   </div>
                 </div>
               ))}
             </div>
 
-            <aside className="rounded-3xl border border-stone-200 bg-white p-6 h-fit space-y-4 sticky top-8">
-              <h2 className="font-serif text-2xl text-stone-900">Summary</h2>
-              <div className="flex justify-between text-sm text-stone-600">
-                <span>Items</span>
-                <span>{cart.items.length}</span>
-              </div>
-              <div className="flex justify-between text-sm text-stone-600">
-                <span>Total</span>
-                <span>Rs. {cart.total}</span>
+            <aside className="border border-[#e8ddd6] bg-white p-5 sm:p-6 h-fit space-y-4 lg:sticky lg:top-8">
+              <h2 className="font-serif text-2xl text-[#281713]">Order Summary</h2>
+              <div className="space-y-2 text-sm text-[#606060]">
+                <div className="flex justify-between">
+                  <span>Items</span>
+                  <span>{cart.items.length}</span>
+                </div>
+                <div className="flex justify-between border-t border-[#e8ddd6] pt-2 font-semibold text-[#281713]">
+                  <span>Total</span>
+                  <span>Rs. {cart.total}</span>
+                </div>
               </div>
               <button className="btn-primary w-full py-3">Checkout</button>
-              <button onClick={refreshCart} className="btn-outline w-full py-3">Refresh</button>
+              <button onClick={refreshCart} className="btn-secondary w-full py-3">Refresh</button>
             </aside>
           </div>
         )}

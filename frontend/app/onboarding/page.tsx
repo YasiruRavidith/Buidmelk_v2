@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { User, HardHat, Check, ArrowRight, ShieldCheck } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
 
 const PROFESSIONS = [
@@ -15,12 +16,12 @@ const PROFESSIONS = [
   { label: "Electrician", value: "ELECTRICIAN" },
   { label: "Plumber", value: "PLUMBER" },
   { label: "Welder", value: "WELDER" },
-  { label: "Painter", value: "PAINTER" }
+  { label: "Painter", value: "PAINTER" },
 ];
 
 export default function Onboarding() {
   const { user, loading } = useAuth();
-  const [role, setRole] = useState<'CLIENT' | 'PROFESSIONAL' | null>(null);
+  const [role, setRole] = useState<"CLIENT" | "PROFESSIONAL" | null>(null);
   const [professionType, setProfessionType] = useState("");
   const [location, setLocation] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -82,12 +83,12 @@ export default function Onboarding() {
       const token = await user.getIdToken();
       const payload: {
         token: string;
-        role: 'CLIENT' | 'PROFESSIONAL';
+        role: "CLIENT" | "PROFESSIONAL";
         profession_type?: string;
         location?: string;
       } = { token, role };
 
-      if (role === 'PROFESSIONAL') {
+      if (role === "PROFESSIONAL") {
         payload.profession_type = professionType;
         payload.location = location;
       }
@@ -105,7 +106,7 @@ export default function Onboarding() {
         return;
       }
 
-      router.push('/dashboard');
+      router.push("/dashboard");
     } catch (error) {
       console.error(error);
       alert("Network Error");
@@ -116,103 +117,146 @@ export default function Onboarding() {
 
   if (loading || isCheckingRole) {
     return (
-      <div className="min-h-screen bg-background text-foreground flex items-center justify-center p-6 py-24">
-        <div className="text-stone-600 text-sm">Checking your profile...</div>
+      <div className="min-h-screen bg-[#FCFAF7] text-[#281713] flex items-center justify-center p-6 py-24">
+        <div className="text-[#606060] text-xs font-semibold uppercase tracking-widest flex items-center gap-2">
+          <div className="w-4 h-4 border-2 border-[#8B4434] border-t-transparent rounded-full animate-spin" />
+          <span>Setting up your workspace...</span>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex items-center justify-center p-6 py-24">
-      <div className="max-w-3xl w-full">
-        <div className="text-center mb-12">
-          <p className="text-orange-600 font-semibold tracking-widest uppercase text-sm mb-3">Welcome to the Network</p>
-          <h1 className="font-serif text-4xl md:text-5xl text-stone-900 leading-tight">
-            How will you use BuildMe.lk?
+    <div className="min-h-screen bg-[#FCFAF7] text-[#281713] flex items-center justify-center p-6 py-12">
+      <div className="max-w-3xl w-full space-y-10">
+        {/* Header */}
+        <div className="text-center space-y-3">
+          <p className="text-[#8B4434] font-semibold tracking-widest uppercase text-xs">
+            Welcome to BuildMe.lk
+          </p>
+          <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-[#281713] leading-tight">
+            How Will You Use Your Workspace?
           </h1>
-          <p className="text-stone-500 text-lg mt-4 max-w-lg mx-auto">
-            Tailor your experience by telling us whether you are building a home or providing professional construction services.
+          <p className="text-xs sm:text-sm text-[#606060] max-w-lg mx-auto leading-relaxed">
+            Select your primary goal to tailor your dashboard tools, estimation preferences, and professional features.
           </p>
         </div>
-        
-        <form onSubmit={handleSubmit} className="space-y-12">
-          {/* Step 1: Primary Role */}
+
+        <form onSubmit={handleSubmit} className="space-y-8">
+          {/* Role Choice Cards */}
           <div className="grid md:grid-cols-2 gap-6">
-            <div 
-              onClick={() => setRole('CLIENT')} 
-              className={`p-8 rounded-2xl cursor-pointer transition-all border ${
-                role === 'CLIENT' 
-                  ? 'border-orange-500 bg-orange-50/50 shadow-md ring-1 ring-orange-500/20' 
-                  : 'border-stone-200 bg-white hover:border-orange-300 hover:shadow-sm'
+            <div
+              onClick={() => setRole("CLIENT")}
+              className={`p-8 cursor-pointer transition-all border relative ${
+                role === "CLIENT"
+                  ? "border-[#8B4434] bg-[#fff7ed] shadow-md"
+                  : "border-[#efe6df] bg-white hover:border-[#8B4434]/50 hover:bg-[#fcfaf9]"
               }`}
             >
-              <div className={`h-12 w-12 rounded-full mb-6 flex items-center justify-center ${role === 'CLIENT' ? 'bg-orange-600 text-white' : 'bg-stone-100 text-stone-400'}`}>
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+              <div
+                className={`h-12 w-12 mb-6 flex items-center justify-center border ${
+                  role === "CLIENT"
+                    ? "bg-[#8B4434] text-white border-[#8B4434]"
+                    : "bg-[#f3ebe4] text-[#8B4434] border-[#efe6df]"
+                }`}
+              >
+                <User className="w-6 h-6" />
               </div>
-              <h3 className="font-serif text-2xl mb-2 text-stone-900">I am a Homeowner</h3>
-              <p className="text-stone-500 leading-relaxed text-sm">
-                I want to estimate building costs, find verified professionals, and hire contractors for my project.
+              <h3 className="font-serif text-2xl mb-2 text-[#281713]">I am a Homeowner</h3>
+              <p className="text-xs text-[#606060] leading-relaxed">
+                I want to calculate construction estimates, view material price trends, find certified contractors, and manage home builds.
               </p>
+              {role === "CLIENT" && (
+                <div className="absolute top-4 right-4 text-[#8B4434]">
+                  <Check className="w-5 h-5" />
+                </div>
+              )}
             </div>
 
-            <div 
-              onClick={() => setRole('PROFESSIONAL')} 
-              className={`p-8 rounded-2xl cursor-pointer transition-all border ${
-                role === 'PROFESSIONAL' 
-                  ? 'border-orange-500 bg-orange-50/50 shadow-md ring-1 ring-orange-500/20' 
-                  : 'border-stone-200 bg-white hover:border-orange-300 hover:shadow-sm'
+            <div
+              onClick={() => setRole("PROFESSIONAL")}
+              className={`p-8 cursor-pointer transition-all border relative ${
+                role === "PROFESSIONAL"
+                  ? "border-[#8B4434] bg-[#fff7ed] shadow-md"
+                  : "border-[#efe6df] bg-white hover:border-[#8B4434]/50 hover:bg-[#fcfaf9]"
               }`}
             >
-              <div className={`h-12 w-12 rounded-full mb-6 flex items-center justify-center ${role === 'PROFESSIONAL' ? 'bg-orange-600 text-white' : 'bg-stone-100 text-stone-400'}`}>
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+              <div
+                className={`h-12 w-12 mb-6 flex items-center justify-center border ${
+                  role === "PROFESSIONAL"
+                    ? "bg-[#8B4434] text-white border-[#8B4434]"
+                    : "bg-[#f3ebe4] text-[#8B4434] border-[#efe6df]"
+                }`}
+              >
+                <HardHat className="w-6 h-6" />
               </div>
-              <h3 className="font-serif text-2xl mb-2 text-stone-900">I am a Professional</h3>
-              <p className="text-stone-500 leading-relaxed text-sm">
-                I want to offer my services, bid on ongoing construction projects, and build my professional portfolio.
+              <h3 className="font-serif text-2xl mb-2 text-[#281713]">I am a Professional</h3>
+              <p className="text-xs text-[#606060] leading-relaxed">
+                I offer construction services, bid on active client projects, list hardware inventory, and showcase my professional profile.
               </p>
+              {role === "PROFESSIONAL" && (
+                <div className="absolute top-4 right-4 text-[#8B4434]">
+                  <Check className="w-5 h-5" />
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Step 2: Professional Details */}
-          {role === 'PROFESSIONAL' && (
-            <div className="bg-white p-8 border border-stone-200 rounded-2xl space-y-6 shadow-sm animate-fade-in-up">
-              <h2 className="font-serif text-2xl text-stone-900 border-b border-stone-100 pb-4">Professional Details</h2>
-              <div className="grid md:grid-cols-2 gap-6 pt-2">
-                <div>
-                  <label className="block text-stone-500 font-medium text-sm tracking-wide mb-2">PROFESSION CATEGORY</label>
-                  <select 
-                    required 
-                    value={professionType} 
+          {/* Professional Details Section */}
+          {role === "PROFESSIONAL" && (
+            <div className="bg-white p-6 sm:p-8 border border-[#efe6df] space-y-6 shadow-xs">
+              <h2 className="font-serif text-xl sm:text-2xl text-[#281713] border-b border-[#efe6df] pb-4">
+                Professional Specialty
+              </h2>
+              <div className="grid md:grid-cols-2 gap-6 pt-1">
+                <div className="space-y-1.5">
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#8B4434]">
+                    Profession Category
+                  </label>
+                  <select
+                    required
+                    value={professionType}
                     onChange={(e) => setProfessionType(e.target.value)}
-                    className="w-full border border-stone-300 text-stone-700 rounded-lg px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
+                    className="w-full border border-[#efe6df] bg-[#FCFAF7] text-[#281713] px-4 py-3 text-sm focus:outline-none focus:border-[#8B4434] transition-colors"
                   >
-                    <option value="" disabled>Select your expertise...</option>
-                    {PROFESSIONS.map(prof => (
-                      <option key={prof.value} value={prof.value}>{prof.label}</option>
+                    <option value="" disabled>
+                      Select your primary field...
+                    </option>
+                    {PROFESSIONS.map((prof) => (
+                      <option key={prof.value} value={prof.value}>
+                        {prof.label}
+                      </option>
                     ))}
                   </select>
                 </div>
 
-                <div>
-                  <label className="block text-stone-500 font-medium text-sm tracking-wide mb-2">PRIMARY LOCATION</label>
-                  <input 
-                    required 
-                    type="text" 
-                    placeholder="e.g., Colombo, Island-wide"
+                <div className="space-y-1.5">
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#8B4434]">
+                    Primary Location / Province
+                  </label>
+                  <input
+                    required
+                    type="text"
+                    placeholder="e.g. Colombo, Western Province"
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
-                    className="w-full border border-stone-300 text-stone-700 rounded-lg px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
+                    className="w-full border border-[#efe6df] bg-[#FCFAF7] text-[#281713] px-4 py-3 text-sm focus:outline-none focus:border-[#8B4434] transition-colors"
                   />
                 </div>
               </div>
             </div>
           )}
 
-          {/* Submit Button */}
+          {/* Submit Action */}
           {role && (
-            <div className="pt-6 animate-fade-in-up">
-              <button type="submit" className="w-full btn-primary text-lg py-4" disabled={isSubmitting}>
-                {isSubmitting ? "Saving..." : "Enter Dashboard"}
+            <div className="pt-2">
+              <button
+                type="submit"
+                className="w-full btn-primary py-4 text-xs font-semibold uppercase tracking-widest flex items-center justify-center gap-2"
+                disabled={isSubmitting}
+              >
+                <span>{isSubmitting ? "Saving Preferences..." : "Enter Workspace Dashboard"}</span>
+                <ArrowRight className="w-4 h-4" />
               </button>
             </div>
           )}

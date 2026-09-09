@@ -25,6 +25,7 @@ urlpatterns = [
     path('api/estimations/', include('estimations.urls')),
     path('api/bidding/', include('bidding.urls')),
     path('api/marketplace/', include('marketplace.urls')),
+    path('api/workers/', include('workers.urls')),
 ]
 
 if settings.DEBUG:

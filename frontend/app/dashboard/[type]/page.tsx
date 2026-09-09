@@ -1,47 +1,48 @@
 "use client";
 
 import Link from "next/link";
-import { use, useEffect } from "react";
+import { use, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { Briefcase, Store, UserCheck, Inbox, Award, ArrowUpRight, ChevronRight, Sparkles } from "lucide-react";
 import { useAuth } from "../../../hooks/useAuth";
 import DashboardShell from "../components/DashboardShell";
 import { mapProfessionToSlug, normalizeProfessionType } from "../utils";
 
 const TYPE_CONFIG: Record<string, { title: string; subtitle: string; highlight: string }> = {
   contractor: {
-    title: "Contractor Dashboard",
-    subtitle: "Manage bids, project pipelines, and client requests.",
-    highlight: "Active contracts",
+    title: "Contractor Workspace",
+    subtitle: "Manage bids, project pipelines, material orders, and client inquiries.",
+    highlight: "Active Bids",
   },
   engineer: {
-    title: "Engineer Dashboard",
-    subtitle: "Track technical consultations and upcoming site visits.",
-    highlight: "Technical reviews",
+    title: "Engineer Workspace",
+    subtitle: "Track technical consultations, structural site reviews, and project assignments.",
+    highlight: "Consultations",
   },
   lawyer: {
-    title: "Lawyer Dashboard",
-    subtitle: "Monitor compliance checks and contract reviews.",
-    highlight: "Legal reviews",
+    title: "Legal Advisor Workspace",
+    subtitle: "Monitor compliance reviews, deed verification, and contract consultations.",
+    highlight: "Legal Audits",
   },
   architect: {
-    title: "Architect Dashboard",
-    subtitle: "Oversee design briefs and project milestones.",
-    highlight: "Design briefs",
+    title: "Architect Workspace",
+    subtitle: "Oversee architectural design briefs, floor plans, and client milestones.",
+    highlight: "Design Briefs",
   },
   qs: {
-    title: "QS Dashboard",
-    subtitle: "Review quantity takeoffs and cost summaries.",
-    highlight: "Cost audits",
+    title: "Quantity Surveyor Workspace",
+    subtitle: "Review bill of quantities (BOQ), material takeoffs, and budget audits.",
+    highlight: "Cost Estimates",
   },
   hardware: {
-    title: "Hardware Owner Dashboard",
-    subtitle: "Update your shop presence, catalog, and featured stock.",
-    highlight: "Shop inquiries",
+    title: "Hardware Owner Workspace",
+    subtitle: "Manage hardware store branches, catalog items, pricing, and buyer inquiries.",
+    highlight: "Shop Locations",
   },
   professional: {
-    title: "Professional Dashboard",
-    subtitle: "Manage your professional presence and active opportunities.",
-    highlight: "Active bids",
+    title: "Professional Workspace",
+    subtitle: "Manage your professional profile, active bids, and project opportunities.",
+    highlight: "Active Opportunities",
   },
 };
 
@@ -54,6 +55,8 @@ export default function ProfessionalTypeDashboard({ params }: { params: Promise<
   const resolvedParams = use(params);
   const dashboardType = resolvedParams.type;
   const normalizedDashboardType = normalizeProfessionType(dashboardType);
+
+  const [bidsCount, setBidsCount] = useState<number>(0);
 
   useEffect(() => {
     const checkAccess = async () => {
@@ -91,6 +94,19 @@ export default function ProfessionalTypeDashboard({ params }: { params: Promise<
         if (dashboardType !== expectedSlug) {
           router.replace(`/dashboard/${expectedSlug}`);
         }
+
+        // Fetch submitted bids count
+        try {
+          const bidsRes = await fetch(`${backendUrl}/bidding/bids/`, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          if (bidsRes.ok) {
+            const bidsData = await bidsRes.json();
+            const list = Array.isArray(bidsData) ? bidsData : bidsData.results || [];
+            setBidsCount(list.length);
+          }
+        } catch {}
+
       } catch (error) {
         console.error("Failed to validate dashboard", error);
         router.replace("/login");
@@ -143,42 +159,131 @@ export default function ProfessionalTypeDashboard({ params }: { params: Promise<
 
   return (
     <DashboardShell navItems={navItems}>
-      <header className="flex flex-col gap-4 pb-8 border-b border-stone-200">
+      {/* Header */}
+      <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 pb-6 border-b border-[#efe6df]">
         <div>
-          <p className="text-orange-600 font-semibold tracking-widest uppercase text-sm mb-2">Professional Dashboard</p>
-          <h1 className="font-serif text-4xl text-stone-900">{config.title}</h1>
-          <p className="text-stone-500 mt-3 max-w-2xl">{config.subtitle}</p>
+          <p className="text-[#8B4434] font-semibold tracking-widest uppercase text-xs mb-1">
+            Professional Portal
+          </p>
+          <h1 className="font-serif text-3xl sm:text-4xl text-[#281713]">{config.title}</h1>
+          <p className="text-xs text-[#606060] mt-1 max-w-xl">{config.subtitle}</p>
         </div>
-        <div className="flex flex-wrap gap-4">
-          <Link href="/profile" className="btn-secondary border-orange-200">
+        <div className="flex flex-wrap gap-3">
+          <Link href="/profile" className="btn-secondary text-xs py-2.5 px-4">
             Edit Public Profile
           </Link>
           {normalizedDashboardType === "HARDWARE" && (
-            <Link href="/dashboard/hardware/shops" className="btn-secondary border-orange-200">
+            <Link href="/dashboard/hardware/shops" className="btn-secondary text-xs py-2.5 px-4">
               Manage Shops
             </Link>
           )}
-          <Link href="/bidding" className="btn-primary">
-            Find New Opportunities
+          <Link href="/bidding" className="btn-primary text-xs py-2.5 px-4">
+            Find Opportunities
           </Link>
         </div>
       </header>
 
+      {/* KPI Cards */}
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="bg-white border border-[#efe6df] p-5 rounded-none shadow-xs space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-[#8B4434]/70">
+              Submitted Proposals
+            </span>
+            <Briefcase className="w-4 h-4 text-[#8B4434]" />
+          </div>
+          <div className="text-3xl font-serif font-bold text-[#281713]">{bidsCount}</div>
+          <p className="text-[11px] text-[#606060]">Active bids &amp; submissions</p>
+        </div>
+
+        <div className="bg-white border border-[#efe6df] p-5 rounded-none shadow-xs space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-[#8B4434]/70">Inquiries</span>
+            <Inbox className="w-4 h-4 text-[#8B4434]" />
+          </div>
+          <div className="text-3xl font-serif font-bold text-[#281713]">0</div>
+          <p className="text-[11px] text-[#606060]">New client messages</p>
+        </div>
+
+        <div className="bg-white border border-[#efe6df] p-5 rounded-none shadow-xs space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-[#8B4434]/70">Verification</span>
+            <UserCheck className="w-4 h-4 text-[#8B4434]" />
+          </div>
+          <div className="text-3xl font-serif font-bold text-[#281713]">Active</div>
+          <p className="text-[11px] text-[#606060]">Verified professional status</p>
+        </div>
+
+        <div className="bg-white border border-[#efe6df] p-5 rounded-none shadow-xs space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-[#8B4434]/70">Rating</span>
+            <Award className="w-4 h-4 text-[#8B4434]" />
+          </div>
+          <div className="text-3xl font-serif font-bold text-[#281713]">5.0</div>
+          <p className="text-[11px] text-[#606060]">Client satisfaction score</p>
+        </div>
+      </div>
+
+      {/* Main Grid Section */}
       <div className="grid md:grid-cols-3 gap-6">
-        <div className="card-luxury h-48 flex flex-col justify-between">
-          <h3 className="font-serif text-xl border-b border-stone-100 pb-3">{config.highlight}</h3>
-          <p className="text-stone-400 text-sm text-center">No items to show yet.</p>
-          <button className="text-orange-600 text-sm font-semibold uppercase tracking-wider text-left">View Details →</button>
+        <div className="bg-white border border-[#efe6df] p-6 rounded-none shadow-xs space-y-4 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between border-b border-[#efe6df] pb-3 mb-3">
+              <h3 className="font-serif text-lg text-[#281713] font-semibold">{config.highlight}</h3>
+              <span className="text-[10px] font-semibold uppercase tracking-wider bg-[#8B4434]/10 text-[#8B4434] px-2 py-0.5">
+                Overview
+              </span>
+            </div>
+            <p className="text-xs text-[#606060] leading-relaxed">
+              Browse open projects posted by homeowners and property developers looking for certified professionals.
+            </p>
+          </div>
+          <Link
+            href="/bidding"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#8B4434] uppercase tracking-wider hover:text-[#6f3829]"
+          >
+            Browse Open Projects <ArrowUpRight className="w-3.5 h-3.5" />
+          </Link>
         </div>
-        <div className="card-luxury h-48 flex flex-col justify-between">
-          <h3 className="font-serif text-xl border-b border-stone-100 pb-3">Pending Requests</h3>
-          <p className="text-stone-400 text-sm text-center">No new requests.</p>
-          <button className="text-orange-600 text-sm font-semibold uppercase tracking-wider text-left">View Requests →</button>
+
+        <div className="bg-white border border-[#efe6df] p-6 rounded-none shadow-xs space-y-4 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between border-b border-[#efe6df] pb-3 mb-3">
+              <h3 className="font-serif text-lg text-[#281713] font-semibold">Pending Requests</h3>
+              <span className="text-[10px] font-semibold uppercase tracking-wider bg-[#8B4434]/10 text-[#8B4434] px-2 py-0.5">
+                Inbox
+              </span>
+            </div>
+            <p className="text-xs text-[#606060] leading-relaxed">
+              Review direct message inquiries, site appointment requests, and consultation bookings.
+            </p>
+          </div>
+          <Link
+            href="/dashboard/requests"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#8B4434] uppercase tracking-wider hover:text-[#6f3829]"
+          >
+            Open Requests <ArrowUpRight className="w-3.5 h-3.5" />
+          </Link>
         </div>
-        <div className="card-luxury h-48 flex flex-col justify-between">
-          <h3 className="font-serif text-xl border-b border-stone-100 pb-3">Performance</h3>
-          <p className="text-stone-400 text-sm text-center">No stats available.</p>
-          <button className="text-orange-600 text-sm font-semibold uppercase tracking-wider text-left">See Insights →</button>
+
+        <div className="bg-white border border-[#efe6df] p-6 rounded-none shadow-xs space-y-4 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between border-b border-[#efe6df] pb-3 mb-3">
+              <h3 className="font-serif text-lg text-[#281713] font-semibold">Public Showcase</h3>
+              <span className="text-[10px] font-semibold uppercase tracking-wider bg-[#8B4434]/10 text-[#8B4434] px-2 py-0.5">
+                Profile
+              </span>
+            </div>
+            <p className="text-xs text-[#606060] leading-relaxed">
+              Keep your profile picture, portfolio photos, certifications, and pricing updated for potential clients.
+            </p>
+          </div>
+          <Link
+            href="/profile"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#8B4434] uppercase tracking-wider hover:text-[#6f3829]"
+          >
+            Manage Profile <ArrowUpRight className="w-3.5 h-3.5" />
+          </Link>
         </div>
       </div>
     </DashboardShell>

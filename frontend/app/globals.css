@@ -7,11 +7,11 @@
 
 :root {
   --background: #FCFAF7; 
-  --foreground: #4A4A4A; 
+  --foreground: #1c1108;
   --color-terracotta: #8B4434;
   --color-base: #FCFAF7;
   --color-blush: #FAEBE7;
-  --color-text: #4A4A4A;
+  --color-text: #1c1108;
 }
 
 @theme inline {
@@ -31,16 +31,27 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-inter), sans-serif;
+  font-family: var(--font-inter), 'DM Sans', sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+  overflow-x: hidden;
+}
+
+html {
+  overflow-x: hidden;
 }
 
 @layer components {
-  /* Minimal Quiet Luxury Utilities overridden */
   .btn-primary {
     @apply bg-[#8B4434] text-[#FCFAF7] px-8 py-4 text-[10px] tracking-[0.2em] uppercase font-semibold hover:bg-[#6c3426] transition-colors shadow-none rounded-none;
   }
   .btn-secondary {
+    @apply border border-[#8B4434] text-[#8B4434] bg-transparent px-8 py-4 text-[10px] tracking-[0.2em] uppercase font-semibold hover:bg-[#8B4434]/5 transition-colors shadow-none rounded-none;
+  }
+  .btn-outline {
     @apply border border-[#8B4434] text-[#8B4434] bg-transparent px-8 py-4 text-[10px] tracking-[0.2em] uppercase font-semibold hover:bg-[#8B4434]/5 transition-colors shadow-none rounded-none;
   }
   .card-luxury {

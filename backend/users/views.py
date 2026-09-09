@@ -224,6 +224,8 @@ def update_profile(request):
     user_updates = {}
     if 'phone_number' in serializer.validated_data:
         user_updates['phone_number'] = serializer.validated_data.get('phone_number')
+    if 'profile_image' in serializer.validated_data:
+        user_updates['profile_image'] = serializer.validated_data.get('profile_image')
 
     if user_updates:
         for field, value in user_updates.items():
@@ -325,6 +327,29 @@ def update_profile(request):
     return Response({
         'message': 'Profile updated successfully',
         'user': response_serializer.data,
+    }, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def upload_profile_image(request):
+    token = request.data.get('token')
+    image_file = request.FILES.get('image')
+
+    if not token or not image_file:
+        return Response({'error': 'token and image file are required'}, status=status.HTTP_400_BAD_REQUEST)
+
+    user, error_response = _get_user_from_token(token)
+    if error_response:
+        return error_response
+
+    user.profile_image = image_file
+    user.save(update_fields=['profile_image'])
+
+    serializer = CustomUserSerializer(user, context={'request': request})
+    return Response({
+        'message': 'Profile image uploaded successfully',
+        'user': serializer.data,
     }, status=status.HTTP_200_OK)
 
 

@@ -279,7 +279,7 @@ export default function ShopDetailPage() {
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {shop.items?.length ? shop.items.map((item) => (
               <div key={item.id} className="rounded-none border border-stone-200 bg-white shadow-sm overflow-hidden flex flex-col">
-                <div className="relative aspect-[4/3] bg-stone-100 border-b border-stone-200">
+                <div className="relative aspect-[4/3] bg-stone-100 border-b border-stone-200 overflow-hidden">
                   {item.image_url ? (
                     <Image src={item.image_url} alt={item.material_name} fill unoptimized className="object-cover" />
                   ) : (

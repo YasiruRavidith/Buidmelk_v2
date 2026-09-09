@@ -1,7 +1,7 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from .models import ProjectPost, Bid
+from .models import ProjectPost, Bid, ProjectUnlock
 from .serializers import ProjectPostSerializer, ProjectPostDetailSerializer, BidSerializer
 
 class ProjectPostViewSet(viewsets.ModelViewSet):
@@ -37,6 +37,12 @@ class BidViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(professional=self.request.user)
 
+    def destroy(self, request, *args, **kwargs):
+        bid = self.get_object()
+        if bid.professional != request.user and getattr(request.user, 'role', '') != 'ADMIN':
+            return Response({"error": "You can only delete your own submitted bids."}, status=status.HTTP_403_FORBIDDEN)
+        return super().destroy(request, *args, **kwargs)
+
     @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticated])
     def accept(self, request, pk=None):
         bid = self.get_object()
@@ -45,6 +51,13 @@ class BidViewSet(viewsets.ModelViewSet):
         # Only the project owner can accept a bid
         if project.client != request.user:
             return Response({"error": "Not authorized"}, status=status.HTTP_403_FORBIDDEN)
+
+        # Check if project owner has unlocked the project using a ticket credit
+        if project.ticket_required and not ProjectUnlock.objects.filter(user=request.user, project=project).exists():
+            return Response(
+                {"error": "You must unlock this project with a ticket credit before accepting proposals."},
+                status=status.HTTP_402_PAYMENT_REQUIRED
+            )
 
         # Accept this bid and reject all others automatically
         bid.status = 'ACCEPTED'
