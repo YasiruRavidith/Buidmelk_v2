@@ -31,7 +31,7 @@ if not firebase_admin._apps:
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-buildmelk-production-secret-key-change-in-prod')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', 'False').lower() in ('true', '1', 't')
+DEBUG = os.getenv('DEBUG', 'True').lower() in ('true', '1', 't')
 
 def env_or_default(name, default):
     value = os.getenv(name)
@@ -172,10 +172,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = '/tmp/staticfiles' if os.getenv('VERCEL') else BASE_DIR / 'staticfiles'
 
 # Media files (user uploads)
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = '/tmp/media' if os.getenv('VERCEL') else BASE_DIR / 'media'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
