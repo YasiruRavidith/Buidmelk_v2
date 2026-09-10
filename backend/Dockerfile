@@ -22,7 +22,8 @@ COPY . /app/
 # Collect static files
 RUN python manage.py collectstatic --noinput || true
 
-# Expose port (7860 is default for Hugging Face Spaces, Render overrides with $PORT)
-EXPOSE 7860
+# Expose port (Railway dynamically injects PORT)
+EXPOSE 8000
 
-CMD exec gunicorn core.wsgi:application --bind 0.0.0.0:${PORT:-7860} --workers 2 --threads 4 --timeout 120
+CMD python manage.py migrate --noinput && exec gunicorn core.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 2 --threads 4 --timeout 120
+

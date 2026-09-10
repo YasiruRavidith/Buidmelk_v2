@@ -99,6 +99,14 @@ CORS_ALLOWED_ORIGINS = [
 ]
 CORS_ALLOW_CREDENTIALS = True
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.railway.app",
+    "https://*.up.railway.app",
+    "https://buildmelk.vercel.app",
+    "https://buildme-lk.vercel.app",
+    "http://localhost:3000",
+]
+
 ROOT_URLCONF = 'core.urls'
 
 TEMPLATES = [
