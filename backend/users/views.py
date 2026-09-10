@@ -116,17 +116,36 @@ def verify_firebase_token(request):
         picture = decoded_token.get('picture', '')
 
         # Get or Create User
-        user, created = CustomUser.objects.get_or_create(
-            firebase_uid=uid,
-            defaults={
-                'username': email.split('@')[0] if email else uid,
-                'email': email,
-                'first_name': name.split()[0] if name else '',
-                'last_name': ' '.join(name.split()[1:]) if name and len(name.split()) > 1 else '',
-                'profile_image': picture,
-                'is_email_verified': decoded_token.get('email_verified', False)
-            }
-        )
+        user = CustomUser.objects.filter(firebase_uid=uid).first()
+        created = False
+        if not user and email:
+            user = CustomUser.objects.filter(email=email).first()
+            if user:
+                user.firebase_uid = uid
+                if picture and not user.profile_image:
+                    user.profile_image = picture
+                if decoded_token.get('email_verified'):
+                    user.is_email_verified = True
+                user.save()
+
+        if not user:
+            created = True
+            base_username = email.split('@')[0] if email else uid
+            username = base_username
+            counter = 1
+            while CustomUser.objects.filter(username=username).exists():
+                username = f"{base_username}_{counter}"
+                counter += 1
+
+            user = CustomUser.objects.create(
+                firebase_uid=uid,
+                username=username,
+                email=email,
+                first_name=name.split()[0] if name else '',
+                last_name=' '.join(name.split()[1:]) if name and len(name.split()) > 1 else '',
+                profile_image=picture,
+                is_email_verified=decoded_token.get('email_verified', False)
+            )
 
         serializer = CustomUserSerializer(user, context={'request': request})
         return Response({

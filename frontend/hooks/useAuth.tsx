@@ -99,6 +99,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await signInWithPopup(auth, googleProvider);
     } catch (error) {
       console.error("Error signing in:", error);
+      throw error;
     }
   };
 

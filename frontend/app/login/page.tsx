@@ -82,8 +82,24 @@ export default function LoginPage() {
       case "auth/wrong-password":
       case "auth/user-not-found":
         return "Invalid email or password credentials.";
+      case "auth/unauthorized-domain":
+        return "This deployed domain is not authorized in Firebase Console! Go to Firebase Console > Authentication > Settings > Authorized Domains and add your domain.";
+      case "auth/popup-closed-by-user":
+        return "Google sign-in was cancelled.";
+      case "auth/operation-not-allowed":
+        return "Google sign-in provider is disabled in Firebase Console. Please enable it in Authentication > Sign-in method.";
       default:
         return "Authentication failed. Please check your network and try again.";
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    setFormError("");
+    setFormInfo("");
+    try {
+      await signInWithGoogle();
+    } catch (error) {
+      setFormError(getAuthErrorMessage(error));
     }
   };
 
@@ -445,8 +461,8 @@ export default function LoginPage() {
           {/* Google Sign-In Button */}
           <button
             type="button"
-            onClick={signInWithGoogle}
-            disabled={loading}
+            onClick={handleGoogleSignIn}
+            disabled={loading || isSubmitting}
             className="w-full border border-[#efe6df] bg-white text-[#281713] px-6 py-3.5 text-xs font-semibold uppercase tracking-wider hover:border-[#8B4434] hover:bg-[#fcfaf9] transition-all flex items-center justify-center gap-3 disabled:opacity-50"
           >
             <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
