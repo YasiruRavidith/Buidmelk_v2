@@ -18,6 +18,14 @@ const nextConfig: NextConfig = {
         hostname: "127.0.0.1",
         port: "8000",
       },
+      {
+        protocol: "https",
+        hostname: "**.railway.app",
+      },
+      {
+        protocol: "https",
+        hostname: "**.up.railway.app",
+      },
     ],
   },
 };
