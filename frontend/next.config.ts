@@ -8,40 +8,51 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "lh3.googleusercontent.com",
+        pathname: "/**",
       },
       {
         protocol: "http",
         hostname: "localhost",
         port: "8000",
+        pathname: "/**",
       },
       {
         protocol: "http",
         hostname: "127.0.0.1",
         port: "8000",
+        pathname: "/**",
       },
       {
         protocol: "https",
         hostname: "**.railway.app",
+        pathname: "/**",
       },
       {
         protocol: "https",
         hostname: "**.up.railway.app",
+        pathname: "/**",
       },
       {
         protocol: "http",
         hostname: "**.railway.app",
+        pathname: "/**",
       },
       {
         protocol: "http",
         hostname: "**.up.railway.app",
+        pathname: "/**",
       },
       {
         protocol: "https",
         hostname: "buidmelkv2-production.up.railway.app",
+        port: "",
+        pathname: "/**",
       },
       {
         protocol: "http",
         hostname: "buidmelkv2-production.up.railway.app",
+        port: "",
+        pathname: "/**",
       },
     ],
   },
