@@ -1,6 +1,7 @@
 """
 URL configuration for core project.
 """
+import os
 import traceback
 import sys
 from django.conf import settings
@@ -16,7 +17,7 @@ def health_check(request):
         "status": "ok",
         "python": sys.version,
         "django_debug": settings.DEBUG,
-        "on_vercel": bool(settings.DEBUG),
+        "on_vercel": bool(os.getenv('VERCEL') or os.getenv('VERCEL_ENV')),
         "db_engine": None,
         "db": None,
         "error": None,
