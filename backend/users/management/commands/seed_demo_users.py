@@ -389,10 +389,14 @@ def ensure_materials():
                 "category": categories[item["category"]],
                 "unit": item["unit"],
                 "ai_price": item["unit_price"],
+                "last_ai_update": timezone.now(),
                 "stock_available": item["stock_available"],
                 "description": item["description"],
             },
         )
+        if not material.last_ai_update:
+            material.last_ai_update = timezone.now()
+            material.save(update_fields=['last_ai_update'])
         materials.append(material)
 
     return materials

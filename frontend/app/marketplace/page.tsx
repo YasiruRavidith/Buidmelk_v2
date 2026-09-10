@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useAuth } from "../../hooks/useAuth";
-import { SlidersHorizontal, X, Package } from "lucide-react";
+import { SlidersHorizontal, X, Package, Clock, Sparkles } from "lucide-react";
 import { API_BASE_URL } from "@/lib/api";
 
 interface Material {
@@ -20,6 +20,28 @@ interface Material {
   stock_available: number;
   rating?: string | null;
   images?: { image_url?: string }[];
+  last_ai_update?: string | null;
+  created_at?: string;
+}
+
+function formatAiUpdateTime(dateStr?: string | null) {
+  if (!dateStr) return "AI price sync active";
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return "AI price sync active";
+
+  const now = new Date();
+  const diffMs = Math.max(0, now.getTime() - date.getTime());
+  const diffMins = Math.floor(diffMs / (1000 * 60));
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+  if (diffMins < 5) return "AI updated just now";
+  if (diffMins < 60) return `AI updated ${diffMins}m ago`;
+  if (diffHours < 24) return `AI updated ${diffHours}h ago`;
+  if (diffDays === 1) return "AI updated yesterday";
+  if (diffDays < 7) return `AI updated ${diffDays}d ago`;
+
+  return `AI updated ${date.toLocaleDateString("en-LK", { month: "short", day: "numeric" })}`;
 }
 
 export default function MarketplaceFeed() {
@@ -398,24 +420,42 @@ export default function MarketplaceFeed() {
                         </p>
                       </div>
 
-                      <div className="pt-4 border-t border-[#efe6df] flex items-end justify-between gap-3 flex-wrap">
-                        <div>
-                          <p className="text-[10px] uppercase tracking-[0.25em] text-[#8B4434]/70 mb-0.5">Price</p>
+                      <div className="pt-4 border-t border-[#efe6df] space-y-4">
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-[10px] uppercase tracking-[0.25em] text-[#8B4434]/70 font-semibold">Price</span>
+                            <span className="inline-flex items-center gap-1 text-[9px] uppercase tracking-wider font-semibold text-[#8B4434] bg-[#8B4434]/10 px-1.5 py-0.5 rounded-none">
+                              <Sparkles className="w-2.5 h-2.5" />
+                              AI Index
+                            </span>
+                          </div>
                           <p className="font-serif text-2xl font-bold text-[#281713]">Rs. {material.current_price}</p>
                           <p className="text-xs text-[#606060]">per {material.unit}</p>
+
+                          {/* Last AI automatic price updated time */}
+                          <div
+                            className="pt-1 flex items-center gap-1.5 text-[10px] text-stone-500"
+                            title={material.last_ai_update ? `Last AI price update: ${new Date(material.last_ai_update).toLocaleString('en-LK')}` : "Automated AI market price sync"}
+                          >
+                            <Clock className="w-3 h-3 text-[#8B4434]/70 shrink-0" />
+                            <span className="font-medium tracking-tight">
+                              {formatAiUpdateTime(material.last_ai_update || material.created_at)}
+                            </span>
+                          </div>
                         </div>
-                        <div className="flex flex-col gap-2 min-w-[110px]">
+
+                        <div className="flex flex-col gap-2 w-full pt-1">
                           <button
                             type="button"
                             onClick={() => addToCart(material)}
                             disabled={cartBusyId === material.id || material.stock_available <= 0}
-                            className="rounded-none border border-[#8B4434] bg-[#8B4434] px-4 py-2.5 text-center text-[10px] font-semibold uppercase tracking-[0.2em] text-white transition-colors hover:bg-[#6e3528] disabled:opacity-50"
+                            className="w-full rounded-none border border-[#8B4434] bg-[#8B4434] px-4 py-2.5 text-center text-[10px] font-semibold uppercase tracking-[0.2em] text-white transition-colors hover:bg-[#6e3528] disabled:opacity-50 cursor-pointer"
                           >
                             {cartBusyId === material.id ? 'Adding...' : 'Add to Cart'}
                           </button>
                           <Link
                             href={`/marketplace/${material.id}`}
-                            className="rounded-none border border-[#8B4434] px-4 py-2.5 text-center text-[10px] font-semibold uppercase tracking-[0.2em] text-[#8B4434] transition-colors hover:bg-[#8B4434] hover:text-white"
+                            className="w-full rounded-none border border-[#8B4434] px-4 py-2.5 text-center text-[10px] font-semibold uppercase tracking-[0.2em] text-[#8B4434] transition-colors hover:bg-[#8B4434] hover:text-white"
                           >
                             View Details
                           </Link>

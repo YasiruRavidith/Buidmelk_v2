@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useAuth } from "../../../hooks/useAuth";
 import { API_BASE_URL } from "@/lib/api";
+import { Clock, Sparkles } from "lucide-react";
 
 interface MaterialDetailData {
   id: number;
@@ -20,6 +21,28 @@ interface MaterialDetailData {
   description?: string | null;
   stock_available: number;
   images?: { image_url?: string | null }[];
+  last_ai_update?: string | null;
+  created_at?: string;
+}
+
+function formatAiUpdateTime(dateStr?: string | null) {
+  if (!dateStr) return "AI price sync active";
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return "AI price sync active";
+
+  const now = new Date();
+  const diffMs = Math.max(0, now.getTime() - date.getTime());
+  const diffMins = Math.floor(diffMs / (1000 * 60));
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+  if (diffMins < 5) return "AI updated just now";
+  if (diffMins < 60) return `AI updated ${diffMins}m ago`;
+  if (diffHours < 24) return `AI updated ${diffHours}h ago`;
+  if (diffDays === 1) return "AI updated yesterday";
+  if (diffDays < 7) return `AI updated ${diffDays}d ago`;
+
+  return `AI updated ${date.toLocaleDateString("en-LK", { month: "short", day: "numeric" })}`;
 }
 
 export default function MaterialDetail() {
@@ -281,7 +304,21 @@ export default function MaterialDetail() {
               </div>
 
               {/* Price & Availability */}
-              <div className="py-4 border-y border-[#e8ddd6] space-y-1">
+              <div className="py-4 border-y border-[#e8ddd6] space-y-2">
+                <div className="flex items-center gap-2.5 flex-wrap">
+                  <div className="inline-flex items-center gap-1.5 bg-[#8B4434]/10 text-[#8B4434] px-2.5 py-1 text-[10px] uppercase tracking-[0.2em] font-bold">
+                    <Sparkles className="w-3 h-3" />
+                    <span>Live AI Market Price</span>
+                  </div>
+                  <div
+                    className="inline-flex items-center gap-1.5 text-[11px] text-stone-500 bg-[#fbf8f5] border border-[#e8ddd6] px-2.5 py-1"
+                    title={material.last_ai_update ? `Last AI price update: ${new Date(material.last_ai_update).toLocaleString('en-LK')}` : "Automated AI market price sync"}
+                  >
+                    <Clock className="w-3 h-3 text-[#8B4434]" />
+                    <span className="font-medium">{formatAiUpdateTime(material.last_ai_update || material.created_at)}</span>
+                  </div>
+                </div>
+
                 <p className="text-3xl sm:text-4xl font-serif text-[#8B4434] font-semibold">
                   Rs. {material.current_price} <span className="text-sm font-sans text-[#606060] font-normal">/ {material.unit}</span>
                 </p>
