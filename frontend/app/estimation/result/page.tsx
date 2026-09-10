@@ -21,36 +21,73 @@ export default function EstimationResult() {
   const [errorMsg, setErrorMsg] = useState("");
 
   useEffect(() => {
-    const raw = sessionStorage.getItem("latestEstimation");
-    if (!raw) {
-      router.push("/estimation");
-      return;
-    }
-    const parsed = JSON.parse(raw);
-    setData(parsed);
-    setTitle(parsed.project_title || "My Construction Project");
-    setLocation(parsed.inputs?.location || "Colombo");
-    setBudgetRange(`LKR ${parsed.grand_total_min} - LKR ${parsed.grand_total_max}`);
+    const loadData = async () => {
+      let parsed: any = null;
 
-    if (parsed.inputs) {
-      const details = parsed.inputs;
+      const raw =
+        sessionStorage.getItem("latestEstimation") ||
+        sessionStorage.getItem("latest_estimate") ||
+        localStorage.getItem("latestEstimation") ||
+        localStorage.getItem("latest_estimate");
+
+      if (raw) {
+        try {
+          parsed = JSON.parse(raw);
+        } catch (_) {}
+      }
+
+      // If not in storage, check ?id= query param from URL
+      if (!parsed && typeof window !== "undefined") {
+        const idParam = new URLSearchParams(window.location.search).get("id");
+        if (idParam) {
+          try {
+            const res = await fetch(`${API_BASE_URL}/estimations/${idParam}/`);
+            if (res.ok) {
+              parsed = await res.json();
+            }
+          } catch (_) {}
+        }
+      }
+
+      if (!parsed) {
+        router.push("/estimation");
+        return;
+      }
+
+      setData(parsed);
+
+      const details = parsed.project_details_json || parsed.inputs || {};
+      const totalCost = Number(parsed.total_estimated_cost) || 0;
+      const minCost = parsed.grand_total_min || (totalCost ? Math.round(totalCost * 0.95) : 0);
+      const maxCost = parsed.grand_total_max || (totalCost ? Math.round(totalCost * 1.1) : 0);
+
+      setTitle(parsed.project_title || "My Construction Project");
+      setLocation(details.location || details.province_district || "Western - Colombo");
+      setBudgetRange(totalCost ? `LKR ${minCost.toLocaleString()} - LKR ${maxCost.toLocaleString()}` : "Negotiable");
+
       const desc = `I'm planning a construction project with the following requirements:
+- Project Title: ${parsed.project_title || "My Construction Project"}
 - Land Size: ${details.land_size || "N/A"}
 - House Size: ${details.house_size || "N/A"}
-- Total Area: ${details.sqft || details.total_area_sqft || "N/A"} sqft
-- Floors: ${details.floors || details.number_of_floors || "1"}
-- Rooms: ${details.rooms || details.number_of_rooms || "N/A"}
+- Total Area: ${parsed.total_area_sqft || details.total_area_sqft || details.sqft || "N/A"} sqft
+- Floors: ${parsed.number_of_floors || details.number_of_floors || "1"}
+- Rooms: ${parsed.number_of_rooms || details.number_of_rooms || "N/A"}
 - Bathrooms: ${details.bathrooms || "N/A"}
-- Quality Standard: ${details.quality || "STANDARD"}
-- Structure Type: ${details.structure_type || "N/A"}
-- Wall Material: ${details.wall_type || "N/A"}
-- Metal Type: ${details.metal_type || "N/A"}
+- Kitchens: ${details.kitchen_count || "N/A"}
+- Quality Standard: ${parsed.quality_level || details.quality || "STANDARD"}
 - Cement Brand: ${details.cement_brand || "N/A"}
+- Cement Type: ${details.cement_type || "N/A"}
+- Sand Type: ${details.sand_type || "N/A"}
+- Metal Type: ${details.metal_type || "N/A"}
 - Roof Type: ${details.roof_type || "N/A"}
+- Interior Level: ${details.interior_level || "N/A"}
+- Timeline Target: ${details.timeline_target || "N/A"}
 
-Looking for verified professionals to bid on this construction project. We have generated an AI estimate of the costs, which you can see in detail on the bidding page.`;
+Looking for verified professionals to bid on this construction project. We have generated an estimate of the costs, which you can see in detail on the bidding page.`;
       setDescription(desc);
-    }
+    };
+
+    loadData();
   }, [router]);
 
   const handlePublishProject = async (e: React.FormEvent) => {
@@ -134,7 +171,7 @@ Looking for verified professionals to bid on this construction project. We have 
             {fmt(data.total_estimated_cost)}
           </h1>
           <p className="text-stone-500 mt-4">
-            For a {data.total_area_sqft} sqft, {data.number_of_floors}-story home ({data.quality_level.toLowerCase()} finish).
+            For a {data.total_area_sqft || 'standard'} sqft, {data.number_of_floors || 1}-story home ({(data.quality_level || 'STANDARD').toLowerCase()} finish).
           </p>
           {pdfUrl && (
             <div className="mt-6">
@@ -142,6 +179,7 @@ Looking for verified professionals to bid on this construction project. We have 
                 href={pdfUrl}
                 target="_blank"
                 rel="noreferrer"
+                download={`estimation-${data.id || 'report'}.pdf`}
                 className="inline-flex items-center justify-center bg-orange-600 text-white px-6 py-3 text-sm font-semibold tracking-wide uppercase hover:bg-orange-700 transition-colors"
               >
                 Download PDF Report

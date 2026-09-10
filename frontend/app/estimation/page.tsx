@@ -94,8 +94,14 @@ export default function SmartEstimation() {
       });
       const result = await response.json();
       if (response.ok) {
-        sessionStorage.setItem("latest_estimate", JSON.stringify(result.data));
-        router.push("/estimation/result");
+        const payload = {
+          ...result.data,
+          pdf_url: result.pdf_url || (result.data?.id ? `/api/estimations/${result.data.id}/pdf/` : null),
+        };
+        sessionStorage.setItem("latestEstimation", JSON.stringify(payload));
+        sessionStorage.setItem("latest_estimate", JSON.stringify(payload));
+        localStorage.setItem("latestEstimation", JSON.stringify(payload));
+        router.push(`/estimation/result${result.data?.id ? `?id=${result.data.id}` : ""}`);
       } else {
         alert(result.error || "Estimation failed");
       }

@@ -389,6 +389,20 @@ def get_user_estimations(request):
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
+def get_estimation_detail(request, estimation_id):
+    try:
+        estimation = EstimationHistory.objects.get(id=estimation_id)
+    except EstimationHistory.DoesNotExist:
+        return Response({'error': 'Estimation not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+    serializer = EstimationHistorySerializer(estimation)
+    payload = serializer.data
+    payload['pdf_url'] = f"/api/estimations/{estimation.id}/pdf/"
+    return Response(payload, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
 def download_estimation_pdf(request, estimation_id):
     try:
         estimation = EstimationHistory.objects.get(id=estimation_id)
