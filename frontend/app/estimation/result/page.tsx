@@ -5,9 +5,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../../hooks/useAuth";
 import { API_BASE_URL, BACKEND_ROOT_URL } from "@/lib/api";
+import { Lock, ShieldCheck, ArrowRight } from "lucide-react";
 
 export default function EstimationResult() {
-  const { user } = useAuth();
+  const { user, backendUser } = useAuth();
   const [data, setData] = useState<any>(null);
   const router = useRouter();
 
@@ -92,7 +93,12 @@ Looking for verified professionals to bid on this construction project. We have 
 
   const handlePublishProject = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
+    if (!user) {
+      setErrorMsg("You must be logged in to publish a project for bidding.");
+      const redirectTarget = `/estimation/result${data?.id ? `?id=${data.id}` : ""}`;
+      router.push(`/login?redirect=${encodeURIComponent(redirectTarget)}`);
+      return;
+    }
     setIsSubmitting(true);
     setErrorMsg("");
 
@@ -245,26 +251,65 @@ Looking for verified professionals to bid on this construction project. We have 
 
           <div className="space-y-6">
             {!isPublishing ? (
-              <div className="bg-orange-50/50 border border-orange-200 rounded-2xl p-8">
-                <h3 className="font-serif text-2xl text-stone-900 mb-2">Ready to start?</h3>
-                <p className="text-stone-600 mb-6 text-sm leading-relaxed">
-                  You can publish this project to the Open Bidding system to get exact quotes from verified professionals.
+              <div className="bg-gradient-to-br from-[#fbf8f5] to-[#f4ede7] border border-[#e8ddd6] rounded-2xl p-6 sm:p-8 shadow-sm">
+                <div className="flex items-center gap-2 text-[#8B4434] text-xs uppercase tracking-[0.25em] font-semibold mb-2">
+                  <ShieldCheck className="w-4 h-4" />
+                  <span>Open Tender Bidding</span>
+                </div>
+                <h3 className="font-serif text-2xl sm:text-3xl text-stone-900 mb-2">
+                  Ready to receive bids from professionals?
+                </h3>
+                <p className="text-stone-600 mb-6 text-xs sm:text-sm leading-relaxed">
+                  Publish this estimation to our Open Bidding system to receive competitive, SLS-standard quotes from verified contractors, architects, and engineers across Sri Lanka.
                 </p>
+
                 {user ? (
-                  <button 
-                    type="button"
-                    onClick={() => setIsPublishing(true)} 
-                    className="w-full btn-primary text-sm cursor-pointer"
-                  >
-                    Publish Project for Bids
-                  </button>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between p-3 bg-white border border-[#e8ddd6] rounded-xl text-xs text-stone-600">
+                      <div className="flex items-center gap-2 truncate">
+                        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                        <span className="truncate font-medium text-stone-900">
+                          Posting as {user.displayName || user.email}
+                        </span>
+                      </div>
+                      {backendUser?.role && (
+                        <span className="text-[10px] uppercase tracking-wider font-semibold text-[#8B4434] bg-[#8B4434]/10 px-2 py-0.5 rounded">
+                          {backendUser.role}
+                        </span>
+                      )}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setIsPublishing(true)}
+                      className="w-full bg-[#8B4434] text-white py-3.5 px-6 rounded-none text-xs uppercase tracking-[0.22em] font-semibold hover:bg-[#6c3426] transition-colors shadow-sm flex items-center justify-center gap-2 cursor-pointer"
+                    >
+                      <span>Publish Project for Bids</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </button>
+                  </div>
                 ) : (
-                  <Link 
-                    href="/login?redirect=/estimation/result" 
-                    className="block text-center w-full btn-primary text-sm cursor-pointer py-4"
-                  >
-                    Sign In to Publish
-                  </Link>
+                  <div className="bg-white border border-amber-200/80 rounded-xl p-5 space-y-4">
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 rounded-full bg-amber-500/10 text-amber-700 flex items-center justify-center shrink-0 mt-0.5">
+                        <Lock className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <p className="text-xs uppercase tracking-wider font-bold text-stone-900">
+                          Sign In Required to Post
+                        </p>
+                        <p className="text-xs text-stone-500 mt-1 leading-relaxed">
+                          Only registered, logged-in clients can post construction tenders to ensure verified client identities and prevent spam for our contractors.
+                        </p>
+                      </div>
+                    </div>
+
+                    <Link
+                      href={`/login?redirect=${encodeURIComponent(`/estimation/result${data?.id ? `?id=${data.id}` : ""}`)}`}
+                      className="block text-center w-full bg-[#8B4434] text-white py-3.5 px-6 text-xs uppercase tracking-[0.22em] font-semibold hover:bg-[#6c3426] transition-colors shadow-sm cursor-pointer"
+                    >
+                      Sign In / Register to Publish
+                    </Link>
+                  </div>
                 )}
               </div>
             ) : (
