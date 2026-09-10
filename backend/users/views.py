@@ -75,10 +75,17 @@ def _get_user_from_token(token):
     try:
         decoded_token = auth.verify_id_token(token)
         uid = decoded_token.get('uid')
-        user = CustomUser.objects.get(firebase_uid=uid)
+        user = CustomUser.objects.filter(firebase_uid=uid).first()
+        if not user:
+            email = decoded_token.get('email')
+            if email:
+                user = CustomUser.objects.filter(email=email).first()
+                if user:
+                    user.firebase_uid = uid
+                    user.save(update_fields=['firebase_uid'])
+        if not user:
+            return None, Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
         return user, None
-    except CustomUser.DoesNotExist:
-        return None, Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         return None, Response({'error': str(e)}, status=status.HTTP_401_UNAUTHORIZED)
 

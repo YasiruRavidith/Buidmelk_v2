@@ -134,6 +134,22 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
+def _get_sqlite_path():
+    volume_dir = Path('/app/media')
+    if volume_dir.exists():
+        volume_db = volume_dir / 'db.sqlite3'
+        local_db = BASE_DIR / 'db.sqlite3'
+        if not volume_db.exists() and local_db.exists():
+            try:
+                import shutil
+                shutil.copyfile(local_db, volume_db)
+            except Exception:
+                pass
+        return str(volume_db)
+    if os.getenv('VERCEL'):
+        return '/tmp/db.sqlite3'
+    return str(BASE_DIR / 'db.sqlite3')
+
 try:
     import dj_database_url
     DATABASE_URL = os.getenv('DATABASE_URL')
@@ -146,19 +162,17 @@ try:
             )
         }
     else:
-        db_path = '/tmp/db.sqlite3' if os.getenv('VERCEL') else BASE_DIR / 'db.sqlite3'
         DATABASES = {
             'default': {
                 'ENGINE': 'django.db.backends.sqlite3',
-                'NAME': db_path,
+                'NAME': _get_sqlite_path(),
             }
         }
 except ImportError:
-    db_path = '/tmp/db.sqlite3' if os.getenv('VERCEL') else BASE_DIR / 'db.sqlite3'
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': db_path,
+            'NAME': _get_sqlite_path(),
         }
     }
 
