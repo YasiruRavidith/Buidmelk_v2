@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useAuth } from "../../hooks/useAuth";
-import { SlidersHorizontal, X } from "lucide-react";
+import { SlidersHorizontal, X, Package } from "lucide-react";
 import { API_BASE_URL } from "@/lib/api";
 
 interface Material {
@@ -350,42 +350,73 @@ export default function MarketplaceFeed() {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-3 gap-5 sm:gap-8">
                 {filteredMaterials.map((material) => (
-                  <article key={material.id} className="group overflow-hidden rounded-none border border-[#e8ddd6] bg-white shadow-sm transition-transform duration-300 hover:-translate-y-1 hover:shadow-xl">
-                    <div className="relative aspect-4/3 bg-[#f3ebe4] border-b border-[#e8ddd6] flex items-end p-5 sm:p-6 overflow-hidden">
+                  <article key={material.id} className="group overflow-hidden rounded-none border border-[#e8ddd6] bg-white shadow-sm transition-transform duration-300 hover:-translate-y-1 hover:shadow-xl flex flex-col h-full">
+                    {/* Top Image Container */}
+                    <div className="relative aspect-4/3 bg-[#f8f5f2] border-b border-[#e8ddd6] overflow-hidden flex items-center justify-center">
                       {material.images && material.images.length > 0 && material.images[0].image_url ? (
                         <img
                           src={material.images[0].image_url}
                           alt={material.name}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                           onError={(e) => {
                             (e.currentTarget as HTMLElement).style.display = "none";
                           }}
                         />
-                      ) : null}
-                      <div className="relative">
-                        <span className="inline-flex rounded-none border border-[#8B4434] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-[#8B4434]">{material.category_name}</span>
-                        <h2 className="mt-3 font-serif text-2xl sm:text-3xl leading-tight text-[#281713]">{material.name}</h2>
-                      </div>
-                    </div>
-                    <div className="p-4 sm:p-6 lg:p-7">
-                      <div className="flex items-center justify-between gap-2 text-xs uppercase tracking-[0.22em] text-[#8B4434]/70 flex-wrap">
-                        <span>{material.brand || 'Generic'}</span>
-                        <span>{material.supplier_name}</span>
-                        <span className={material.stock_available > 0 ? '' : 'text-red-400'}>{material.stock_available > 0 ? `${material.stock_available} in stock` : "Out of stock"}</span>
-                      </div>
-                      <p className="mt-4 text-sm leading-7 text-[#606060] line-clamp-3">{material.description || "No description provided."}</p>
-                      <div className="mt-5 border-t border-[#efe6df] pt-4 flex items-end justify-between gap-3 flex-wrap">
-                        <div>
-                          <p className="text-[10px] uppercase tracking-[0.25em] text-[#8B4434]/70 mb-1">Price</p>
-                          <p className="font-serif text-2xl text-[#281713]">Rs. {material.current_price}</p>
-                          <p className="text-sm text-[#606060]">per {material.unit}</p>
+                      ) : (
+                        <div className="flex flex-col items-center justify-center text-[#8B4434]/40 gap-2">
+                          <Package className="w-10 h-10" />
+                          <span className="text-[10px] uppercase tracking-wider font-medium">No image</span>
                         </div>
-                        <div className="flex flex-col gap-2 min-w-[120px]">
-                          <button type="button" onClick={() => addToCart(material)} disabled={cartBusyId === material.id}
-                            className="rounded-none border border-[#8B4434] px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#8B4434] transition-colors hover:bg-[#8B4434] hover:text-white disabled:opacity-60">
+                      )}
+                      {/* Floating Category Badge */}
+                      <div className="absolute top-3 left-3 z-10">
+                        <span className="inline-flex rounded-none border border-[#8B4434]/30 bg-white/90 backdrop-blur-xs px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#8B4434] shadow-xs">
+                          {material.category_name}
+                        </span>
+                      </div>
+                      {material.stock_available <= 0 && (
+                        <div className="absolute top-3 right-3 z-10">
+                          <span className="inline-flex rounded-none bg-red-600 text-white px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider shadow-xs">
+                            Out of Stock
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Content Section */}
+                    <div className="p-5 sm:p-6 flex flex-col flex-1 justify-between gap-4">
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between gap-2 text-[11px] uppercase tracking-[0.2em] text-[#8B4434]/70">
+                          <span className="font-semibold">{material.brand || 'Generic'}</span>
+                          <span className="truncate max-w-[140px] text-stone-500">{material.supplier_name}</span>
+                        </div>
+                        <h2 className="font-serif text-xl sm:text-2xl font-semibold leading-snug text-[#281713] line-clamp-2 group-hover:text-[#8B4434] transition-colors">
+                          {material.name}
+                        </h2>
+                        <p className="text-xs leading-relaxed text-[#606060] line-clamp-2">
+                          {material.description || "No description provided."}
+                        </p>
+                      </div>
+
+                      <div className="pt-4 border-t border-[#efe6df] flex items-end justify-between gap-3 flex-wrap">
+                        <div>
+                          <p className="text-[10px] uppercase tracking-[0.25em] text-[#8B4434]/70 mb-0.5">Price</p>
+                          <p className="font-serif text-2xl font-bold text-[#281713]">Rs. {material.current_price}</p>
+                          <p className="text-xs text-[#606060]">per {material.unit}</p>
+                        </div>
+                        <div className="flex flex-col gap-2 min-w-[110px]">
+                          <button
+                            type="button"
+                            onClick={() => addToCart(material)}
+                            disabled={cartBusyId === material.id || material.stock_available <= 0}
+                            className="rounded-none border border-[#8B4434] bg-[#8B4434] px-4 py-2.5 text-center text-[10px] font-semibold uppercase tracking-[0.2em] text-white transition-colors hover:bg-[#6e3528] disabled:opacity-50"
+                          >
                             {cartBusyId === material.id ? 'Adding...' : 'Add to Cart'}
                           </button>
-                          <Link href={`/marketplace/${material.id}`} className="rounded-none border border-[#8B4434] px-4 py-2.5 text-center text-[11px] font-semibold uppercase tracking-[0.22em] text-[#8B4434] transition-colors hover:bg-[#8B4434] hover:text-white">
+                          <Link
+                            href={`/marketplace/${material.id}`}
+                            className="rounded-none border border-[#8B4434] px-4 py-2.5 text-center text-[10px] font-semibold uppercase tracking-[0.2em] text-[#8B4434] transition-colors hover:bg-[#8B4434] hover:text-white"
+                          >
                             View Details
                           </Link>
                         </div>
