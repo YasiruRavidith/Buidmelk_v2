@@ -26,6 +26,22 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "**.up.railway.app",
       },
+      {
+        protocol: "http",
+        hostname: "**.railway.app",
+      },
+      {
+        protocol: "http",
+        hostname: "**.up.railway.app",
+      },
+      {
+        protocol: "https",
+        hostname: "buidmelkv2-production.up.railway.app",
+      },
+      {
+        protocol: "http",
+        hostname: "buidmelkv2-production.up.railway.app",
+      },
     ],
   },
 };

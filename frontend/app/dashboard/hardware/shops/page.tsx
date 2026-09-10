@@ -50,7 +50,12 @@ type HardwareShopItem = {
 
 const normalizeMediaUrl = (baseUrl: string, value?: string) => {
   if (!value) return "";
-  if (value.startsWith("http")) return value;
+  if (value.startsWith("http")) {
+    if (value.startsWith("http://") && value.includes("railway.app")) {
+      return value.replace("http://", "https://");
+    }
+    return value;
+  }
   if (value.startsWith("/")) return `${baseUrl}${value}`;
   return `${baseUrl}/${value}`;
 };

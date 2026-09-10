@@ -57,6 +57,10 @@ OPENROUTER_REFRESH_INTERVAL_HOURS = int(env_or_default('OPENROUTER_REFRESH_INTER
 allowed_hosts_env = os.getenv('ALLOWED_HOSTS', '*')
 ALLOWED_HOSTS = [h.strip() for h in allowed_hosts_env.split(',') if h.strip()] if allowed_hosts_env != '*' else ['*']
 
+# Reverse proxy SSL headers for Railway / Render / Vercel
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+USE_X_FORWARDED_HOST = True
+
 
 # Application definition
 

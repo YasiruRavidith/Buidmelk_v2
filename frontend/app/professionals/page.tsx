@@ -270,7 +270,7 @@ export default function FindProfessionalsPage() {
                       )}
 
                       {prof.profile_image ? (
-                        <Image src={prof.profile_image} alt={`${prof.first_name} ${prof.last_name}`} fill sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw" className="object-cover transition-transform duration-700 group-hover:scale-105" />
+                        <Image src={prof.profile_image} alt={`${prof.first_name} ${prof.last_name}`} fill unoptimized sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw" className="object-cover transition-transform duration-700 group-hover:scale-105" />
                       ) : (
                         <div className="flex h-full items-center justify-center bg-gradient-to-br from-[#f6ece6] to-[#fcfaf7] text-[#8B4434]">
                           <User className="w-16 h-16 opacity-60" />
