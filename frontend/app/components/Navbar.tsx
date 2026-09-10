@@ -4,7 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter, usePathname } from 'next/navigation'
 import { useState, useRef, useEffect, useMemo, useCallback } from 'react'
-import { ShoppingCart, Menu, X, ChevronRight, Trash2, Plus, Minus, User } from 'lucide-react'
+import { ShoppingCart, Menu, X, ChevronRight, Trash2, Plus, Minus, User, Ticket } from 'lucide-react'
 import { useAuth } from '../../hooks/useAuth'
 import { API_BASE_URL } from '../../lib/api'
 
@@ -171,18 +171,18 @@ export default function Navbar() {
   return (
     <>
       {/* ── Main Navbar ─────────────────────────────────────────────── */}
-      <nav className="fixed top-0 left-0 w-full z-50 px-4 sm:px-6 md:px-12 h-16 sm:h-20 md:h-24 flex justify-between items-center bg-[#f5f3f0]/95 backdrop-blur-3xl border-b border-[#8B4434]/20">
+      <nav className="fixed top-0 left-0 w-full z-50 px-4 sm:px-6 md:px-8 lg:px-12 h-16 sm:h-20 flex justify-between items-center bg-[#f5f3f0]/95 backdrop-blur-3xl border-b border-[#8B4434]/20 transition-all">
 
         {/* Brand */}
         <Link href="/" className="flex items-center gap-3 shrink-0">
-          <Image src="/logo.png" alt="BuildMe.lk" width={120} height={32} className="object-contain w-[100px] sm:w-[120px] md:w-[140px]" priority />
+          <Image src="/logo.png" alt="BuildMe.lk" width={120} height={32} className="object-contain w-[100px] sm:w-[115px] md:w-[130px]" priority />
         </Link>
 
-        {/* Desktop nav links */}
-        <div className="absolute left-1/2 -translate-x-1/2 hidden md:flex items-center gap-8 lg:gap-10">
+        {/* Desktop nav links: visible on lg (1024px) and above */}
+        <div className="absolute left-1/2 -translate-x-1/2 hidden lg:flex items-center gap-4 xl:gap-7 2xl:gap-9">
           {navLinks.map(link => (
             <Link key={link.href} href={link.href}
-              className={`text-[12px] uppercase tracking-[0.2em] font-semibold transition-opacity hover:opacity-70 ${pathname === link.href ? 'text-[#8B4434]' : 'text-[#b44d08]'}`}>
+              className={`text-[11px] xl:text-[12px] uppercase tracking-[0.15em] xl:tracking-[0.2em] font-semibold transition-opacity hover:opacity-70 ${pathname === link.href ? 'text-[#8B4434]' : 'text-[#b44d08]'}`}>
               {link.label}
             </Link>
           ))}
@@ -190,11 +190,23 @@ export default function Navbar() {
 
         {/* Right actions */}
         <div className="flex items-center gap-2 sm:gap-3">
+          {/* Ticket credit pill — visible on tablet (sm/md) and desktop when logged in */}
+          {user && ticketCredits !== null && (
+            <Link
+              href="/tickets"
+              className="hidden sm:flex items-center gap-1.5 border border-[#b44d08]/20 bg-[#b44d08]/5 px-2.5 py-1.5 text-[10px] font-semibold text-[#b44d08] hover:bg-[#b44d08]/10 transition-colors shrink-0"
+              title="My ticket credits"
+            >
+              <Ticket className="h-3.5 w-3.5" />
+              <span>{ticketCredits} credit{ticketCredits !== 1 ? 's' : ''}</span>
+            </Link>
+          )}
+
           {/* Cart icon */}
           <button
             onClick={openCart}
             aria-label="Open cart"
-            className="relative inline-flex items-center justify-center p-2 text-[#b44d08] hover:opacity-70 transition-opacity"
+            className="relative inline-flex items-center justify-center p-2 text-[#b44d08] hover:opacity-70 transition-opacity rounded-sm hover:bg-[#b44d08]/5"
           >
             <ShoppingCart className="h-5 w-5" />
             {cartCount > 0 && (
@@ -204,36 +216,25 @@ export default function Navbar() {
             )}
           </button>
 
-          {/* Desktop: user avatar / auth buttons */}
+          {/* Desktop & Tablet: user avatar / auth buttons */}
           {loading ? (
-            <div className="h-4 w-16 bg-[#8B4434]/10 animate-pulse hidden md:block" />
+            <div className="h-8 w-8 rounded-full bg-[#8B4434]/10 animate-pulse hidden sm:block" />
           ) : user ? (
-            <div className="relative hidden md:flex items-center gap-3" ref={userMenuRef}>
-              {/* Ticket credit pill — always visible when logged in */}
-              {ticketCredits !== null && (
-                <Link
-                  href="/tickets"
-                  className="flex items-center gap-1.5 border border-[#b44d08]/20 bg-[#b44d08]/5 px-2.5 py-1.5 text-[10px] font-semibold text-[#b44d08] hover:bg-[#b44d08]/10 transition-colors"
-                  title="My ticket credits"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></svg>
-                  <span>{ticketCredits} credit{ticketCredits !== 1 ? 's' : ''}</span>
-                </Link>
-              )}
+            <div className="relative hidden sm:flex items-center gap-2" ref={userMenuRef}>
               <button
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
-                className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+                className="flex items-center gap-2 hover:opacity-80 transition-opacity p-0.5 rounded-full focus:outline-none focus:ring-2 focus:ring-[#8B4434]/30"
               >
                 {profilePhoto || user.photoURL ? (
-                  <img src={profilePhoto || user.photoURL || ''} alt={displayName} className="rounded-full object-cover border border-[#b44d08]/20 w-10 h-10" />
+                  <img src={profilePhoto || user.photoURL || ''} alt={displayName} className="rounded-full object-cover border border-[#b44d08]/20 w-8 h-8 sm:w-9 sm:h-9" />
                 ) : (
-                  <div className="w-10 h-10 rounded-full bg-[#b44d08]/10 border border-[#b44d08]/20 flex justify-center items-center text-[#b44d08]">
-                    <User className="h-5 w-5" />
+                  <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#b44d08]/10 border border-[#b44d08]/20 flex justify-center items-center text-[#b44d08]">
+                    <User className="h-4 w-4" />
                   </div>
                 )}
               </button>
               {userMenuOpen && (
-                <div className="absolute top-14 right-0 w-52 bg-[#FCFAF7] border border-[#b44d08]/10 shadow-[0_4px_20px_-2px_rgba(139,68,52,0.15)] flex flex-col py-2 z-50">
+                <div className="absolute top-12 sm:top-14 right-0 w-52 bg-[#FCFAF7] border border-[#b44d08]/10 shadow-[0_4px_20px_-2px_rgba(139,68,52,0.15)] flex flex-col py-2 z-50">
                   <div className="px-4 py-3 border-b border-[#b44d08]/10 mb-2">
                     <p className="text-[#b44d08] text-xs font-semibold truncate">{displayName}</p>
                     <p className="text-[#b44d08]/70 text-[11px] truncate">{user.email}</p>
@@ -261,50 +262,50 @@ export default function Navbar() {
               )}
             </div>
           ) : (
-            <div className="hidden md:flex items-center gap-3">
-              <Link href="/login" className="text-[12px] uppercase tracking-[0.2em] font-semibold text-[#b44d08] hover:opacity-70 transition-opacity">Log In</Link>
-              <Link href="/login" className="bg-[#b44d08] text-[#FCFAF7] px-5 py-2.5 text-[11px] tracking-[0.2em] uppercase font-semibold hover:bg-[#6c3426] transition-colors">Get Started</Link>
+            <div className="hidden sm:flex items-center gap-2 md:gap-3">
+              <Link href="/login" className="text-[11px] md:text-[12px] uppercase tracking-[0.15em] md:tracking-[0.2em] font-semibold text-[#b44d08] hover:opacity-70 transition-opacity px-2.5 py-1.5">Log In</Link>
+              <Link href="/login" className="bg-[#b44d08] text-[#FCFAF7] px-3.5 py-2 sm:px-4 sm:py-2.5 md:px-5 text-[10px] sm:text-[11px] tracking-[0.16em] md:tracking-[0.2em] uppercase font-semibold hover:bg-[#6c3426] transition-colors whitespace-nowrap">Get Started</Link>
             </div>
           )}
 
-          {/* Hamburger (mobile only) */}
+          {/* Hamburger: visible on mobile and tablet (< lg) */}
           <button
             onClick={() => setMobileNavOpen(true)}
             aria-label="Open navigation menu"
-            className="md:hidden inline-flex items-center justify-center p-2 text-[#b44d08] hover:opacity-70 transition-opacity"
+            className="lg:hidden inline-flex items-center justify-center p-2 text-[#b44d08] hover:opacity-70 transition-opacity rounded-sm hover:bg-[#b44d08]/5"
           >
             <Menu className="h-6 w-6" />
           </button>
         </div>
       </nav>
 
-      {/* ── Mobile Nav Panel (slides from left) ─────────────────────── */}
+      {/* ── Mobile & Tablet Nav Panel (slides from left) ─────────────── */}
       {/* Backdrop */}
       <div
         onClick={() => setMobileNavOpen(false)}
-        className={`fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm transition-opacity duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] md:hidden
+        className={`fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm transition-opacity duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] lg:hidden
           ${mobileNavOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
       />
       {/* Panel */}
-      <aside className={`fixed top-0 left-0 h-full w-[80vw] max-w-[320px] z-[70] bg-[#FCFAF7] shadow-2xl flex flex-col transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] md:hidden
+      <aside className={`fixed top-0 left-0 h-full w-[85vw] sm:w-[380px] md:w-[420px] max-w-[440px] z-[70] bg-[#FCFAF7] shadow-2xl flex flex-col transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] lg:hidden
         ${mobileNavOpen ? 'translate-x-0' : '-translate-x-full'}`}>
 
         {/* Panel header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-[#8B4434]/10">
+        <div className="flex items-center justify-between px-5 sm:px-6 py-4 sm:py-5 border-b border-[#8B4434]/10">
           <Link href="/" onClick={() => setMobileNavOpen(false)}>
-            <Image src="/logo.png" alt="BuildMe.lk" width={100} height={28} className="object-contain" />
+            <Image src="/logo.png" alt="BuildMe.lk" width={115} height={30} className="object-contain" />
           </Link>
-          <button onClick={() => setMobileNavOpen(false)} aria-label="Close menu" className="p-2 text-[#8B4434] hover:opacity-70">
+          <button onClick={() => setMobileNavOpen(false)} aria-label="Close menu" className="p-2 text-[#8B4434] hover:opacity-70 rounded-sm hover:bg-[#8B4434]/5">
             <X className="h-5 w-5" />
           </button>
         </div>
 
         {/* Nav links */}
-        <nav className="flex-1 overflow-y-auto px-4 py-6 space-y-1">
+        <nav className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 space-y-1.5">
           {navLinks.map(link => (
             <Link key={link.href} href={link.href}
               onClick={() => setMobileNavOpen(false)}
-              className={`flex items-center justify-between px-4 py-3.5 text-[12px] uppercase tracking-[0.22em] font-semibold transition-colors rounded-none
+              className={`flex items-center justify-between px-4 py-3.5 sm:py-4 text-[12px] sm:text-[13px] uppercase tracking-[0.2em] font-semibold transition-colors rounded-none
                 ${pathname === link.href
                   ? 'bg-[#8B4434] text-white'
                   : 'text-[#b44d08] hover:bg-[#8B4434]/5'}`}>
@@ -315,40 +316,56 @@ export default function Navbar() {
         </nav>
 
         {/* User section */}
-        <div className="border-t border-[#8B4434]/10 p-4">
+        <div className="border-t border-[#8B4434]/10 p-4 sm:p-6 bg-[#f8f5f2]/60">
           {loading ? (
-            <div className="h-10 bg-[#8B4434]/10 animate-pulse" />
+            <div className="h-12 bg-[#8B4434]/10 animate-pulse" />
           ) : user ? (
-            <div className="space-y-1">
-              <div className="flex items-center gap-3 px-4 py-3 mb-2">
+            <div className="space-y-1.5">
+              <div className="flex items-center gap-3 px-3 py-3 mb-2 bg-white border border-[#8B4434]/10">
                 {profilePhoto || user.photoURL ? (
-                  <img src={profilePhoto || user.photoURL || ''} alt={displayName} className="w-9 h-9 rounded-full object-cover border border-[#b44d08]/20" />
+                  <img src={profilePhoto || user.photoURL || ''} alt={displayName} className="w-10 h-10 rounded-full object-cover border border-[#b44d08]/20 shrink-0" />
                 ) : (
-                  <div className="w-9 h-9 rounded-full bg-[#b44d08]/10 border border-[#b44d08]/20 flex justify-center items-center text-[#b44d08]">
-                    <User className="h-4 w-4" />
+                  <div className="w-10 h-10 rounded-full bg-[#b44d08]/10 border border-[#b44d08]/20 flex justify-center items-center text-[#b44d08] shrink-0">
+                    <User className="h-5 w-5" />
                   </div>
                 )}
-                <div className="min-w-0">
+                <div className="min-w-0 flex-1">
                   <p className="text-[#b44d08] text-xs font-semibold truncate">{displayName}</p>
                   <p className="text-[#b44d08]/60 text-[11px] truncate">{user.email}</p>
+                  {ticketCredits !== null && (
+                    <p className="text-[10px] text-[#8B4434] font-medium mt-0.5">
+                      {ticketCredits} ticket credit{ticketCredits !== 1 ? 's' : ''}
+                    </p>
+                  )}
                 </div>
               </div>
-              <Link href="/dashboard" onClick={() => setMobileNavOpen(false)} className="flex items-center justify-between px-4 py-3 text-[12px] uppercase tracking-[0.2em] font-semibold text-[#b44d08] hover:bg-[#8B4434]/5 transition-colors">
+              <Link href="/dashboard" onClick={() => setMobileNavOpen(false)} className="flex items-center justify-between px-3 py-2.5 text-[12px] uppercase tracking-[0.18em] font-semibold text-[#b44d08] hover:bg-[#8B4434]/5 transition-colors">
                 Dashboard <ChevronRight className="h-4 w-4 opacity-50" />
               </Link>
-              <Link href="/profile" onClick={() => setMobileNavOpen(false)} className="flex items-center justify-between px-4 py-3 text-[12px] uppercase tracking-[0.2em] font-semibold text-[#b44d08] hover:bg-[#8B4434]/5 transition-colors">
+              <Link href="/profile" onClick={() => setMobileNavOpen(false)} className="flex items-center justify-between px-3 py-2.5 text-[12px] uppercase tracking-[0.18em] font-semibold text-[#b44d08] hover:bg-[#8B4434]/5 transition-colors">
                 My Profile <ChevronRight className="h-4 w-4 opacity-50" />
               </Link>
-              <button onClick={handleSignOut} className="w-full flex items-center justify-between px-4 py-3 text-[12px] uppercase tracking-[0.2em] font-semibold text-[#8B4434]/70 hover:bg-[#8B4434]/5 transition-colors border-t border-[#8B4434]/10 mt-2 pt-4">
+              <Link href="/tickets" onClick={() => setMobileNavOpen(false)} className="flex items-center justify-between px-3 py-2.5 text-[12px] uppercase tracking-[0.18em] font-semibold text-[#b44d08] hover:bg-[#8B4434]/5 transition-colors">
+                <span>My Tickets</span>
+                {ticketCredits !== null && (
+                  <span className="bg-[#b44d08] text-white text-[9px] font-bold px-1.5 py-0.5 min-w-[18px] text-center">
+                    {ticketCredits}
+                  </span>
+                )}
+              </Link>
+              <Link href="/workers/my-jobs" onClick={() => setMobileNavOpen(false)} className="flex items-center justify-between px-3 py-2.5 text-[12px] uppercase tracking-[0.18em] font-semibold text-[#b44d08] hover:bg-[#8B4434]/5 transition-colors">
+                My Worker Jobs <ChevronRight className="h-4 w-4 opacity-50" />
+              </Link>
+              <button onClick={handleSignOut} className="w-full flex items-center justify-between px-3 py-2.5 text-[12px] uppercase tracking-[0.18em] font-semibold text-[#8B4434]/80 hover:bg-[#8B4434]/5 transition-colors border-t border-[#8B4434]/10 mt-2 pt-3">
                 Logout <ChevronRight className="h-4 w-4 opacity-50" />
               </button>
             </div>
           ) : (
             <div className="space-y-3">
-              <Link href="/login" onClick={() => setMobileNavOpen(false)} className="block w-full bg-[#b44d08] text-[#FCFAF7] px-4 py-3.5 text-center text-[11px] tracking-[0.2em] uppercase font-semibold hover:bg-[#6c3426] transition-colors">
+              <Link href="/login" onClick={() => setMobileNavOpen(false)} className="block w-full bg-[#b44d08] text-[#FCFAF7] px-4 py-3 text-center text-[11px] sm:text-[12px] tracking-[0.2em] uppercase font-semibold hover:bg-[#6c3426] transition-colors">
                 Get Started
               </Link>
-              <Link href="/login" onClick={() => setMobileNavOpen(false)} className="block w-full text-center text-[11px] uppercase tracking-[0.2em] font-semibold text-[#b44d08] hover:opacity-70 transition-opacity py-2">
+              <Link href="/login" onClick={() => setMobileNavOpen(false)} className="block w-full text-center text-[11px] sm:text-[12px] uppercase tracking-[0.2em] font-semibold text-[#b44d08] hover:opacity-70 transition-opacity py-2">
                 Log In
               </Link>
             </div>

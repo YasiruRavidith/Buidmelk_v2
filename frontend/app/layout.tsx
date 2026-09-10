@@ -9,8 +9,8 @@ const fraunces = Fraunces({ subsets: ['latin'], variable: '--font-playfair', wei
 const dmSans = DM_Sans({ subsets: ['latin'], variable: '--font-inter', weight: ['300','400','500','600','700'] })
 
 export const metadata = {
-  title: 'BuildMe.lk | Quiet Luxury Construction',
-  description: 'Sri Lanka\'s premium construction and architecture marketplace.',
+  title: 'BuildMe.lk | Sri Lanka\'s Premium Construction Marketplace',
+  description: 'Sri Lanka\'s premium marketplace connecting homeowners with trusted builders, architects, and construction professionals. Get quotes, compare portfolios, and build your dream home with confidence.',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
