@@ -7,10 +7,10 @@ export default function Footer() {
         <div className="text-sm text-stone-600">© {new Date().getFullYear()} BuildMe.lk. All rights reserved.</div>
 
         <nav className="flex flex-wrap items-center gap-4">
-          <Link href="/about" className="text-sm text-stone-600 hover:text-stone-900">About</Link>
-          <Link href="/contact" className="text-sm text-stone-600 hover:text-stone-900">Contact</Link>
-          <Link href="/terms" className="text-sm text-stone-600 hover:text-stone-900">Terms</Link>
-          <Link href="/privacy" className="text-sm text-stone-600 hover:text-stone-900">Privacy</Link>
+          <Link href="/about" prefetch={false} className="text-sm text-stone-600 hover:text-stone-900">About</Link>
+          <Link href="/contact" prefetch={false} className="text-sm text-stone-600 hover:text-stone-900">Contact</Link>
+          <Link href="/terms" prefetch={false} className="text-sm text-stone-600 hover:text-stone-900">Terms</Link>
+          <Link href="/privacy" prefetch={false} className="text-sm text-stone-600 hover:text-stone-900">Privacy</Link>
         </nav>
       </div>
     </footer>
