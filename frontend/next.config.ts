@@ -57,7 +57,7 @@ const nextConfig: NextConfig = {
     ],
   },
   async rewrites() {
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000/api";
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "https://buidmelkv2-production.up.railway.app/api";
     const backendOrigin = backendUrl.replace(/\/api\/?$/, "");
     return [
       {
