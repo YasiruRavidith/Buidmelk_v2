@@ -41,6 +41,21 @@ const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
 const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000/api";
 
+const normalizePhotoUrl = (url?: string | null): string | null => {
+  if (!url) return null;
+  if (url.startsWith("http://") && url.includes("railway.app")) {
+    return url.replace("http://", "https://");
+  }
+  if (url.startsWith("http://") || url.startsWith("https://")) {
+    return url;
+  }
+  const backendOrigin = backendUrl.replace(/\/api\/?$/, "");
+  if (url.startsWith("/")) {
+    return `${backendOrigin}${url}`;
+  }
+  return `${backendOrigin}/media/${url}`;
+};
+
 const verifyTokenWithBackend = async (token: string) => {
   try {
     const response = await fetch(`${backendUrl}/users/auth/verify/`, {
@@ -63,7 +78,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedPhoto = localStorage.getItem("profilePhotoUrl");
-      if (storedPhoto) setProfilePhoto(storedPhoto);
+      if (storedPhoto) setProfilePhoto(normalizePhotoUrl(storedPhoto));
     }
 
     const unsubscribe = onIdTokenChanged(auth, async (currentUser) => {
@@ -73,7 +88,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const res = await verifyTokenWithBackend(token);
         if (res?.user) {
           setBackendUser(res.user);
-          const photoUrl = res.user.profile_image_url || res.user.profile_image || currentUser.photoURL || null;
+          const photoUrl = normalizePhotoUrl(res.user.profile_image_url || res.user.profile_image) || currentUser.photoURL || null;
           if (photoUrl) {
             setProfilePhoto(photoUrl);
             if (typeof window !== "undefined") {
@@ -166,7 +181,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw new Error(result.error || "Failed to upload profile photo to backend");
       }
 
-      const photoUrl = result.user?.profile_image_url || result.user?.profile_image;
+      const photoUrl = normalizePhotoUrl(result.user?.profile_image_url || result.user?.profile_image);
       if (photoUrl) {
         setProfilePhoto(photoUrl);
         setBackendUser(result.user);

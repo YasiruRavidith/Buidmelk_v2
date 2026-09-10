@@ -1,3 +1,4 @@
+import os
 import re
 from urllib.parse import quote
 
@@ -263,17 +264,34 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
     def get_profile_image_url(self, obj):
         request = self.context.get('request')
+        url = None
         if obj.profile_image and hasattr(obj.profile_image, 'url'):
-            if request:
-                return request.build_absolute_uri(obj.profile_image.url)
-            return obj.profile_image.url
+            url = obj.profile_image.url
         elif isinstance(obj.profile_image, str) and obj.profile_image:
-            if obj.profile_image.startswith('http'):
-                return obj.profile_image
-            if request:
-                return request.build_absolute_uri(obj.profile_image)
-            return obj.profile_image
-        return None
+            url = obj.profile_image
+
+        if not url:
+            return None
+
+        if url.startswith('http'):
+            return url
+
+        if request:
+            return request.build_absolute_uri(url)
+
+        base = os.getenv('OPENROUTER_SITE_URL', 'https://buidmelkv2-production.up.railway.app')
+        base = base.replace('/api', '').rstrip('/')
+        if url.startswith('/'):
+            return f"{base}{url}"
+        return f"{base}/media/{url}"
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        full_url = self.get_profile_image_url(instance)
+        if full_url:
+            data['profile_image'] = full_url
+            data['profile_image_url'] = full_url
+        return data
 
 
 class OnboardingSerializer(serializers.Serializer):
