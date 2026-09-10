@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { SlidersHorizontal, X, User, CheckCircle2, BadgeCheck } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { SlidersHorizontal, X, User, CheckCircle2, BadgeCheck, Lock } from "lucide-react";
 import { useAuth } from "../../hooks/useAuth";
 import { API_BASE_URL } from "@/lib/api";
 
@@ -33,6 +34,7 @@ interface Professional {
 
 export default function FindProfessionalsPage() {
   const { user } = useAuth();
+  const router = useRouter();
   const [professionals, setProfessionals] = useState<Professional[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -42,6 +44,31 @@ export default function FindProfessionalsPage() {
   const [professionFilter, setProfessionFilter] = useState("ALL");
   const [locationFilter, setLocationFilter] = useState("");
   const [minRating, setMinRating] = useState(0);
+
+  // Connect authentication modal state
+  const [connectAuthModal, setConnectAuthModal] = useState<{
+    open: boolean;
+    profName: string;
+    profId: number | null;
+  }>({
+    open: false,
+    profName: "",
+    profId: null,
+  });
+
+  const handleConnect = (prof: Professional) => {
+    const profName = `${prof.first_name} ${prof.last_name}`.trim() || prof.username;
+    if (!user) {
+      setConnectAuthModal({
+        open: true,
+        profName,
+        profId: prof.id,
+      });
+      return;
+    }
+    // Logged in: navigate to professional profile to connect / reveal contact
+    router.push(`/professionals/${prof.id}`);
+  };
 
   useEffect(() => {
     async function fetchProfessionals() {
@@ -336,8 +363,9 @@ export default function FindProfessionalsPage() {
                           View Profile
                         </Link>
                         <button
-                          className="flex-1 rounded-none bg-[#8B4434] px-3 sm:px-4 py-2.5 sm:py-3 text-center text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.22em] text-[#FCFAF7] transition-colors hover:bg-[#6c3426]"
-                          onClick={() => alert('Connect feature coming soon!')}
+                          type="button"
+                          className="flex-1 rounded-none bg-[#8B4434] px-3 sm:px-4 py-2.5 sm:py-3 text-center text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.22em] text-[#FCFAF7] transition-colors hover:bg-[#6c3426] cursor-pointer"
+                          onClick={() => handleConnect(prof)}
                         >
                           Connect
                         </button>
@@ -350,6 +378,54 @@ export default function FindProfessionalsPage() {
           </section>
         </div>
       </div>
+
+      {/* ── Connect Login Required Modal ── */}
+      {connectAuthModal.open && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
+          <div className="relative w-full max-w-md bg-[#FCFAF7] border border-[#e8ddd6] p-6 sm:p-8 shadow-2xl space-y-5 animate-in fade-in zoom-in-95 duration-200">
+            <button
+              onClick={() => setConnectAuthModal({ open: false, profName: "", profId: null })}
+              className="absolute top-4 right-4 p-2 text-[#8B4434]/60 hover:text-[#8B4434] transition-colors"
+              aria-label="Close"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="w-12 h-12 rounded-full bg-[#8B4434]/10 text-[#8B4434] flex items-center justify-center">
+              <Lock className="w-5 h-5" />
+            </div>
+
+            <div className="space-y-2">
+              <p className="text-[10px] uppercase tracking-[0.25em] text-[#8B4434] font-semibold">
+                Authentication Required
+              </p>
+              <h3 className="font-serif text-2xl text-[#281713]">
+                Log in to Connect
+              </h3>
+              <p className="text-xs sm:text-sm text-[#606060] leading-relaxed">
+                Please log in to connect with{" "}
+                <strong className="text-[#281713]">{connectAuthModal.profName}</strong> and access direct contact details, verified credentials, and quotes.
+              </p>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3 pt-2">
+              <Link
+                href={`/login?redirect=${encodeURIComponent(`/professionals/${connectAuthModal.profId || ""}`)}`}
+                className="flex-1 bg-[#8B4434] text-white py-3 px-4 text-center text-xs uppercase tracking-[0.2em] font-semibold hover:bg-[#6c3426] transition-colors"
+              >
+                Log In to Connect
+              </Link>
+              <button
+                type="button"
+                onClick={() => setConnectAuthModal({ open: false, profName: "", profId: null })}
+                className="border border-[#e8ddd6] py-3 px-4 text-xs uppercase tracking-[0.2em] font-semibold text-[#606060] hover:text-[#281713] hover:bg-stone-100 transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
