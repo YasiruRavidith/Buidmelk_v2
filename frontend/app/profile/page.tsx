@@ -71,6 +71,7 @@ export default function ProfilePage() {
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const [photoUploading, setPhotoUploading] = useState(false);
   const [photoMsg, setPhotoMsg] = useState("");
+  const [displayedPhoto, setDisplayedPhoto] = useState<string | null>(null);
 
   const [role, setRole] = useState<"CLIENT" | "PROFESSIONAL" | "ADMIN" | null>(null);
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -114,6 +115,7 @@ export default function ProfilePage() {
       if (uploadProfilePhoto) {
         const savedUrl = await uploadProfilePhoto(file);
         if (savedUrl) {
+          setDisplayedPhoto(savedUrl);
           setPhotoMsg("Profile picture saved to database successfully!");
           setTimeout(() => setPhotoMsg(""), 4000);
         }
@@ -170,6 +172,10 @@ export default function ProfilePage() {
       const result = await response.json();
       if (response.ok && result.user) {
         const backendUser = result.user;
+        const photo = backendUser.profile_image_url || backendUser.profile_image;
+        if (photo) {
+          setDisplayedPhoto(normalizeMediaUrl(backendBaseUrl, photo));
+        }
         setRole(backendUser.role || null);
         setPhoneNumber(backendUser.phone_number || "");
 
@@ -206,6 +212,12 @@ export default function ProfilePage() {
   useEffect(() => {
     loadProfile();
   }, [loadProfile]);
+
+  useEffect(() => {
+    if (profilePhoto) {
+      setDisplayedPhoto(profilePhoto);
+    }
+  }, [profilePhoto]);
 
   const uploadAssets = async (token: string) => {
     const uploadBatch = async (imageType: string, files: File[], single = false) => {
@@ -421,8 +433,13 @@ export default function ProfilePage() {
                 onClick={() => avatarInputRef.current?.click()}
                 className="relative group cursor-pointer w-24 h-24 rounded-full overflow-hidden border-2 border-[#8B4434]/40 shrink-0 shadow-sm"
               >
-                {profilePhoto || user?.photoURL ? (
-                  <img src={profilePhoto || user?.photoURL || ""} alt="Profile" className="w-full h-full object-cover" />
+                {displayedPhoto || profilePhoto || user?.photoURL ? (
+                  <img
+                    src={displayedPhoto || profilePhoto || user?.photoURL || ""}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                    onError={() => setDisplayedPhoto(null)}
+                  />
                 ) : (
                   <div className="w-full h-full bg-[#f3ebe4] flex items-center justify-center">
                     <User className="w-10 h-10 text-[#8B4434]" />

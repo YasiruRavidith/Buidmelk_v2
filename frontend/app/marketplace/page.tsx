@@ -353,7 +353,14 @@ export default function MarketplaceFeed() {
                   <article key={material.id} className="group overflow-hidden rounded-none border border-[#e8ddd6] bg-white shadow-sm transition-transform duration-300 hover:-translate-y-1 hover:shadow-xl">
                     <div className="relative aspect-4/3 bg-[#f3ebe4] border-b border-[#e8ddd6] flex items-end p-5 sm:p-6 overflow-hidden">
                       {material.images && material.images.length > 0 && material.images[0].image_url ? (
-                        <Image src={material.images[0].image_url} alt={material.name} fill unoptimized sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw" className="object-cover" />
+                        <img
+                          src={material.images[0].image_url}
+                          alt={material.name}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            (e.currentTarget as HTMLElement).style.display = "none";
+                          }}
+                        />
                       ) : null}
                       <div className="relative">
                         <span className="inline-flex rounded-none border border-[#8B4434] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-[#8B4434]">{material.category_name}</span>

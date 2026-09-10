@@ -53,6 +53,18 @@ def health_check(request):
     return JsonResponse(result, json_dumps_params={"indent": 2})
 
 
+def serve_media_with_cors(request, path, document_root=None, show_indexes=False):
+    response = serve(request, path, document_root=document_root, show_indexes=show_indexes)
+    response["Access-Control-Allow-Origin"] = "*"
+    response["Access-Control-Allow-Methods"] = "GET, OPTIONS"
+    response["Access-Control-Allow-Headers"] = "*"
+    response["Cross-Origin-Resource-Policy"] = "cross-origin"
+    response["Cross-Origin-Embedder-Policy"] = "unsafe-none"
+    response["Cross-Origin-Opener-Policy"] = "unsafe-none"
+    response["Cache-Control"] = "public, max-age=86400"
+    return response
+
+
 urlpatterns = [
     path('health/', health_check, name='health_check'),
     path('admin/', admin.site.urls),
@@ -61,5 +73,5 @@ urlpatterns = [
     path('api/bidding/', include('bidding.urls')),
     path('api/marketplace/', include('marketplace.urls')),
     path('api/workers/', include('workers.urls')),
-    re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+    re_path(r'^media/(?P<path>.*)$', serve_media_with_cors, {'document_root': settings.MEDIA_ROOT}),
 ]

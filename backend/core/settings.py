@@ -60,6 +60,7 @@ ALLOWED_HOSTS = [h.strip() for h in allowed_hosts_env.split(',') if h.strip()] i
 # Reverse proxy SSL headers for Railway / Render / Vercel
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 USE_X_FORWARDED_HOST = True
+SECURE_CROSS_ORIGIN_OPENER_POLICY = None
 
 
 # Application definition

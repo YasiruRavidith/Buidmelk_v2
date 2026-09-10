@@ -184,7 +184,14 @@ export default function ShopDetailPage() {
         <div className="max-w-7xl mx-auto px-6 pb-16 lg:pb-20 space-y-8">
           <div className="relative h-96 md:h-120 bg-stone-100 overflow-hidden rounded-none border border-stone-200 shadow-sm">
             {shop.banner_image_url ? (
-              <Image src={shop.banner_image_url} alt={shop.shop_name} fill unoptimized className="object-cover" />
+              <img
+                src={shop.banner_image_url}
+                alt={shop.shop_name}
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  (e.currentTarget as HTMLElement).style.display = "none";
+                }}
+              />
             ) : (
               <div className="absolute inset-0 flex items-center justify-center text-stone-300">
                 <ShoppingBag className="h-20 w-20" />
@@ -205,7 +212,16 @@ export default function ShopDetailPage() {
             <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
               {shop.gallery_images.map((image, index) => (
                 <div key={`${image.image_url}-${index}`} className="relative aspect-square overflow-hidden rounded-none border border-stone-200 bg-stone-100 shadow-sm">
-                  {image.image_url ? <Image src={image.image_url} alt={`${shop.shop_name} ${index + 1}`} fill unoptimized className="object-cover" /> : null}
+                  {image.image_url ? (
+                    <img
+                      src={image.image_url}
+                      alt={`${shop.shop_name} ${index + 1}`}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        (e.currentTarget as HTMLElement).style.display = "none";
+                      }}
+                    />
+                  ) : null}
                 </div>
               ))}
             </div>
@@ -282,7 +298,14 @@ export default function ShopDetailPage() {
               <div key={item.id} className="rounded-none border border-stone-200 bg-white shadow-sm overflow-hidden flex flex-col">
                 <div className="relative aspect-[4/3] bg-stone-100 border-b border-stone-200 overflow-hidden">
                   {item.image_url ? (
-                    <Image src={item.image_url} alt={item.material_name} fill unoptimized className="object-cover" />
+                    <img
+                      src={item.image_url}
+                      alt={item.material_name}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        (e.currentTarget as HTMLElement).style.display = "none";
+                      }}
+                    />
                   ) : (
                     <div className="absolute inset-0 flex items-center justify-center text-stone-300">
                       <ShoppingBag className="h-12 w-12" />

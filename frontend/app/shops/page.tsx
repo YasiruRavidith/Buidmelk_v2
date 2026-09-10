@@ -125,7 +125,14 @@ export default function ShopsPage() {
               <Link key={shop.id} href={`/shops/${shop.id}`} className="group overflow-hidden rounded-none border border-stone-200 bg-white shadow-sm transition-transform hover:-translate-y-1 hover:shadow-xl">
                 <div className="relative h-56 bg-stone-100 overflow-hidden">
                   {shop.banner_image_url ? (
-                    <Image src={shop.banner_image_url} alt={shop.shop_name} fill unoptimized className="object-cover transition-transform duration-500 group-hover:scale-105" />
+                    <img
+                      src={shop.banner_image_url}
+                      alt={shop.shop_name}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      onError={(e) => {
+                        (e.currentTarget as HTMLElement).style.display = "none";
+                      }}
+                    />
                   ) : (
                     <div className="absolute inset-0 flex items-center justify-center text-stone-300">
                       <Building2 className="h-14 w-14" />

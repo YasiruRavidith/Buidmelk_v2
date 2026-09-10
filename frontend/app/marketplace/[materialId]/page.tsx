@@ -208,13 +208,13 @@ export default function MaterialDetail() {
             <div className="space-y-4">
               <div className="relative bg-[#FCFAF7] border border-[#e8ddd6] p-4 h-80 sm:h-96 md:h-112 overflow-hidden w-full flex items-center justify-center">
                 {activeImageUrl ? (
-                  <Image
+                  <img
                     src={activeImageUrl}
                     alt={material.name}
-                    fill
-                    unoptimized
-                    sizes="(max-width: 1024px) 100vw, 50vw"
-                    className="object-contain p-4"
+                    className="w-full h-full object-contain p-4"
+                    onError={(e) => {
+                      (e.currentTarget as HTMLElement).style.display = "none";
+                    }}
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-[#908078] text-sm uppercase tracking-wider font-semibold">
@@ -234,13 +234,13 @@ export default function MaterialDetail() {
                         activeImage === index ? "border-[#8B4434] ring-2 ring-[#8B4434]/20" : "border-[#e8ddd6] hover:border-[#8B4434]/50"
                       }`}
                     >
-                      <Image
+                      <img
                         src={image.image_url || ""}
                         alt={`${material.name} thumbnail ${index + 1}`}
-                        fill
-                        unoptimized
-                        sizes="120px"
-                        className="object-cover"
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          (e.currentTarget as HTMLElement).style.display = "none";
+                        }}
                       />
                     </button>
                   ))}
@@ -400,13 +400,13 @@ export default function MaterialDetail() {
                     >
                       <div className="relative h-16 w-16 bg-[#FCFAF7] border border-[#e8ddd6] shrink-0 overflow-hidden">
                         {related.images && related.images[0]?.image_url ? (
-                          <Image
+                          <img
                             src={related.images[0].image_url}
                             alt={related.name}
-                            fill
-                            unoptimized
-                            sizes="64px"
-                            className="object-cover"
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              (e.currentTarget as HTMLElement).style.display = "none";
+                            }}
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center text-[10px] text-[#908078]">

@@ -256,7 +256,14 @@ export default function ProfessionalProfilePage() {
             <div className="relative shrink-0">
               <div className="w-28 h-28 sm:w-36 sm:h-36 overflow-hidden border-2 border-[#FCFAF7]/10 bg-[#8B4434]/20">
                 {prof.profile_image ? (
-                  <Image src={prof.profile_image} alt={displayName} width={144} height={144} unoptimized className="w-full h-full object-cover" />
+                  <img
+                    src={prof.profile_image}
+                    alt={displayName}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      (e.currentTarget as HTMLElement).style.display = "none";
+                    }}
+                  />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
                     <User className="w-16 h-16 text-[#FCFAF7]/40" />
