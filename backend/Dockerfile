@@ -28,6 +28,7 @@ RUN python manage.py collectstatic --noinput || true
 # Expose port (Railway dynamically injects PORT)
 EXPOSE 8000
 
-CMD cp -rn /app/default_media/* /app/media/ 2>/dev/null || true; python manage.py migrate --noinput && python load_initial_data.py && exec gunicorn core.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 2 --threads 4 --timeout 120
+CMD mkdir -p /app/media && cp -rn /app/default_media/* /app/media/ 2>/dev/null || true; chmod -R 777 /app/media 2>/dev/null || true; python manage.py migrate --noinput && python load_initial_data.py && exec gunicorn core.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 2 --threads 4 --timeout 120
+
 
 
