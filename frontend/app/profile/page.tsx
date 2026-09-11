@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState, useRef, ChangeEvent } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Camera, Upload, CheckCircle2, User } from "lucide-react";
+import { Camera, Upload, CheckCircle2, User, Trash2, Loader2 } from "lucide-react";
 import DashboardShell from "../dashboard/components/DashboardShell";
 import { useAuth } from "../../hooks/useAuth";
 import { normalizeProfessionType } from "../dashboard/utils";
@@ -94,10 +94,49 @@ export default function ProfilePage() {
   const [certificationImages, setCertificationImages] = useState<Array<{ id: number; image_url?: string; image?: string }>>([]);
   const [portfolioUploads, setPortfolioUploads] = useState<File[]>([]);
   const [certificationUploads, setCertificationUploads] = useState<File[]>([]);
+  const [deletingAssetId, setDeletingAssetId] = useState<number | null>(null);
 
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isLocationsLoading, setIsLocationsLoading] = useState(true);
+
+  const handleDeleteAsset = async (imageType: "portfolio" | "certification", imageId: number) => {
+    if (!user) return;
+    if (!confirm(`Are you sure you want to delete this ${imageType} photo?`)) return;
+
+    setDeletingAssetId(imageId);
+    try {
+      const token = await user.getIdToken();
+      const response = await fetch(`${backendUrl}/users/profile/assets/delete/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          token,
+          image_type: imageType,
+          image_id: imageId,
+        }),
+      });
+
+      if (response.ok) {
+        if (imageType === "portfolio") {
+          setPortfolioImages((prev) => prev.filter((img) => img.id !== imageId));
+        } else {
+          setCertificationImages((prev) => prev.filter((img) => img.id !== imageId));
+        }
+      } else {
+        const data = await response.json();
+        alert(data.error || `Failed to delete ${imageType} image.`);
+      }
+    } catch (err) {
+      console.error("Error deleting asset:", err);
+      alert("An unexpected error occurred while deleting the image.");
+    } finally {
+      setDeletingAssetId(null);
+    }
+  };
 
   const handleAvatarSelect = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -700,7 +739,7 @@ export default function ProfilePage() {
                       {portfolioImages.length > 0 && (
                         <div className="grid grid-cols-3 gap-3">
                           {portfolioImages.map((image) => (
-                            <div key={image.id} className="h-20 rounded-lg border border-stone-200 overflow-hidden bg-stone-50">
+                            <div key={image.id} className="group relative h-20 rounded-lg border border-stone-200 overflow-hidden bg-stone-50">
                               {image.image_url || image.image ? (
                                 <img
                                   src={normalizeMediaUrl(backendBaseUrl, image.image_url || image.image)}
@@ -710,6 +749,19 @@ export default function ProfilePage() {
                               ) : (
                                 <div className="h-full w-full flex items-center justify-center text-xs text-stone-400">No image</div>
                               )}
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteAsset("portfolio", image.id)}
+                                disabled={deletingAssetId === image.id}
+                                className="absolute top-1 right-1 bg-red-600/90 hover:bg-red-700 text-white p-1 rounded-full opacity-80 group-hover:opacity-100 transition-opacity shadow-xs cursor-pointer"
+                                title="Delete portfolio photo"
+                              >
+                                {deletingAssetId === image.id ? (
+                                  <Loader2 className="w-3 h-3 animate-spin" />
+                                ) : (
+                                  <Trash2 className="w-3 h-3" />
+                                )}
+                              </button>
                             </div>
                           ))}
                         </div>
@@ -727,7 +779,7 @@ export default function ProfilePage() {
                       {certificationImages.length > 0 && (
                         <div className="grid grid-cols-3 gap-3">
                           {certificationImages.map((image) => (
-                            <div key={image.id} className="h-20 rounded-lg border border-stone-200 overflow-hidden bg-stone-50">
+                            <div key={image.id} className="group relative h-20 rounded-lg border border-stone-200 overflow-hidden bg-stone-50">
                               {image.image_url || image.image ? (
                                 <img
                                   src={normalizeMediaUrl(backendBaseUrl, image.image_url || image.image)}
@@ -737,6 +789,19 @@ export default function ProfilePage() {
                               ) : (
                                 <div className="h-full w-full flex items-center justify-center text-xs text-stone-400">No image</div>
                               )}
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteAsset("certification", image.id)}
+                                disabled={deletingAssetId === image.id}
+                                className="absolute top-1 right-1 bg-red-600/90 hover:bg-red-700 text-white p-1 rounded-full opacity-80 group-hover:opacity-100 transition-opacity shadow-xs cursor-pointer"
+                                title="Delete certificate photo"
+                              >
+                                {deletingAssetId === image.id ? (
+                                  <Loader2 className="w-3 h-3 animate-spin" />
+                                ) : (
+                                  <Trash2 className="w-3 h-3" />
+                                )}
+                              </button>
                             </div>
                           ))}
                         </div>

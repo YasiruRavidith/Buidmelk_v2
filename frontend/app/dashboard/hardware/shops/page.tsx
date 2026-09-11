@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "../../../../hooks/useAuth";
 import DashboardShell from "../../components/DashboardShell";
+import { Trash2, Loader2 } from "lucide-react";
 
 type HardwareShopImage = {
   id: number;
@@ -446,6 +447,69 @@ export default function HardwareShopsPage() {
     }
   };
 
+  const [deletingShopImageId, setDeletingShopImageId] = useState<number | null>(null);
+  const [isDeletingBanner, setIsDeletingBanner] = useState(false);
+
+  const handleDeleteShopImage = async (shopId: number, imageId: number) => {
+    if (!user) return;
+    if (!confirm("Are you sure you want to delete this shop gallery image?")) return;
+
+    setDeletingShopImageId(imageId);
+    try {
+      const token = await user.getIdToken();
+      const response = await fetch(`${backendUrl}/users/hardware/shops/${shopId}/images/${imageId}/delete/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({ token, shop_id: shopId, image_id: imageId }),
+      });
+
+      if (response.ok) {
+        await loadShops(token);
+      } else {
+        const data = await response.json();
+        alert(data.error || "Failed to delete shop image.");
+      }
+    } catch (err) {
+      console.error("Failed to delete shop image:", err);
+      alert("An unexpected error occurred while deleting the image.");
+    } finally {
+      setDeletingShopImageId(null);
+    }
+  };
+
+  const handleDeleteShopBanner = async (shopId: number) => {
+    if (!user) return;
+    if (!confirm("Are you sure you want to remove the banner image?")) return;
+
+    setIsDeletingBanner(true);
+    try {
+      const token = await user.getIdToken();
+      const response = await fetch(`${backendUrl}/users/hardware/shops/${shopId}/banner/delete/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({ token, shop_id: shopId, image_type: "banner" }),
+      });
+
+      if (response.ok) {
+        await loadShops(token);
+      } else {
+        const data = await response.json();
+        alert(data.error || "Failed to remove banner image.");
+      }
+    } catch (err) {
+      console.error("Failed to delete shop banner:", err);
+      alert("An unexpected error occurred while deleting the banner.");
+    } finally {
+      setIsDeletingBanner(false);
+    }
+  };
+
   const handleAddItem = async () => {
     if (!user || !activeShop) return;
     setItemsError("");
@@ -805,7 +869,7 @@ export default function HardwareShopsPage() {
             <div className="space-y-3">
               <label className="block text-stone-500 font-medium text-sm tracking-wide">BANNER IMAGE</label>
               {activeShop.banner_image_url || activeShop.banner_image ? (
-                <div className="h-32 rounded-xl border border-stone-200 overflow-hidden bg-stone-50">
+                <div className="relative group h-32 rounded-xl border border-stone-200 overflow-hidden bg-stone-50">
                   <Image
                     src={normalizeMediaUrl(backendBaseUrl, activeShop.banner_image_url || activeShop.banner_image)}
                     alt={`${activeShop.shop_name} banner`}
@@ -813,6 +877,19 @@ export default function HardwareShopsPage() {
                     height={240}
                     className="h-full w-full object-cover"
                   />
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteShopBanner(activeShop.id)}
+                    disabled={isDeletingBanner}
+                    className="absolute top-2 right-2 bg-red-600/90 hover:bg-red-700 text-white p-1.5 rounded-full opacity-85 group-hover:opacity-100 transition-opacity shadow-xs cursor-pointer"
+                    title="Remove banner image"
+                  >
+                    {isDeletingBanner ? (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    ) : (
+                      <Trash2 className="w-3.5 h-3.5" />
+                    )}
+                  </button>
                 </div>
               ) : (
                 <div className="text-xs text-stone-400">No banner uploaded</div>
@@ -834,7 +911,7 @@ export default function HardwareShopsPage() {
               {activeShop.gallery_images && activeShop.gallery_images.length > 0 ? (
                 <div className="grid grid-cols-3 gap-2">
                   {activeShop.gallery_images.map((image) => (
-                    <div key={image.id} className="h-20 rounded-lg border border-stone-200 overflow-hidden bg-stone-50">
+                    <div key={image.id} className="relative group h-20 rounded-lg border border-stone-200 overflow-hidden bg-stone-50">
                       <Image
                         src={normalizeMediaUrl(backendBaseUrl, image.image_url || image.image)}
                         alt="Gallery"
@@ -842,6 +919,19 @@ export default function HardwareShopsPage() {
                         height={160}
                         className="h-full w-full object-cover"
                       />
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteShopImage(activeShop.id, image.id)}
+                        disabled={deletingShopImageId === image.id}
+                        className="absolute top-1 right-1 bg-red-600/90 hover:bg-red-700 text-white p-1 rounded-full opacity-85 group-hover:opacity-100 transition-opacity shadow-xs cursor-pointer"
+                        title="Delete gallery image"
+                      >
+                        {deletingShopImageId === image.id ? (
+                          <Loader2 className="w-3 h-3 animate-spin" />
+                        ) : (
+                          <Trash2 className="w-3 h-3" />
+                        )}
+                      </button>
                     </div>
                   ))}
                 </div>

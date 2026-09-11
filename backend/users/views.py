@@ -458,6 +458,73 @@ def upload_professional_asset(request):
     }, status=status.HTTP_200_OK)
 
 
+@api_view(['POST', 'DELETE'])
+@permission_classes([AllowAny])
+def delete_professional_asset(request, image_type=None, image_id=None):
+    """
+    Allows a professional user to delete one of their portfolio or certification images.
+    Supports URL parameters or POST body with token.
+    """
+    token = request.data.get('token') if hasattr(request, 'data') and request.data else None
+    if not token:
+        auth_header = request.headers.get('Authorization') or request.META.get('HTTP_AUTHORIZATION')
+        if auth_header and auth_header.startswith('Bearer '):
+            token = auth_header.split(' ')[1]
+
+    user, error_response = _get_user_from_token(token)
+    if error_response:
+        return error_response
+
+    if user.role != 'PROFESSIONAL':
+        return Response({'error': 'Only professionals can delete assets'}, status=status.HTTP_403_FORBIDDEN)
+
+    profile = ProfessionalProfile.objects.filter(user=user).first()
+    if not profile:
+        return Response({'error': 'Professional profile not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    img_type = image_type or (request.data.get('image_type') if hasattr(request, 'data') else None)
+    img_id = image_id or (request.data.get('image_id') if hasattr(request, 'data') else None)
+
+    if not img_type or not img_id:
+        return Response({'error': 'image_type and image_id are required'}, status=status.HTTP_400_BAD_REQUEST)
+
+    if img_type == 'portfolio':
+        asset = ProfessionalPortfolioImage.objects.filter(id=img_id, profile=profile).first()
+        if not asset:
+            return Response({'error': 'Portfolio image not found or not owned by you'}, status=status.HTTP_404_NOT_FOUND)
+        if asset.image:
+            try:
+                asset.image.delete(save=False)
+            except Exception:
+                pass
+        asset.delete()
+        response_serializer = CustomUserSerializer(user, context={'request': request})
+        return Response({
+            'message': 'Portfolio image deleted successfully',
+            'id': int(img_id),
+            'user': response_serializer.data,
+        }, status=status.HTTP_200_OK)
+
+    elif img_type == 'certification':
+        asset = ProfessionalCertificationImage.objects.filter(id=img_id, profile=profile).first()
+        if not asset:
+            return Response({'error': 'Certification image not found or not owned by you'}, status=status.HTTP_404_NOT_FOUND)
+        if asset.image:
+            try:
+                asset.image.delete(save=False)
+            except Exception:
+                pass
+        asset.delete()
+        response_serializer = CustomUserSerializer(user, context={'request': request})
+        return Response({
+            'message': 'Certification image deleted successfully',
+            'id': int(img_id),
+            'user': response_serializer.data,
+        }, status=status.HTTP_200_OK)
+
+    return Response({'error': 'Unsupported image_type. Must be portfolio or certification'}, status=status.HTTP_400_BAD_REQUEST)
+
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def list_hardware_shops(request):
@@ -618,6 +685,73 @@ def upload_hardware_shop_images(request, shop_id: int):
 
     response_serializer = HardwareShopSerializer(shop, context={'request': request})
     return Response({'shop': response_serializer.data}, status=status.HTTP_200_OK)
+
+
+@api_view(['POST', 'DELETE'])
+@permission_classes([AllowAny])
+def delete_hardware_shop_image(request, shop_id=None, image_id=None):
+    """
+    Allows a hardware owner to delete one of their shop's gallery images or clear the banner image.
+    """
+    token = request.data.get('token') if hasattr(request, 'data') and request.data else None
+    if not token:
+        auth_header = request.headers.get('Authorization') or request.META.get('HTTP_AUTHORIZATION')
+        if auth_header and auth_header.startswith('Bearer '):
+            token = auth_header.split(' ')[1]
+
+    user, error_response = _get_user_from_token(token)
+    if error_response:
+        return error_response
+
+    profile, error_response = _get_hardware_profile(user)
+    if error_response:
+        return error_response
+
+    s_id = shop_id or (request.data.get('shop_id') if hasattr(request, 'data') else None)
+    img_id = image_id or (request.data.get('image_id') if hasattr(request, 'data') else None)
+    image_type = request.data.get('image_type', 'gallery') if hasattr(request, 'data') else 'gallery'
+
+    if not s_id:
+        return Response({'error': 'shop_id is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+    shop = HardwareShop.objects.filter(id=s_id, profile=profile).first()
+    if not shop:
+        return Response({'error': 'Hardware shop not found or not owned by you'}, status=status.HTTP_404_NOT_FOUND)
+
+    if image_type == 'banner':
+        if shop.banner_image:
+            try:
+                shop.banner_image.delete(save=False)
+            except Exception:
+                pass
+            shop.banner_image = None
+            shop.save(update_fields=['banner_image'])
+        response_serializer = HardwareShopSerializer(shop, context={'request': request})
+        return Response({
+            'message': 'Banner image removed successfully',
+            'shop': response_serializer.data,
+        }, status=status.HTTP_200_OK)
+
+    if not img_id:
+        return Response({'error': 'image_id is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+    gallery_img = HardwareShopImage.objects.filter(id=img_id, shop=shop).first()
+    if not gallery_img:
+        return Response({'error': 'Shop image not found or not owned by you'}, status=status.HTTP_404_NOT_FOUND)
+
+    if gallery_img.image:
+        try:
+            gallery_img.image.delete(save=False)
+        except Exception:
+            pass
+    gallery_img.delete()
+
+    response_serializer = HardwareShopSerializer(shop, context={'request': request})
+    return Response({
+        'message': 'Shop gallery image deleted successfully',
+        'id': int(img_id),
+        'shop': response_serializer.data,
+    }, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
