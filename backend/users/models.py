@@ -62,6 +62,13 @@ class ProfessionalPortfolioImage(models.Model):
     image = models.FileField(upload_to='professional/portfolio/')
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
+    def save(self, *args, **kwargs):
+        if self.image and not getattr(self, '_watermark_applied', False):
+            from core.watermark import add_watermark_to_file
+            add_watermark_to_file(self.image, text="BUILDME.LK")
+            self._watermark_applied = True
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"Portfolio image for {self.profile.user.email or self.profile.user.username}"
 
@@ -70,6 +77,13 @@ class ProfessionalCertificationImage(models.Model):
     profile = models.ForeignKey(ProfessionalProfile, on_delete=models.CASCADE, related_name='certification_images')
     image = models.FileField(upload_to='professional/certifications/')
     uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        if self.image and not getattr(self, '_watermark_applied', False):
+            from core.watermark import add_watermark_to_file
+            add_watermark_to_file(self.image, text="BUILDME.LK VERIFIED")
+            self._watermark_applied = True
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Certification image for {self.profile.user.email or self.profile.user.username}"
@@ -96,6 +110,13 @@ class HardwareGalleryImage(models.Model):
     image = models.FileField(upload_to='hardware/gallery/')
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
+    def save(self, *args, **kwargs):
+        if self.image and not getattr(self, '_watermark_applied', False):
+            from core.watermark import add_watermark_to_file
+            add_watermark_to_file(self.image, text="BUILDME.LK")
+            self._watermark_applied = True
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"Gallery image for {self.hardware_profile.profile.user.email or self.hardware_profile.profile.user.username}"
 
@@ -121,6 +142,13 @@ class HardwareShopImage(models.Model):
     shop = models.ForeignKey(HardwareShop, on_delete=models.CASCADE, related_name='gallery_images')
     image = models.FileField(upload_to='hardware/shops/gallery/')
     uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        if self.image and not getattr(self, '_watermark_applied', False):
+            from core.watermark import add_watermark_to_file
+            add_watermark_to_file(self.image, text="BUILDME.LK")
+            self._watermark_applied = True
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Shop image for {self.shop.shop_name}"

@@ -45,6 +45,21 @@ def _build_google_maps_embed(value, fallback_text):
     return f"https://www.google.com/maps?q={quote(query)}&output=embed"
 
 
+def _normalize_media_url(url, request):
+    if not url:
+        return None
+    url_str = str(url)
+    if url_str.startswith('http'):
+        return url_str
+    if request:
+        return request.build_absolute_uri(url_str)
+    base = os.getenv('OPENROUTER_SITE_URL', 'https://buidmelkv2-production.up.railway.app')
+    base = base.replace('/api', '').rstrip('/')
+    if url_str.startswith('/'):
+        return f"{base}{url_str}"
+    return f"{base}/media/{url_str}"
+
+
 class ProfessionalPortfolioImageSerializer(serializers.ModelSerializer):
     image_url = serializers.SerializerMethodField()
 
@@ -55,9 +70,7 @@ class ProfessionalPortfolioImageSerializer(serializers.ModelSerializer):
     def get_image_url(self, obj):
         request = self.context.get('request')
         if obj.image and hasattr(obj.image, 'url'):
-            if request:
-                return request.build_absolute_uri(obj.image.url)
-            return obj.image.url
+            return _normalize_media_url(obj.image.url, request)
         return None
 
 
@@ -71,9 +84,7 @@ class ProfessionalCertificationImageSerializer(serializers.ModelSerializer):
     def get_image_url(self, obj):
         request = self.context.get('request')
         if obj.image and hasattr(obj.image, 'url'):
-            if request:
-                return request.build_absolute_uri(obj.image.url)
-            return obj.image.url
+            return _normalize_media_url(obj.image.url, request)
         return None
 
 

@@ -7,7 +7,7 @@ import Link from "next/link";
 import {
   MapPin, Briefcase, Star, Clock, Mail, ChevronLeft, Shield,
   Send, User, BadgeCheck, CheckCircle2, Lock, Ticket, ArrowRight,
-  Phone, Building2
+  Phone, Building2, Sparkles, ShieldCheck, Award, GraduationCap, X, ExternalLink
 } from "lucide-react";
 import { useAuth } from "../../../hooks/useAuth";
 import { API_BASE_URL } from "@/lib/api";
@@ -29,6 +29,20 @@ interface ProfessionalProfile {
   rating: string;
   projects_completed: number;
   is_verified?: boolean;
+  portfolio_images?: { id: number; image?: string; image_url?: string; uploaded_at?: string }[];
+  certification_images?: { id: number; image?: string; image_url?: string; uploaded_at?: string }[];
+  hardware_profile?: {
+    shop_name?: string;
+    shop_address?: string;
+    shop_phone?: string;
+    shop_email?: string;
+    business_registration?: string;
+    opening_hours?: string;
+    services?: string;
+    banner_image_url?: string;
+    gallery_images?: { id: number; image_url?: string }[];
+    google_maps_link?: string;
+  } | null;
 }
 
 interface Professional {
@@ -69,6 +83,12 @@ export default function ProfessionalProfilePage() {
   const [reviewComment, setReviewComment] = useState("");
   const [reviewSaving, setReviewSaving] = useState(false);
   const [hoverRating, setHoverRating] = useState(0);
+
+  // Lightbox modal for portfolio & certification images
+  const [selectedImageModal, setSelectedImageModal] = useState<{
+    url: string;
+    title: string;
+  } | null>(null);
 
   // Ticket gate for contact info
   const [contactUnlocked, setContactUnlocked] = useState(false);
@@ -364,6 +384,198 @@ export default function ProfessionalProfilePage() {
             {/* Divider */}
             <div className="border-t border-[#e8ddd6]" />
 
+            {/* ── Portfolio Showcase Gallery ── */}
+            {profile?.portfolio_images && profile.portfolio_images.length > 0 && (
+              <section>
+                <div className="flex items-end justify-between gap-4 mb-6 flex-wrap">
+                  <div>
+                    <p className="text-[10px] uppercase tracking-[0.35em] text-[#8B4434]/60 font-semibold mb-2">Past Projects</p>
+                    <h2 className="font-serif text-3xl sm:text-4xl text-[#1c1108]">Project Portfolio</h2>
+                  </div>
+                  <span className="text-xs text-stone-500 uppercase tracking-widest font-medium">
+                    {profile.portfolio_images.length} completed work{profile.portfolio_images.length !== 1 ? "s" : ""}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                  {profile.portfolio_images.map((item, index) => {
+                    const imgUrl = item.image_url || item.image || "";
+                    return (
+                      <div
+                        key={item.id || index}
+                        onClick={() => setSelectedImageModal({ url: imgUrl, title: `${displayName} — Project #${index + 1}` })}
+                        className="group relative aspect-[4/3] bg-stone-100 border border-[#e8ddd6] overflow-hidden cursor-pointer shadow-xs"
+                      >
+                        <img
+                          src={imgUrl}
+                          alt={`Project ${index + 1}`}
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          onError={(e) => {
+                            (e.currentTarget as HTMLElement).style.display = "none";
+                          }}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-between p-4 text-white">
+                          <span className="text-xs uppercase tracking-wider font-semibold flex items-center gap-1.5">
+                            <Sparkles className="w-3.5 h-3.5" /> View Photo
+                          </span>
+                          <span className="text-[10px] bg-[#8B4434] px-2 py-0.5 tracking-widest uppercase font-bold">
+                            Watermarked
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </section>
+            )}
+
+            {/* ── Verified Certifications & Accreditations ── */}
+            {((profile?.certification_images && profile.certification_images.length > 0) || profile?.certifications) && (
+              <section>
+                <div className="flex items-end justify-between gap-4 mb-6 flex-wrap">
+                  <div>
+                    <p className="text-[10px] uppercase tracking-[0.35em] text-[#8B4434]/60 font-semibold mb-2">Qualifications</p>
+                    <h2 className="font-serif text-3xl sm:text-4xl text-[#1c1108]">Certifications &amp; Licenses</h2>
+                  </div>
+                  <span className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-wider font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-1">
+                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                    Verified Credentials
+                  </span>
+                </div>
+
+                {profile?.certifications && (
+                  <div className="bg-[#FCFAF7] border border-[#e8ddd6] p-5 sm:p-6 mb-6">
+                    <div className="flex items-center gap-2 mb-2 text-[#8B4434] font-semibold text-xs uppercase tracking-wider">
+                      <Award className="w-4 h-4" />
+                      <span>Accreditations &amp; Registrations</span>
+                    </div>
+                    <p className="text-sm text-[#3a2820] leading-relaxed whitespace-pre-wrap">
+                      {profile.certifications}
+                    </p>
+                  </div>
+                )}
+
+                {profile?.certification_images && profile.certification_images.length > 0 && (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                    {profile.certification_images.map((cert, index) => {
+                      const imgUrl = cert.image_url || cert.image || "";
+                      return (
+                        <div
+                          key={cert.id || index}
+                          onClick={() => setSelectedImageModal({ url: imgUrl, title: `${displayName} — Verified Certificate #${index + 1}` })}
+                          className="group relative aspect-[3/4] bg-white border border-[#e8ddd6] overflow-hidden p-2.5 shadow-xs cursor-pointer hover:border-[#8B4434] transition-colors"
+                        >
+                          <div className="relative w-full h-full bg-stone-50 overflow-hidden flex items-center justify-center">
+                            <img
+                              src={imgUrl}
+                              alt={`Certificate ${index + 1}`}
+                              className="w-full h-full object-contain"
+                              onError={(e) => {
+                                (e.currentTarget as HTMLElement).style.display = "none";
+                              }}
+                            />
+                          </div>
+                          <div className="absolute top-3 right-3 bg-[#8B4434] text-white text-[9px] font-bold px-1.5 py-0.5 tracking-wider uppercase shadow-xs">
+                            Verified
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </section>
+            )}
+
+            {/* ── Academic & Technical Education ── */}
+            {profile?.education && (
+              <section>
+                <div className="flex items-center gap-2 mb-2 text-[#8B4434]/60 font-semibold text-[10px] uppercase tracking-[0.35em]">
+                  <GraduationCap className="w-4 h-4 text-[#8B4434]" />
+                  <span>Academic &amp; Vocational</span>
+                </div>
+                <h2 className="font-serif text-3xl sm:text-4xl text-[#1c1108] mb-4">Education &amp; Background</h2>
+                <div className="bg-white border border-[#e8ddd6] p-5 sm:p-6 shadow-xs">
+                  <p className="text-sm text-[#3a2820] leading-relaxed whitespace-pre-wrap">
+                    {profile.education}
+                  </p>
+                </div>
+              </section>
+            )}
+
+            {/* ── Service Areas ── */}
+            {profile?.service_areas && profile.service_areas.length > 0 && (
+              <section>
+                <p className="text-[10px] uppercase tracking-[0.35em] text-[#8B4434]/60 font-semibold mb-2">Coverage</p>
+                <h2 className="font-serif text-3xl sm:text-4xl text-[#1c1108] mb-4">Service Locations</h2>
+                <div className="flex flex-wrap gap-2">
+                  {profile.service_areas.map((area, i) => (
+                    <span key={i} className="inline-flex items-center gap-1.5 border border-[#e8ddd6] bg-white px-3.5 py-2 text-xs font-medium text-[#281713] shadow-2xs">
+                      <MapPin className="w-3 h-3 text-[#8B4434]" />
+                      {area}
+                    </span>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* ── Hardware Storefront Details (if HARDWARE) ── */}
+            {profile?.hardware_profile && (
+              <section className="border border-[#e8ddd6] bg-[#FCFAF7] p-6 sm:p-8 space-y-4 shadow-xs">
+                <div className="flex items-center gap-2 text-[#8B4434] text-xs uppercase tracking-widest font-semibold">
+                  <Building2 className="w-4 h-4" />
+                  <span>Hardware Merchant Storefront</span>
+                </div>
+                <h3 className="font-serif text-2xl sm:text-3xl text-[#1c1108]">
+                  {profile.hardware_profile.shop_name || "Hardware Store"}
+                </h3>
+                {profile.hardware_profile.shop_address && (
+                  <p className="text-xs text-[#606060] flex items-center gap-2">
+                    <MapPin className="w-3.5 h-3.5 text-[#8B4434]" />
+                    {profile.hardware_profile.shop_address}
+                  </p>
+                )}
+                {profile.hardware_profile.opening_hours && (
+                  <p className="text-xs text-[#606060] flex items-center gap-2">
+                    <Clock className="w-3.5 h-3.5 text-[#8B4434]" />
+                    Hours: {profile.hardware_profile.opening_hours}
+                  </p>
+                )}
+                {profile.hardware_profile.services && (
+                  <p className="text-xs text-[#3a2820] leading-relaxed pt-2 border-t border-[#e8ddd6]">
+                    {profile.hardware_profile.services}
+                  </p>
+                )}
+                {profile.hardware_profile.gallery_images && profile.hardware_profile.gallery_images.length > 0 && (
+                  <div className="pt-2">
+                    <p className="text-[10px] uppercase tracking-wider text-[#8B4434]/60 font-semibold mb-2">Shop Gallery</p>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                      {profile.hardware_profile.gallery_images.map((g, idx) => (
+                        <div
+                          key={g.id || idx}
+                          onClick={() => setSelectedImageModal({ url: g.image_url || "", title: `${profile.hardware_profile?.shop_name || "Shop"} — Photo ${idx + 1}` })}
+                          className="aspect-square bg-stone-100 border border-[#e8ddd6] overflow-hidden cursor-pointer"
+                        >
+                          <img src={g.image_url || ""} alt="Shop" className="w-full h-full object-cover" />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {profile.hardware_profile.google_maps_link && (
+                  <div className="pt-2">
+                    <iframe
+                      src={profile.hardware_profile.google_maps_link}
+                      className="w-full h-56 border border-[#e8ddd6]"
+                      loading="lazy"
+                    />
+                  </div>
+                )}
+              </section>
+            )}
+
+            {/* Divider */}
+            <div className="border-t border-[#e8ddd6]" />
+
             {/* Reviews */}
             <section>
               <div className="flex items-end justify-between gap-4 mb-6 flex-wrap">
@@ -645,6 +857,39 @@ export default function ProfessionalProfilePage() {
 
         </div>
       </div>
+
+      {/* ── Image Lightbox Modal ── */}
+      {selectedImageModal && (
+        <div
+          onClick={() => setSelectedImageModal(null)}
+          className="fixed inset-0 z-50 bg-black/85 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-200"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="relative max-w-4xl max-h-[90vh] bg-[#1c1108] border border-[#8B4434]/40 overflow-hidden flex flex-col shadow-2xl"
+          >
+            <div className="flex items-center justify-between px-5 py-3 border-b border-[#FCFAF7]/10 bg-black/40">
+              <span className="text-xs font-serif text-[#FCFAF7] tracking-wider truncate">
+                {selectedImageModal.title}
+              </span>
+              <button
+                onClick={() => setSelectedImageModal(null)}
+                className="text-stone-400 hover:text-white transition-colors p-1 cursor-pointer"
+                aria-label="Close"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-2 flex items-center justify-center overflow-auto max-h-[80vh]">
+              <img
+                src={selectedImageModal.url}
+                alt={selectedImageModal.title}
+                className="max-h-[75vh] w-auto object-contain"
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
