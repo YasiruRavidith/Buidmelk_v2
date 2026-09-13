@@ -75,6 +75,7 @@ export default function CartPage() {
       if (response.ok) {
         const data = await response.json();
         setCart(data);
+        window.dispatchEvent(new Event("cartUpdated"));
       }
     } finally {
       setBusyItemId(null);
@@ -95,6 +96,7 @@ export default function CartPage() {
       if (response.ok) {
         const data = await response.json();
         setCart(data);
+        window.dispatchEvent(new Event("cartUpdated"));
       }
     } finally {
       setBusyItemId(null);

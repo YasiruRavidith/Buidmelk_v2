@@ -20,7 +20,7 @@ const PROFESSIONS = [
 ];
 
 export default function Onboarding() {
-  const { user, loading } = useAuth();
+  const { user, loading, refreshUser } = useAuth();
   const [role, setRole] = useState<"CLIENT" | "PROFESSIONAL" | null>(null);
   const [professionType, setProfessionType] = useState("");
   const [location, setLocation] = useState("");
@@ -106,6 +106,30 @@ export default function Onboarding() {
         return;
       }
 
+      // If professional, record registration fee
+      if (role === "PROFESSIONAL") {
+        try {
+          await fetch(`${backendUrl}/users/professional/pay-registration/`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({
+              token,
+              transaction_ref: "ONBOARDING_REGISTRATION"
+            })
+          });
+        } catch (feeErr) {
+          console.error("Registration fee error:", feeErr);
+        }
+      }
+
+      await refreshUser();
+      window.dispatchEvent(new Event("userUpdated"));
+      window.dispatchEvent(new Event("ticketsUpdated"));
+      window.dispatchEvent(new Event("cartUpdated"));
+
       router.push("/dashboard");
     } catch (error) {
       console.error(error);
@@ -153,18 +177,23 @@ export default function Onboarding() {
                   : "border-[#efe6df] bg-white hover:border-[#8B4434]/50 hover:bg-[#fcfaf9]"
               }`}
             >
-              <div
-                className={`h-12 w-12 mb-6 flex items-center justify-center border ${
-                  role === "CLIENT"
-                    ? "bg-[#8B4434] text-white border-[#8B4434]"
-                    : "bg-[#f3ebe4] text-[#8B4434] border-[#efe6df]"
-                }`}
-              >
-                <User className="w-6 h-6" />
+              <div className="flex items-center justify-between mb-4">
+                <div
+                  className={`h-12 w-12 flex items-center justify-center border ${
+                    role === "CLIENT"
+                      ? "bg-[#8B4434] text-white border-[#8B4434]"
+                      : "bg-[#f3ebe4] text-[#8B4434] border-[#efe6df]"
+                  }`}
+                >
+                  <User className="w-6 h-6" />
+                </div>
+                <span className="bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1">
+                  100% Free
+                </span>
               </div>
               <h3 className="font-serif text-2xl mb-2 text-[#281713]">I am a Homeowner</h3>
               <p className="text-xs text-[#606060] leading-relaxed">
-                I want to calculate construction estimates, view material price trends, find certified contractors, and manage home builds.
+                Free registration. Calculate civil engineering BOQ estimates, browse material prices, and contact verified contractors freely.
               </p>
               {role === "CLIENT" && (
                 <div className="absolute top-4 right-4 text-[#8B4434]">
@@ -181,18 +210,23 @@ export default function Onboarding() {
                   : "border-[#efe6df] bg-white hover:border-[#8B4434]/50 hover:bg-[#fcfaf9]"
               }`}
             >
-              <div
-                className={`h-12 w-12 mb-6 flex items-center justify-center border ${
-                  role === "PROFESSIONAL"
-                    ? "bg-[#8B4434] text-white border-[#8B4434]"
-                    : "bg-[#f3ebe4] text-[#8B4434] border-[#efe6df]"
-                }`}
-              >
-                <HardHat className="w-6 h-6" />
+              <div className="flex items-center justify-between mb-4">
+                <div
+                  className={`h-12 w-12 flex items-center justify-center border ${
+                    role === "PROFESSIONAL"
+                      ? "bg-[#8B4434] text-white border-[#8B4434]"
+                      : "bg-[#f3ebe4] text-[#8B4434] border-[#efe6df]"
+                  }`}
+                >
+                  <HardHat className="w-6 h-6" />
+                </div>
+                <span className="bg-[#8B4434]/10 text-[#8B4434] border border-[#8B4434]/30 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1">
+                  LKR 1,000 One-Time
+                </span>
               </div>
               <h3 className="font-serif text-2xl mb-2 text-[#281713]">I am a Professional</h3>
               <p className="text-xs text-[#606060] leading-relaxed">
-                I offer construction services, bid on active client projects, list hardware inventory, and showcase my professional profile.
+                Offer construction services, submit proposals on client project tenders, showcase your portfolio, and list hardware items.
               </p>
               {role === "PROFESSIONAL" && (
                 <div className="absolute top-4 right-4 text-[#8B4434]">
@@ -205,10 +239,16 @@ export default function Onboarding() {
           {/* Professional Details Section */}
           {role === "PROFESSIONAL" && (
             <div className="bg-white p-6 sm:p-8 border border-[#efe6df] space-y-6 shadow-xs">
-              <h2 className="font-serif text-xl sm:text-2xl text-[#281713] border-b border-[#efe6df] pb-4">
-                Professional Specialty
-              </h2>
-              <div className="grid md:grid-cols-2 gap-6 pt-1">
+              <div className="border-b border-[#efe6df] pb-4">
+                <h2 className="font-serif text-xl sm:text-2xl text-[#281713]">
+                  Professional Specialty &amp; Activation
+                </h2>
+                <p className="text-xs text-[#606060] mt-1">
+                  Set up your business category and complete your verified registration.
+                </p>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-1.5">
                   <label className="block text-[11px] font-bold uppercase tracking-wider text-[#8B4434]">
                     Profession Category
@@ -244,6 +284,21 @@ export default function Onboarding() {
                   />
                 </div>
               </div>
+
+              {/* One-Time Registration Fee Card */}
+              <div className="p-5 bg-[#8B4434]/5 border border-[#8B4434]/20 space-y-2">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <h4 className="font-serif text-base text-[#1c1108]">One-Time Registration Fee</h4>
+                    <p className="text-xs text-[#606060]">Activates your professional profile &amp; verified listing</p>
+                  </div>
+                  <span className="font-serif text-2xl text-[#8B4434]">LKR 1,000</span>
+                </div>
+                <div className="flex items-center gap-1.5 text-[10px] text-emerald-700 font-semibold pt-1 border-t border-[#8B4434]/15">
+                  <ShieldCheck className="w-3.5 h-3.5" />
+                  <span>Instant activation enabled for verification &amp; onboarding demo</span>
+                </div>
+              </div>
             </div>
           )}
 
@@ -255,7 +310,13 @@ export default function Onboarding() {
                 className="w-full btn-primary py-4 text-xs font-semibold uppercase tracking-widest flex items-center justify-center gap-2"
                 disabled={isSubmitting}
               >
-                <span>{isSubmitting ? "Saving Preferences..." : "Enter Workspace Dashboard"}</span>
+                <span>
+                  {isSubmitting 
+                    ? "Setting up workspace..." 
+                    : role === "PROFESSIONAL" 
+                    ? "Pay Registration Fee (LKR 1,000) & Enter Dashboard" 
+                    : "Complete Free Registration & Enter"}
+                </span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>

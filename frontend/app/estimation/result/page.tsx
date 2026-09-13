@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../../../hooks/useAuth";
 import { API_BASE_URL, BACKEND_ROOT_URL } from "@/lib/api";
-import { Lock, ShieldCheck, ArrowRight } from "lucide-react";
+import { Lock, ShieldCheck, ArrowRight, Ticket, AlertCircle, CheckCircle2 } from "lucide-react";
 
 export default function EstimationResult() {
   const { user, backendUser } = useAuth();
@@ -20,6 +20,12 @@ export default function EstimationResult() {
   const [budgetRange, setBudgetRange] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+
+  // Bidding ticket monetization states
+  const [ticketBalance, setTicketBalance] = useState<number | null>(null);
+  const [showTicketModal, setShowTicketModal] = useState(false);
+  const [purchasingTicket, setPurchasingTicket] = useState(false);
+  const [ticketPurchasedSuccess, setTicketPurchasedSuccess] = useState(false);
 
   useEffect(() => {
     const loadData = async () => {
@@ -91,19 +97,32 @@ Looking for verified professionals to bid on this construction project. We have 
     loadData();
   }, [router]);
 
-  const handlePublishProject = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!user) {
-      setErrorMsg("You must be logged in to publish a project for bidding.");
-      const redirectTarget = `/estimation/result${data?.id ? `?id=${data.id}` : ""}`;
-      router.push(`/login?redirect=${encodeURIComponent(redirectTarget)}`);
-      return;
+  // Fetch client bidding tickets balance
+  useEffect(() => {
+    if (!user) return;
+    async function loadTickets() {
+      if (!user) return;
+      try {
+        const token = await user.getIdToken();
+        const res = await fetch(`${API_BASE_URL}/bidding/tickets/my/`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (res.ok) {
+          const tData = await res.json();
+          setTicketBalance(tData.total_credits_remaining ?? 0);
+        }
+      } catch (e) {
+        console.error("Failed to load tickets", e);
+      }
     }
+    loadTickets();
+  }, [user]);
+
+  const doPublish = async (token: string) => {
     setIsSubmitting(true);
     setErrorMsg("");
 
     try {
-      const token = await user.getIdToken();
       const res = await fetch(`${API_BASE_URL}/bidding/projects/`, {
         method: "POST",
         headers: {
@@ -120,39 +139,90 @@ Looking for verified professionals to bid on this construction project. We have 
       });
 
       if (res.ok) {
-        // Read raw text first to debug any parsing issues
         const rawText = await res.text();
         let result: any = {};
         try {
           result = JSON.parse(rawText);
-        } catch (_) {
-          console.error("Response was not valid JSON:", rawText);
-        }
+        } catch (_) {}
 
-        // Extract the project ID — DRF returns the created object directly
         const createdId = result?.id ?? result?.data?.id;
-
         if (createdId) {
-          // Navigate directly to the new project page
           router.push(`/bidding/${createdId}`);
         } else {
-          // Fallback: ID couldn't be extracted, go to the bidding feed
-          console.warn("Could not extract project ID from response:", result);
           router.push("/bidding");
         }
       } else {
-        let errText = "Failed to publish project. Please try again.";
-        try {
-          const errorData = await res.json();
-          errText = errorData.error || errorData.detail || errText;
-        } catch (_) {}
-        setErrorMsg(errText);
+        const errorData = await res.json().catch(() => ({}));
+        if (res.status === 402 || errorData.needs_ticket) {
+          setShowTicketModal(true);
+        } else {
+          setErrorMsg(errorData.error || errorData.detail || "Failed to publish project. Please try again.");
+        }
       }
     } catch (err) {
       console.error(err);
       setErrorMsg("Network error occurred. Please try again.");
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handlePublishProject = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) {
+      setErrorMsg("You must be logged in to publish a project for bidding.");
+      const redirectTarget = `/estimation/result${data?.id ? `?id=${data.id}` : ""}`;
+      router.push(`/login?redirect=${encodeURIComponent(redirectTarget)}`);
+      return;
+    }
+
+    // If client has 0 tickets, prompt purchase immediately
+    if (ticketBalance === 0) {
+      setShowTicketModal(true);
+      return;
+    }
+
+    try {
+      const token = await user.getIdToken();
+      await doPublish(token);
+    } catch (err) {
+      console.error(err);
+      setErrorMsg("Authentication error. Please re-login.");
+    }
+  };
+
+  const handleBuyTicketAndPublish = async () => {
+    if (!user) return;
+    setPurchasingTicket(true);
+    try {
+      const token = await user.getIdToken();
+      // 1. Purchase 1 bidding ticket (LKR 1,500)
+      const buyRes = await fetch(`${API_BASE_URL}/bidding/tickets/purchase/`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ quantity: 1, transaction_ref: "MOCK_PAYMENT" })
+      });
+
+      if (!buyRes.ok) {
+        const err = await buyRes.json().catch(() => ({}));
+        alert(err.error || "Failed to purchase bidding ticket.");
+        return;
+      }
+
+      setTicketPurchasedSuccess(true);
+      setShowTicketModal(false);
+      window.dispatchEvent(new Event("ticketsUpdated"));
+
+      // 2. Immediately publish tender
+      await doPublish(token);
+    } catch (err) {
+      console.error(err);
+      alert("Error processing ticket purchase.");
+    } finally {
+      setPurchasingTicket(false);
     }
   };
 
@@ -376,14 +446,78 @@ Looking for verified professionals to bid on this construction project. We have 
                   />
                 </div>
 
+                {/* Ticket status pill */}
+                {user && ticketBalance !== null && (
+                  <div className={`p-3 border flex items-center justify-between text-xs ${ticketBalance > 0 ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-amber-50 border-amber-200 text-amber-800'}`}>
+                    <div className="flex items-center gap-2">
+                      <Ticket className="w-4 h-4" />
+                      <span>
+                        {ticketBalance > 0 
+                          ? `You have ${ticketBalance} Bidding Ticket credit${ticketBalance > 1 ? 's' : ''}. 1 will be used.` 
+                          : "1 Bidding Ticket (LKR 1,500) required to publish tender."}
+                      </span>
+                    </div>
+                    {ticketBalance === 0 && (
+                      <span className="font-semibold uppercase tracking-wider text-[10px]">Ticket Required</span>
+                    )}
+                  </div>
+                )}
+
                 <button 
                   type="submit" 
                   disabled={isSubmitting} 
-                  className="w-full btn-primary py-4 text-sm disabled:opacity-70 cursor-pointer"
+                  className="w-full btn-primary py-4 text-sm disabled:opacity-70 cursor-pointer flex items-center justify-center gap-2"
                 >
-                  {isSubmitting ? "Publishing..." : "Publish Project"}
+                  <Ticket className="w-4 h-4" />
+                  {isSubmitting ? "Publishing..." : ticketBalance === 0 ? "Buy Ticket & Publish (LKR 1,500)" : "Publish Project Tender"}
                 </button>
               </form>
+            )}
+
+            {/* Ticket purchase prompt modal */}
+            {showTicketModal && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+                <div className="bg-white max-w-md w-full p-6 sm:p-8 space-y-6 shadow-2xl border border-stone-200">
+                  <div className="flex items-center gap-3 border-b border-stone-200 pb-4">
+                    <div className="w-10 h-10 bg-[#8B4434]/10 flex items-center justify-center text-[#8B4434]">
+                      <Ticket className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h3 className="font-serif text-xl text-stone-900">Bidding Ticket Required</h3>
+                      <p className="text-xs text-stone-500">Tender Publishing Fee: LKR 1,500</p>
+                    </div>
+                  </div>
+
+                  <p className="text-xs sm:text-sm text-stone-600 leading-relaxed">
+                    To publish your project tender on the public marketplace, 1 Bidding Ticket (LKR 1,500) is required. 
+                    Verified contractors will submit competitive proposals which you can review freely.
+                  </p>
+
+                  <div className="p-4 bg-stone-50 border border-stone-200 space-y-1 text-xs">
+                    <div className="flex justify-between font-semibold text-stone-900">
+                      <span>Bidding Ticket (1 Tender)</span>
+                      <span>LKR 1,500</span>
+                    </div>
+                    <p className="text-[10px] text-stone-500">Includes unlimited contractor proposals &amp; direct messaging.</p>
+                  </div>
+
+                  <div className="flex flex-col gap-3">
+                    <button
+                      onClick={handleBuyTicketAndPublish}
+                      disabled={purchasingTicket}
+                      className="w-full bg-[#8B4434] text-white py-3.5 text-xs font-bold uppercase tracking-widest hover:bg-[#723628] disabled:opacity-70 transition-colors"
+                    >
+                      {purchasingTicket ? "Purchasing & Publishing..." : "Buy Ticket & Publish Now (LKR 1,500)"}
+                    </button>
+                    <button
+                      onClick={() => setShowTicketModal(false)}
+                      className="w-full text-xs text-stone-500 hover:text-stone-800 py-1"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              </div>
             )}
             
             <div className="bg-white border border-stone-200 rounded-2xl p-8">

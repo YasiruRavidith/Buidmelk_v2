@@ -12,6 +12,7 @@ from .models import (
     HardwareShop,
     HardwareShopImage,
     HardwareShopItem,
+    PaymentTransaction,
 )
 from .serializers import (
     CustomUserSerializer,
@@ -23,10 +24,13 @@ from .serializers import (
     HardwareShopItemSerializer,
     HardwareShopItemCreateSerializer,
     HardwareShopItemUpdateSerializer,
+    PaymentTransactionSerializer,
 )
 from marketplace.models import Material
 import firebase_admin
 from firebase_admin import auth
+from django.utils import timezone
+from datetime import timedelta
 
 SRI_LANKA_LOCATIONS = [
     {
@@ -88,6 +92,17 @@ def _get_user_from_token(token):
         return user, None
     except Exception as e:
         return None, Response({'error': str(e)}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+def _resolve_user(request):
+    if hasattr(request, 'user') and request.user and request.user.is_authenticated and not request.user.is_anonymous:
+        return request.user, None
+    token = request.data.get('token') if hasattr(request, 'data') and request.data else None
+    if not token:
+        auth_header = request.headers.get('Authorization') or request.META.get('HTTP_AUTHORIZATION')
+        if auth_header and auth_header.startswith('Bearer '):
+            token = auth_header.split(' ')[1]
+    return _get_user_from_token(token)
 
 
 def _get_hardware_profile(user):
@@ -903,3 +918,236 @@ def get_professional(request, prof_id):
         return Response(serializer.data, status=status.HTTP_200_OK)
     except CustomUser.DoesNotExist:
         return Response({'error': 'Professional not found'}, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['GET', 'POST'])
+@permission_classes([AllowAny])
+def get_professional_membership(request):
+    user, error = _resolve_user(request)
+    if error:
+        return error
+
+    if user.role != 'PROFESSIONAL':
+        return Response({'error': 'Only professionals have membership plans'}, status=status.HTTP_400_BAD_REQUEST)
+
+    profile, _ = ProfessionalProfile.objects.get_or_create(user=user)
+
+    plans_catalog = [
+        {
+            "id": "MONTHLY",
+            "name": "Monthly Service Plan",
+            "price": 500.00,
+            "period": "month",
+            "badge_included": False,
+            "description": "Full bidding access & active directory listing.",
+            "discount_tag": None,
+        },
+        {
+            "id": "YEARLY",
+            "name": "Yearly Service Plan",
+            "price": 5000.00,
+            "period": "year",
+            "badge_included": False,
+            "description": "Full annual bidding access & priority directory listing. Save LKR 1,000!",
+            "discount_tag": "2 Months Free",
+        },
+        {
+            "id": "PRO_MONTHLY",
+            "name": "Pro Plan (Monthly)",
+            "price": 550.00,
+            "period": "month",
+            "badge_included": True,
+            "description": "Service fee + Official Verified Badge bundled for just LKR 550/mo.",
+            "discount_tag": "Pro Bundle",
+        },
+        {
+            "id": "PRO_YEARLY",
+            "name": "Pro Plan (Yearly)",
+            "price": 5000.00,
+            "period": "year",
+            "badge_included": True,
+            "description": "Complete 1-year service fee + Verified Badge included 100% FREE (Save LKR 2,000)!",
+            "discount_tag": "Best Value (Free Badge)",
+        },
+        {
+            "id": "VERIFIED_BADGE",
+            "name": "Verified Badge (Standalone)",
+            "price": 1000.00,
+            "period": "year",
+            "badge_included": True,
+            "description": "Official BuildMe.lk Verified checkmark & partner trust seal for 1 year.",
+            "discount_tag": None,
+        },
+        {
+            "id": "REGISTRATION_FEE",
+            "name": "Professional Registration Fee",
+            "price": 1000.00,
+            "period": "one-time",
+            "badge_included": False,
+            "description": "One-time registration fee required to activate professional capabilities.",
+            "discount_tag": "One-Time",
+        }
+    ]
+
+    return Response({
+        "registration_fee_paid": profile.registration_fee_paid,
+        "registration_fee_paid_at": profile.registration_fee_paid_at,
+        "service_fee_plan": profile.service_fee_plan,
+        "service_fee_status": profile.service_fee_status,
+        "service_fee_expires_at": profile.service_fee_expires_at,
+        "is_service_active": profile.is_service_active(),
+        "is_verified": profile.is_verified,
+        "badge_expires_at": profile.badge_expires_at,
+        "is_badge_active": profile.is_badge_active(),
+        "catalog": plans_catalog,
+    }, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def pay_registration_fee(request):
+    user, error = _resolve_user(request)
+    if error:
+        return error
+
+    if user.role != 'PROFESSIONAL':
+        return Response({'error': 'Registration fee is only for professionals'}, status=status.HTTP_400_BAD_REQUEST)
+
+    profile, _ = ProfessionalProfile.objects.get_or_create(user=user)
+    if profile.registration_fee_paid:
+        return Response({'message': 'Registration fee already paid', 'already_paid': True}, status=status.HTTP_200_OK)
+
+    ref_id = request.data.get('transaction_ref', 'MOCK_PAYMENT')
+
+    profile.registration_fee_paid = True
+    profile.registration_fee_paid_at = timezone.now()
+    profile.save(update_fields=['registration_fee_paid', 'registration_fee_paid_at'])
+
+    PaymentTransaction.objects.create(
+        user=user,
+        transaction_type='REGISTRATION_FEE',
+        amount=1000.00,
+        payment_method=request.data.get('payment_method', 'MOCK_PAYMENT'),
+        reference_id=ref_id,
+        status='COMPLETED',
+    )
+
+    return Response({
+        'message': 'Professional registration fee of LKR 1,000 paid successfully.',
+        'registration_fee_paid': True,
+        'registration_fee_paid_at': profile.registration_fee_paid_at,
+    }, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def subscribe_service_plan(request):
+    user, error = _resolve_user(request)
+    if error:
+        return error
+
+    if user.role != 'PROFESSIONAL':
+        return Response({'error': 'Subscriptions are only available for professionals'}, status=status.HTTP_400_BAD_REQUEST)
+
+    profile, _ = ProfessionalProfile.objects.get_or_create(user=user)
+
+    plan = request.data.get('plan')
+    ref_id = request.data.get('transaction_ref', 'MOCK_PAYMENT')
+
+    PLAN_CONFIG = {
+        'MONTHLY': {'price': 500.00, 'days': 30, 'type': 'SERVICE_FEE_MONTHLY', 'badge': False},
+        'YEARLY': {'price': 5000.00, 'days': 365, 'type': 'SERVICE_FEE_YEARLY', 'badge': False},
+        'PRO_MONTHLY': {'price': 550.00, 'days': 30, 'type': 'PRO_PLAN_MONTHLY', 'badge': True},
+        'PRO_YEARLY': {'price': 5000.00, 'days': 365, 'type': 'PRO_PLAN_YEARLY', 'badge': True},
+    }
+
+    if plan not in PLAN_CONFIG:
+        return Response({'error': f"Invalid plan '{plan}'. Choose from {list(PLAN_CONFIG.keys())}"}, status=status.HTTP_400_BAD_REQUEST)
+
+    config = PLAN_CONFIG[plan]
+    now = timezone.now()
+
+    # Calculate service fee expiry
+    base_date = profile.service_fee_expires_at if (profile.service_fee_expires_at and profile.service_fee_expires_at > now) else now
+    new_service_expiry = base_date + timedelta(days=config['days'])
+
+    profile.service_fee_plan = plan
+    profile.service_fee_status = 'ACTIVE'
+    profile.service_fee_expires_at = new_service_expiry
+    update_fields = ['service_fee_plan', 'service_fee_status', 'service_fee_expires_at']
+
+    # If Pro plan includes badge
+    if config['badge']:
+        profile.is_verified = True
+        badge_base = profile.badge_expires_at if (profile.badge_expires_at and profile.badge_expires_at > now) else now
+        profile.badge_expires_at = badge_base + timedelta(days=config['days'])
+        update_fields.extend(['is_verified', 'badge_expires_at'])
+
+    profile.save(update_fields=update_fields)
+
+    PaymentTransaction.objects.create(
+        user=user,
+        transaction_type=config['type'],
+        amount=config['price'],
+        payment_method=request.data.get('payment_method', 'MOCK_PAYMENT'),
+        reference_id=ref_id,
+        status='COMPLETED',
+    )
+
+    return Response({
+        'message': f"Successfully subscribed to {plan} for LKR {config['price']}.",
+        'plan': plan,
+        'service_fee_status': profile.service_fee_status,
+        'service_fee_expires_at': profile.service_fee_expires_at,
+        'is_verified': profile.is_verified,
+        'badge_expires_at': profile.badge_expires_at,
+    }, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def buy_verified_badge(request):
+    user, error = _resolve_user(request)
+    if error:
+        return error
+
+    if user.role != 'PROFESSIONAL':
+        return Response({'error': 'Verified badge is only for professionals'}, status=status.HTTP_400_BAD_REQUEST)
+
+    profile, _ = ProfessionalProfile.objects.get_or_create(user=user)
+    ref_id = request.data.get('transaction_ref', 'MOCK_PAYMENT')
+
+    now = timezone.now()
+    base_date = profile.badge_expires_at if (profile.badge_expires_at and profile.badge_expires_at > now) else now
+    new_badge_expiry = base_date + timedelta(days=365)
+
+    profile.is_verified = True
+    profile.badge_expires_at = new_badge_expiry
+    profile.save(update_fields=['is_verified', 'badge_expires_at'])
+
+    PaymentTransaction.objects.create(
+        user=user,
+        transaction_type='VERIFIED_BADGE_YEARLY',
+        amount=1000.00,
+        payment_method=request.data.get('payment_method', 'MOCK_PAYMENT'),
+        reference_id=ref_id,
+        status='COMPLETED',
+    )
+
+    return Response({
+        'message': 'Verified badge purchased successfully for LKR 1,000 (1 Year).',
+        'is_verified': True,
+        'badge_expires_at': profile.badge_expires_at,
+    }, status=status.HTTP_200_OK)
+
+
+@api_view(['GET', 'POST'])
+@permission_classes([AllowAny])
+def list_user_transactions(request):
+    user, error = _resolve_user(request)
+    if error:
+        return error
+
+    transactions = PaymentTransaction.objects.filter(user=user).order_by('-created_at')
+    serializer = PaymentTransactionSerializer(transactions, many=True)
+    return Response({'transactions': serializer.data}, status=status.HTTP_200_OK)

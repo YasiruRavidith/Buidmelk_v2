@@ -162,6 +162,7 @@ export default function ShopDetailPage() {
         const data = await response.json().catch(() => ({}));
         alert(data.detail || 'Failed to add item to cart');
       } else {
+        window.dispatchEvent(new Event("cartUpdated"));
         alert('Added to cart');
       }
     } catch {

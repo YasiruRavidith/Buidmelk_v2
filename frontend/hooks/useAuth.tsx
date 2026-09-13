@@ -96,11 +96,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             }
           }
         }
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new Event("userUpdated"));
+          window.dispatchEvent(new Event("ticketsUpdated"));
+          window.dispatchEvent(new Event("cartUpdated"));
+        }
       } else {
         setBackendUser(null);
         setProfilePhoto(null);
         if (typeof window !== "undefined") {
           localStorage.removeItem("profilePhotoUrl");
+          window.dispatchEvent(new Event("userUpdated"));
+          window.dispatchEvent(new Event("ticketsUpdated"));
+          window.dispatchEvent(new Event("cartUpdated"));
         }
       }
       setLoading(false);
@@ -155,6 +163,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       await auth.currentUser.reload();
       setUser(auth.currentUser);
+      const token = await auth.currentUser.getIdToken(true);
+      const res = await verifyTokenWithBackend(token);
+      if (res?.user) {
+        setBackendUser(res.user);
+        const photoUrl = normalizePhotoUrl(res.user.profile_image_url || res.user.profile_image) || auth.currentUser.photoURL || null;
+        if (photoUrl) {
+          setProfilePhoto(photoUrl);
+          if (typeof window !== "undefined") {
+            localStorage.setItem("profilePhotoUrl", photoUrl);
+          }
+        }
+      }
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new Event("userUpdated"));
+        window.dispatchEvent(new Event("ticketsUpdated"));
+        window.dispatchEvent(new Event("cartUpdated"));
+      }
       return !!auth.currentUser.emailVerified;
     } catch (error) {
       console.error("Error refreshing user:", error);

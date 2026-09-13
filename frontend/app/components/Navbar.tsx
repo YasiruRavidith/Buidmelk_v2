@@ -4,7 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter, usePathname } from 'next/navigation'
 import { useState, useRef, useEffect, useMemo, useCallback } from 'react'
-import { ShoppingCart, Menu, X, ChevronRight, Trash2, Plus, Minus, User, Ticket } from 'lucide-react'
+import { ShoppingCart, Menu, X, ChevronRight, Trash2, Plus, Minus, User, Ticket, ShieldCheck, MessageSquare } from 'lucide-react'
 import { useAuth } from '../../hooks/useAuth'
 import { API_BASE_URL } from '../../lib/api'
 
@@ -24,7 +24,7 @@ type Cart = {
 };
 
 export default function Navbar() {
-  const { user, profilePhoto, loading, signOut } = useAuth();
+  const { user, backendUser, profilePhoto, loading, signOut } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -41,6 +41,9 @@ export default function Navbar() {
   // Ticket credit count
   const [ticketCredits, setTicketCredits] = useState<number | null>(null);
 
+  // Unread chat messages count
+  const [unreadChatCount, setUnreadChatCount] = useState<number>(0);
+
   const displayName = useMemo(() => {
     if (!user) return '';
     return user.displayName || user.email || 'User';
@@ -55,22 +58,55 @@ export default function Navbar() {
     { href: '/estimation', label: 'Estimation' },
   ];
 
-  // Fetch ticket credits when user logs in
-  useEffect(() => {
-    if (!user) { setTicketCredits(null); return; }
-    const fetch_ = async () => {
-      try {
-        const token = await user.getIdToken();
-        const res = await fetch(`${API_BASE_URL}/bidding/tickets/my/`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (res.ok) {
-          const data = await res.json();
-          setTicketCredits(data.total_credits_remaining ?? 0);
-        }
-      } catch {}
-    };
-    fetch_();
+  const fetchTickets = useCallback(async () => {
+    if (!user) {
+      setTicketCredits(null);
+      return;
+    }
+    try {
+      const token = await user.getIdToken();
+      const res = await fetch(`${API_BASE_URL}/bidding/tickets/my/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setTicketCredits(data.total_credits_remaining ?? 0);
+      }
+    } catch {}
+  }, [user]);
+
+  // Fetch unread chats count
+  const fetchUnreadChats = useCallback(async () => {
+    if (!user) {
+      setUnreadChatCount(0);
+      return;
+    }
+    try {
+      const token = await user.getIdToken();
+      const res = await fetch(`${API_BASE_URL}/bidding/chats/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setUnreadChatCount(data.total_unread ?? 0);
+      }
+    } catch {
+      // silent
+    }
+  }, [user]);
+
+  // Fetch cart
+  const fetchCart = useCallback(async () => {
+    if (!user) {
+      setCart(null);
+      return;
+    }
+    setCartLoading(true);
+    try {
+      const token = await user.getIdToken();
+      const res = await fetch(`${API_BASE_URL}/marketplace/cart/?token=${encodeURIComponent(token)}`);
+      if (res.ok) setCart(await res.json());
+    } catch { /* silent */ } finally { setCartLoading(false); }
   }, [user]);
 
   // Lock body scroll when any panel is open
@@ -83,12 +119,17 @@ export default function Navbar() {
     return () => { document.documentElement.style.overflow = ''; };
   }, [mobileNavOpen, cartOpen]);
 
-  // Close panels on route change
+  // Close panels on route change and refresh balances & unread chats
   useEffect(() => {
     setMobileNavOpen(false);
     setCartOpen(false);
     setUserMenuOpen(false);
-  }, [pathname]);
+    if (user) {
+      fetchCart();
+      fetchTickets();
+      fetchUnreadChats();
+    }
+  }, [pathname, user, fetchCart, fetchTickets, fetchUnreadChats]);
 
   // Close user menu on outside click
   useEffect(() => {
@@ -107,24 +148,47 @@ export default function Navbar() {
     };
   }, [userMenuOpen]);
 
-  // Fetch cart
-  const fetchCart = useCallback(async () => {
-    if (!user) return;
-    setCartLoading(true);
-    try {
-      const token = await user.getIdToken();
-      const res = await fetch(`${API_BASE_URL}/marketplace/cart/?token=${encodeURIComponent(token)}`);
-      if (res.ok) setCart(await res.json());
-    } catch { /* silent */ } finally { setCartLoading(false); }
-  }, [user]);
-
-  // Initial cart fetch & window event listener
+  // Reactive listeners for live updates across login, register, buying tickets, cart updates, chat updates
   useEffect(() => {
-    if (user) fetchCart();
+    if (user) {
+      fetchCart();
+      fetchTickets();
+      fetchUnreadChats();
+    } else {
+      setCart(null);
+      setTicketCredits(null);
+      setUnreadChatCount(0);
+    }
+
     const handleCartUpdate = () => fetchCart();
+    const handleTicketsUpdate = () => fetchTickets();
+    const handleChatUpdate = () => fetchUnreadChats();
+    const handleUserUpdate = () => {
+      fetchCart();
+      fetchTickets();
+      fetchUnreadChats();
+    };
+
     window.addEventListener("cartUpdated", handleCartUpdate);
-    return () => window.removeEventListener("cartUpdated", handleCartUpdate);
-  }, [user, fetchCart]);
+    window.addEventListener("ticketsUpdated", handleTicketsUpdate);
+    window.addEventListener("chatUpdated", handleChatUpdate);
+    window.addEventListener("userUpdated", handleUserUpdate);
+    window.addEventListener("focus", handleUserUpdate);
+
+    // Periodic check for new chat messages every 10 seconds while logged in
+    const chatInterval = setInterval(() => {
+      if (user) fetchUnreadChats();
+    }, 10000);
+
+    return () => {
+      window.removeEventListener("cartUpdated", handleCartUpdate);
+      window.removeEventListener("ticketsUpdated", handleTicketsUpdate);
+      window.removeEventListener("chatUpdated", handleChatUpdate);
+      window.removeEventListener("userUpdated", handleUserUpdate);
+      window.removeEventListener("focus", handleUserUpdate);
+      clearInterval(chatInterval);
+    };
+  }, [user, fetchCart, fetchTickets, fetchUnreadChats]);
 
   const openCart = () => {
     setCartOpen(true);
@@ -141,7 +205,10 @@ export default function Navbar() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token, item_id: itemId, quantity }),
       });
-      if (res.ok) setCart(await res.json());
+      if (res.ok) {
+        setCart(await res.json());
+        window.dispatchEvent(new Event("cartUpdated"));
+      }
     } finally { setBusyItemId(null); }
   };
 
@@ -155,7 +222,10 @@ export default function Navbar() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token, item_id: itemId }),
       });
-      if (res.ok) setCart(await res.json());
+      if (res.ok) {
+        setCart(await res.json());
+        window.dispatchEvent(new Event("cartUpdated"));
+      }
     } finally { setBusyItemId(null); }
   };
 
@@ -190,15 +260,26 @@ export default function Navbar() {
 
         {/* Right actions */}
         <div className="flex items-center gap-2 sm:gap-3">
-          {/* Ticket credit pill — visible on tablet (sm/md) and desktop when logged in */}
-          {user && ticketCredits !== null && (
+          {/* Ticket credit pill for Clients / Membership pill for Professionals */}
+          {user && ticketCredits !== null && backendUser?.role !== 'PROFESSIONAL' && (
             <Link
               href="/tickets"
               className="hidden sm:flex items-center gap-1.5 border border-[#b44d08]/20 bg-[#b44d08]/5 px-2.5 py-1.5 text-[10px] font-semibold text-[#b44d08] hover:bg-[#b44d08]/10 transition-colors shrink-0"
-              title="My ticket credits"
+              title="Bidding Tickets (Tender Posts)"
             >
               <Ticket className="h-3.5 w-3.5" />
-              <span>{ticketCredits} credit{ticketCredits !== 1 ? 's' : ''}</span>
+              <span>{ticketCredits} Ticket{ticketCredits !== 1 ? 's' : ''}</span>
+            </Link>
+          )}
+
+          {user && backendUser?.role === 'PROFESSIONAL' && (
+            <Link
+              href="/dashboard/professional"
+              className="hidden sm:flex items-center gap-1.5 border border-[#8B4434]/20 bg-[#8B4434]/10 px-2.5 py-1.5 text-[10px] font-semibold text-[#8B4434] hover:bg-[#8B4434]/15 transition-colors shrink-0"
+              title="Manage Professional Membership"
+            >
+              <ShieldCheck className="h-3.5 w-3.5" />
+              <span>Pro Workspace</span>
             </Link>
           )}
 
@@ -223,37 +304,78 @@ export default function Navbar() {
             <div className="relative hidden sm:flex items-center gap-2" ref={userMenuRef}>
               <button
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
-                className="flex items-center gap-2 hover:opacity-80 transition-opacity p-0.5 rounded-full focus:outline-none focus:ring-2 focus:ring-[#8B4434]/30"
+                className="relative flex items-center gap-2 hover:opacity-80 transition-opacity p-0.5 rounded-full focus:outline-none focus:ring-2 focus:ring-[#8B4434]/30"
               >
                 {profilePhoto || user.photoURL ? (
-                  <img src={profilePhoto || user.photoURL || ''} alt={displayName} className="rounded-full object-cover border border-[#b44d08]/20 w-8 h-8 sm:w-9 sm:h-9" />
+                  <img 
+                    src={profilePhoto || user.photoURL || ''} 
+                    alt={displayName} 
+                    className={`rounded-full object-cover border border-[#b44d08]/20 w-8 h-8 sm:w-9 sm:h-9 transition-all ${
+                      unreadChatCount > 0 
+                        ? 'ring-2 ring-emerald-500 ring-offset-2 ring-offset-[#FCFAF7] shadow-[0_0_12px_rgba(16,185,129,0.7)] animate-pulse' 
+                        : ''
+                    }`} 
+                  />
                 ) : (
-                  <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#b44d08]/10 border border-[#b44d08]/20 flex justify-center items-center text-[#b44d08]">
+                  <div 
+                    className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#b44d08]/10 border border-[#b44d08]/20 flex justify-center items-center text-[#b44d08] transition-all ${
+                      unreadChatCount > 0 
+                        ? 'ring-2 ring-emerald-500 ring-offset-2 ring-offset-[#FCFAF7] shadow-[0_0_12px_rgba(16,185,129,0.7)] animate-pulse' 
+                        : ''
+                    }`}
+                  >
                     <User className="h-4 w-4" />
                   </div>
                 )}
+                {unreadChatCount > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 flex h-3.5 w-3.5 z-10 pointer-events-none">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500 border-2 border-[#FCFAF7]"></span>
+                  </span>
+                )}
               </button>
               {userMenuOpen && (
-                <div className="absolute top-12 sm:top-14 right-0 w-52 bg-[#FCFAF7] border border-[#b44d08]/10 shadow-[0_4px_20px_-2px_rgba(139,68,52,0.15)] flex flex-col py-2 z-50">
+                <div className="absolute top-12 sm:top-14 right-0 w-56 bg-[#FCFAF7] border border-[#b44d08]/10 shadow-[0_4px_20px_-2px_rgba(139,68,52,0.15)] flex flex-col py-2 z-50">
                   <div className="px-4 py-3 border-b border-[#b44d08]/10 mb-2">
                     <p className="text-[#b44d08] text-xs font-semibold truncate">{displayName}</p>
                     <p className="text-[#b44d08]/70 text-[11px] truncate">{user.email}</p>
-                    {ticketCredits !== null && (
+                    {backendUser?.role !== 'PROFESSIONAL' && ticketCredits !== null && (
                       <p className="text-[10px] text-[#b44d08]/60 mt-1">
-                        <span className="font-semibold text-[#b44d08]">{ticketCredits}</span> ticket credit{ticketCredits !== 1 ? 's' : ''} remaining
+                        <span className="font-semibold text-[#b44d08]">{ticketCredits}</span> Bidding Ticket{ticketCredits !== 1 ? 's' : ''}
                       </p>
                     )}
                   </div>
                   <Link href="/dashboard" onClick={() => setUserMenuOpen(false)} className="px-4 py-2 text-[#b44d08] hover:bg-[#b44d08]/5 text-[10px] tracking-[0.1em] uppercase font-semibold transition-colors">Dashboard</Link>
-                  <Link href="/profile" onClick={() => setUserMenuOpen(false)} className="px-4 py-2 text-[#b44d08] hover:bg-[#b44d08]/5 text-[10px] tracking-[0.1em] uppercase font-semibold transition-colors">My Profile</Link>
-                  <Link href="/tickets" onClick={() => setUserMenuOpen(false)} className="px-4 py-2 text-[#b44d08] hover:bg-[#b44d08]/5 text-[10px] tracking-[0.1em] uppercase font-semibold transition-colors flex items-center justify-between">
-                    <span>My Tickets</span>
-                    {ticketCredits !== null && (
-                      <span className="bg-[#b44d08] text-white text-[9px] font-bold px-1.5 py-0.5 min-w-[18px] text-center">
-                        {ticketCredits}
+                  <Link 
+                    href={backendUser?.role === 'PROFESSIONAL' ? '/dashboard/professional#chats' : '/dashboard/client#chats'} 
+                    onClick={() => setUserMenuOpen(false)} 
+                    className="px-4 py-2 text-[#b44d08] hover:bg-[#b44d08]/5 text-[10px] tracking-[0.1em] uppercase font-semibold transition-colors flex items-center justify-between"
+                  >
+                    <span className="flex items-center gap-1.5">
+                      <MessageSquare className="w-3.5 h-3.5" />
+                      Messages &amp; Chats
+                    </span>
+                    {unreadChatCount > 0 && (
+                      <span className="bg-emerald-600 text-white text-[9px] font-bold px-1.5 py-0.2 rounded-full animate-pulse">
+                        {unreadChatCount} new
                       </span>
                     )}
                   </Link>
+                  <Link href="/profile" onClick={() => setUserMenuOpen(false)} className="px-4 py-2 text-[#b44d08] hover:bg-[#b44d08]/5 text-[10px] tracking-[0.1em] uppercase font-semibold transition-colors">My Profile</Link>
+                  {backendUser?.role === 'PROFESSIONAL' ? (
+                    <Link href="/dashboard/professional" onClick={() => setUserMenuOpen(false)} className="px-4 py-2 text-[#b44d08] hover:bg-[#b44d08]/5 text-[10px] tracking-[0.1em] uppercase font-semibold transition-colors">
+                      Membership &amp; Plans
+                    </Link>
+                  ) : (
+                    <Link href="/tickets" onClick={() => setUserMenuOpen(false)} className="px-4 py-2 text-[#b44d08] hover:bg-[#b44d08]/5 text-[10px] tracking-[0.1em] uppercase font-semibold transition-colors flex items-center justify-between">
+                      <span>Bidding Tickets</span>
+                      {ticketCredits !== null && (
+                        <span className="bg-[#b44d08] text-white text-[9px] font-bold px-1.5 py-0.5 min-w-[18px] text-center">
+                          {ticketCredits}
+                        </span>
+                      )}
+                    </Link>
+                  )}
                   <Link href="/workers/my-jobs" onClick={() => setUserMenuOpen(false)} className="px-4 py-2 text-[#b44d08] hover:bg-[#b44d08]/5 text-[10px] tracking-[0.1em] uppercase font-semibold transition-colors">My Worker Jobs</Link>
                   <button onClick={handleSignOut} className="px-4 py-2 text-left text-[#b44d08]/80 hover:bg-[#b44d08]/5 text-[10px] tracking-[0.1em] uppercase font-semibold transition-colors mt-1 border-t border-[#b44d08]/10 pt-3">
                     Logout
@@ -322,19 +444,37 @@ export default function Navbar() {
           ) : user ? (
             <div className="space-y-1.5">
               <div className="flex items-center gap-3 px-3 py-3 mb-2 bg-white border border-[#8B4434]/10">
-                {profilePhoto || user.photoURL ? (
-                  <img src={profilePhoto || user.photoURL || ''} alt={displayName} className="w-10 h-10 rounded-full object-cover border border-[#b44d08]/20 shrink-0" />
-                ) : (
-                  <div className="w-10 h-10 rounded-full bg-[#b44d08]/10 border border-[#b44d08]/20 flex justify-center items-center text-[#b44d08] shrink-0">
-                    <User className="h-5 w-5" />
-                  </div>
-                )}
+                <div className="relative shrink-0">
+                  {profilePhoto || user.photoURL ? (
+                    <img 
+                      src={profilePhoto || user.photoURL || ''} 
+                      alt={displayName} 
+                      className={`w-10 h-10 rounded-full object-cover border border-[#b44d08]/20 shrink-0 ${
+                        unreadChatCount > 0 ? 'ring-2 ring-emerald-500 animate-pulse' : ''
+                      }`} 
+                    />
+                  ) : (
+                    <div 
+                      className={`w-10 h-10 rounded-full bg-[#b44d08]/10 border border-[#b44d08]/20 flex justify-center items-center text-[#b44d08] shrink-0 ${
+                        unreadChatCount > 0 ? 'ring-2 ring-emerald-500 animate-pulse' : ''
+                      }`}
+                    >
+                      <User className="h-5 w-5" />
+                    </div>
+                  )}
+                  {unreadChatCount > 0 && (
+                    <span className="absolute -top-0.5 -right-0.5 flex h-3.5 w-3.5 z-10 pointer-events-none">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500 border-2 border-white"></span>
+                    </span>
+                  )}
+                </div>
                 <div className="min-w-0 flex-1">
                   <p className="text-[#b44d08] text-xs font-semibold truncate">{displayName}</p>
                   <p className="text-[#b44d08]/60 text-[11px] truncate">{user.email}</p>
-                  {ticketCredits !== null && (
+                  {backendUser?.role !== 'PROFESSIONAL' && ticketCredits !== null && (
                     <p className="text-[10px] text-[#8B4434] font-medium mt-0.5">
-                      {ticketCredits} ticket credit{ticketCredits !== 1 ? 's' : ''}
+                      {ticketCredits} Bidding Ticket{ticketCredits !== 1 ? 's' : ''}
                     </p>
                   )}
                 </div>
@@ -342,17 +482,41 @@ export default function Navbar() {
               <Link href="/dashboard" onClick={() => setMobileNavOpen(false)} className="flex items-center justify-between px-3 py-2.5 text-[12px] uppercase tracking-[0.18em] font-semibold text-[#b44d08] hover:bg-[#8B4434]/5 transition-colors">
                 Dashboard <ChevronRight className="h-4 w-4 opacity-50" />
               </Link>
+              <Link 
+                href={backendUser?.role === 'PROFESSIONAL' ? '/dashboard/professional#chats' : '/dashboard/client#chats'} 
+                onClick={() => setMobileNavOpen(false)} 
+                className="flex items-center justify-between px-3 py-2.5 text-[12px] uppercase tracking-[0.18em] font-semibold text-[#b44d08] hover:bg-[#8B4434]/5 transition-colors"
+              >
+                <span className="flex items-center gap-1.5">
+                  <MessageSquare className="w-3.5 h-3.5" />
+                  Messages &amp; Chats
+                </span>
+                {unreadChatCount > 0 ? (
+                  <span className="bg-emerald-600 text-white text-[9px] font-bold px-1.5 py-0.5 min-w-[18px] text-center rounded-full animate-pulse">
+                    {unreadChatCount} new
+                  </span>
+                ) : (
+                  <ChevronRight className="h-4 w-4 opacity-50" />
+                )}
+              </Link>
               <Link href="/profile" onClick={() => setMobileNavOpen(false)} className="flex items-center justify-between px-3 py-2.5 text-[12px] uppercase tracking-[0.18em] font-semibold text-[#b44d08] hover:bg-[#8B4434]/5 transition-colors">
                 My Profile <ChevronRight className="h-4 w-4 opacity-50" />
               </Link>
-              <Link href="/tickets" onClick={() => setMobileNavOpen(false)} className="flex items-center justify-between px-3 py-2.5 text-[12px] uppercase tracking-[0.18em] font-semibold text-[#b44d08] hover:bg-[#8B4434]/5 transition-colors">
-                <span>My Tickets</span>
-                {ticketCredits !== null && (
-                  <span className="bg-[#b44d08] text-white text-[9px] font-bold px-1.5 py-0.5 min-w-[18px] text-center">
-                    {ticketCredits}
-                  </span>
-                )}
-              </Link>
+              {backendUser?.role === 'PROFESSIONAL' ? (
+                <Link href="/dashboard/professional" onClick={() => setMobileNavOpen(false)} className="flex items-center justify-between px-3 py-2.5 text-[12px] uppercase tracking-[0.18em] font-semibold text-[#b44d08] hover:bg-[#8B4434]/5 transition-colors">
+                  <span>Membership &amp; Plans</span>
+                  <ChevronRight className="h-4 w-4 opacity-50" />
+                </Link>
+              ) : (
+                <Link href="/tickets" onClick={() => setMobileNavOpen(false)} className="flex items-center justify-between px-3 py-2.5 text-[12px] uppercase tracking-[0.18em] font-semibold text-[#b44d08] hover:bg-[#8B4434]/5 transition-colors">
+                  <span>Bidding Tickets</span>
+                  {ticketCredits !== null && (
+                    <span className="bg-[#b44d08] text-white text-[9px] font-bold px-1.5 py-0.5 min-w-[18px] text-center">
+                      {ticketCredits}
+                    </span>
+                  )}
+                </Link>
+              )}
               <Link href="/workers/my-jobs" onClick={() => setMobileNavOpen(false)} className="flex items-center justify-between px-3 py-2.5 text-[12px] uppercase tracking-[0.18em] font-semibold text-[#b44d08] hover:bg-[#8B4434]/5 transition-colors">
                 My Worker Jobs <ChevronRight className="h-4 w-4 opacity-50" />
               </Link>

@@ -9,6 +9,8 @@ router.register(r'bids', views.BidViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
+    # Private Chat Conversations
+    path('chats/', views.my_chat_conversations, name='my_chat_conversations'),
     # Ticket system
     path('tickets/purchase/', ticket_views.purchase_ticket_bundle, name='purchase_ticket_bundle'),
     path('tickets/my/', ticket_views.my_ticket_bundles, name='my_ticket_bundles'),

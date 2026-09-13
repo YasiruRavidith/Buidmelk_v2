@@ -154,6 +154,7 @@ export default function MarketplaceFeed() {
       });
 
       if (response.ok) {
+        window.dispatchEvent(new Event("cartUpdated"));
         alert(`${material.name} added to cart`);
       } else {
         const data = await response.json().catch(() => ({}));

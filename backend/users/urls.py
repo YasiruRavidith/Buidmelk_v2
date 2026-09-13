@@ -27,4 +27,10 @@ urlpatterns = [
     path('hardware/shops/items/<int:item_id>/delete/', views.delete_hardware_shop_item, name='delete_hardware_shop_item'),
     path('professionals/', views.list_professionals, name='list_professionals'),
     path('professionals/<int:prof_id>/', views.get_professional, name='get_professional'),
+    # Membership, Subscriptions & Monetization
+    path('professional/membership/', views.get_professional_membership, name='get_professional_membership'),
+    path('professional/pay-registration/', views.pay_registration_fee, name='pay_registration_fee'),
+    path('professional/subscribe/', views.subscribe_service_plan, name='subscribe_service_plan'),
+    path('professional/buy-badge/', views.buy_verified_badge, name='buy_verified_badge'),
+    path('transactions/', views.list_user_transactions, name='list_user_transactions'),
 ]

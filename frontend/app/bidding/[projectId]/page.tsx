@@ -1,10 +1,13 @@
 "use client";
 
-import { useState, useEffect, use } from "react";
+import { useState, useEffect, useRef, use } from "react";
 import Link from "next/link";
 import { useAuth } from "../../../hooks/useAuth";
 import { API_BASE_URL } from "@/lib/api";
-import { Lock, Ticket, ShieldCheck, ArrowRight, AlertCircle } from "lucide-react";
+import { 
+  Lock, Ticket, ShieldCheck, ArrowRight, AlertCircle, 
+  MessageSquare, Send, X, Check, CheckCheck, RefreshCw 
+} from "lucide-react";
 
 export default function ProjectDetail({ params }: { params: Promise<{ projectId: string }> }) {
   const { projectId } = use(params);
@@ -19,6 +22,16 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
   const [loading, setLoading] = useState(true);
   const [acceptingBidId, setAcceptingBidId] = useState<number | null>(null);
 
+  // Private Chat Room state
+  const [chatOpen, setChatOpen] = useState(false);
+  const [chatData, setChatData] = useState<any>(null);
+  const [chatMessages, setChatMessages] = useState<any[]>([]);
+  const [chatInput, setChatInput] = useState("");
+  const [chatSending, setChatSending] = useState(false);
+  const [chatLoading, setChatLoading] = useState(false);
+  const [chatError, setChatError] = useState<string | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
   // Ticket gate state
   const [ticketStatus, setTicketStatus] = useState<{
     unlocked: boolean;
@@ -30,6 +43,8 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
   const [unlocking, setUnlocking] = useState(false);
   const [purchasing, setPurchasing] = useState(false);
   const [ticketError, setTicketError] = useState("");
+  const [bidError, setBidError] = useState<string | null>(null);
+  const [bidNeedsMembership, setBidNeedsMembership] = useState(false);
 
   // Accordion Expand/Collapse States for long sections
   const [showAiStrategy, setShowAiStrategy] = useState(false);
@@ -124,6 +139,100 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
     if (user) checkTicket();
   }, [user, projectId]);
 
+  // Check URL query param to automatically open chat (e.g. from contractor dashboard)
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const search = new URLSearchParams(window.location.search);
+      if (search.get("chat") === "open") {
+        setChatOpen(true);
+      }
+    }
+  }, []);
+
+  const fetchChat = async (silent = false) => {
+    if (!user) return;
+    if (!silent) setChatLoading(true);
+    setChatError(null);
+    try {
+      const token = await user.getIdToken();
+      const res = await fetch(`${API_BASE_URL}/bidding/projects/${projectId}/chat/`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setChatData(data);
+        setChatMessages(data.messages || []);
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new Event("chatUpdated"));
+        }
+      } else {
+        const errData = await res.json().catch(() => ({}));
+        if (!silent) setChatError(errData.error || "Failed to load chat.");
+      }
+    } catch (err) {
+      console.error("Chat fetch error:", err);
+      if (!silent) setChatError("Could not connect to chat server.");
+    } finally {
+      if (!silent) setChatLoading(false);
+    }
+  };
+
+  // Poll chat messages every 3 seconds while chat modal is open
+  useEffect(() => {
+    if (!chatOpen || !user) return;
+    fetchChat(false);
+    const interval = setInterval(() => {
+      fetchChat(true);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [chatOpen, user, projectId]);
+
+  // Auto-scroll to bottom of chat
+  useEffect(() => {
+    if (chatOpen && messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [chatMessages, chatOpen]);
+
+  const handleSendMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const text = chatInput.trim();
+    if (!text || !user || chatSending) return;
+
+    setChatSending(true);
+    setChatError(null);
+    try {
+      const token = await user.getIdToken();
+      const res = await fetch(`${API_BASE_URL}/bidding/projects/${projectId}/chat/`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ message: text }),
+      });
+
+      if (res.ok) {
+        const newMsg = await res.json();
+        setChatMessages((prev) => [...prev, newMsg]);
+        setChatInput("");
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new Event("chatUpdated"));
+        }
+      } else {
+        const errData = await res.json().catch(() => ({}));
+        setChatError(errData.error || "Failed to send message.");
+      }
+    } catch (err) {
+      console.error("Failed to send message", err);
+      setChatError("Network error while sending message.");
+    } finally {
+      setChatSending(false);
+    }
+  };
+
   const handleAcceptBid = async (bidId: number) => {
     if (!user) return;
     setAcceptingBidId(bidId);
@@ -137,8 +246,9 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
         }
       });
       if (res.ok) {
-        alert("Bid accepted successfully!");
-        fetchProject();
+        alert("Bid accepted successfully! Private chat room is now open with the contractor.");
+        await fetchProject();
+        setChatOpen(true);
       } else {
         alert("Failed to accept bid.");
       }
@@ -177,13 +287,19 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
 
       if (res.ok) {
         setSubmitted(true);
+        setBidError(null);
+        setBidNeedsMembership(false);
         fetchProject();
       } else {
-        alert("Failed to submit bid.");
+        const errData = await res.json().catch(() => ({}));
+        if (res.status === 402 || errData.needs_registration || errData.needs_service_fee) {
+          setBidNeedsMembership(true);
+        }
+        setBidError(errData.error || "Failed to submit proposal. Please check your membership status.");
       }
     } catch (err) {
       console.error(err);
-      alert("Error submitting bid.");
+      setBidError("Error submitting bid. Please check connection.");
     } finally {
       setIsSubmitting(false);
     }
@@ -208,6 +324,31 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
       </div>
     );
   }
+
+  const acceptedBid = project?.accepted_bid || project?.bids?.find((b: any) => b.status === 'ACCEPTED');
+  const isProjectOwner = Boolean(user && project?.client_firebase_uid === user.uid);
+  const isAcceptedContractor = Boolean(user && acceptedBid?.professional_details?.firebase_uid === user.uid);
+  const canAccessChat = Boolean(acceptedBid && (isProjectOwner || isAcceptedContractor));
+
+  const counterpartName = isProjectOwner
+    ? (chatData?.professional?.name || (acceptedBid?.professional_details?.first_name 
+        ? `${acceptedBid?.professional_details?.first_name || ''} ${acceptedBid?.professional_details?.last_name || ''}`.trim() 
+        : acceptedBid?.professional_details?.username || "Contractor"))
+    : (chatData?.client?.name || project?.client_name || "Project Homeowner");
+
+  const counterpartRole = isProjectOwner ? "Accepted Contractor" : "Project Homeowner";
+  const counterpartImage = isProjectOwner 
+    ? (chatData?.professional?.profile_image || acceptedBid?.professional_details?.profile_image) 
+    : (chatData?.client?.profile_image);
+
+  const formatChatTime = (isoString: string) => {
+    try {
+      const d = new Date(isoString);
+      return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    } catch {
+      return "";
+    }
+  };
 
   const statusStyles: Record<string, string> = {
     OPEN: "bg-emerald-50 text-emerald-800 border-emerald-200",
@@ -262,6 +403,29 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
               <span className="font-semibold text-white text-sm">{project.bids?.length || project.bids_count || 0} Submitted</span>
             </div>
           </div>
+
+          {/* Active Chat Quick Action Banner if Bid is Accepted and User has access */}
+          {canAccessChat && (
+            <div className="pt-4 border-t border-[#322318] flex flex-wrap items-center justify-between gap-3 bg-emerald-950/40 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-3 border-y border-emerald-800/40">
+              <div className="flex items-center gap-2.5">
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                </span>
+                <span className="text-xs font-semibold text-emerald-200">
+                  Bid Accepted &amp; Awarded — Private 1-on-1 Chat Room Active
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setChatOpen(true)}
+                className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold uppercase tracking-wider px-4 py-2 transition-all shadow-sm cursor-pointer"
+              >
+                <MessageSquare className="w-4 h-4" />
+                Open Private Chat
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -431,88 +595,11 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
                 )}
               </div>
 
-              {/* Ticket Gate Block */}
-              {user && ticketStatus && !ticketStatus.unlocked && !ticketStatus.is_professional && (
-                <div className="border border-[#8B4434]/30 bg-[#FCFAF7] shadow-sm">
-                  {/* Blurred preview hint */}
-                  <div className="relative overflow-hidden p-6 pointer-events-none select-none">
-                    {[1,2,3].map((i) => (
-                      <div key={i} className="mb-4 p-4 border border-[#e8ddd6] bg-white opacity-40 space-y-2">
-                        <div className="h-3 w-32 bg-[#e8ddd6] rounded" />
-                        <div className="h-2 w-48 bg-[#e8ddd6] rounded" />
-                        <div className="h-2 w-24 bg-[#8B4434]/20 rounded" />
-                      </div>
-                    ))}
-                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#FCFAF7]/70 to-[#FCFAF7]" />
-                  </div>
-                  {/* Lock UI */}
-                  <div className="px-6 pb-8 text-center space-y-5">
-                    <div className="w-14 h-14 bg-[#1c1108] flex items-center justify-center mx-auto">
-                      <Lock className="w-6 h-6 text-[#8B4434]" />
-                    </div>
-                    <div>
-                      <h4 className="font-serif text-xl sm:text-2xl text-[#1c1108]">
-                        {ticketStatus.is_owner ? "Unlock Proposals & Contractor Identities" : "Proposals & Contractor Details are Locked"}
-                      </h4>
-                      <p className="text-xs sm:text-sm text-[#606060] mt-2 max-w-md mx-auto leading-relaxed">
-                        {ticketStatus.is_owner
-                          ? "As the project owner, spend 1 ticket credit to unlock ALL proposals submitted for your tender, reveal contractor names & contact details, view professional profiles, and accept a bid."
-                          : "Use 1 ticket credit to unlock ALL proposals submitted for this project tender, reveal professional names & contact details, and view full professional profiles."}
-                      </p>
-                      <p className="text-[11px] text-[#8B4434] font-semibold mt-1">
-                        ✨ 1 credit unlocks ALL proposals for this project tender.
-                      </p>
-                    </div>
-
-                    {ticketError && (
-                      <div className="flex items-center gap-2 text-rose-700 text-xs bg-rose-50 border border-rose-200 p-3 text-left">
-                        <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-                        {ticketError}
-                      </div>
-                    )}
-
-                    {ticketStatus.credits_remaining > 0 ? (
-                      <div className="space-y-3">
-                        <p className="text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 py-2 px-4 inline-block font-medium">
-                          You have <strong>{ticketStatus.credits_remaining}</strong> unlock credit{ticketStatus.credits_remaining > 1 ? "s" : ""} available
-                        </p>
-                        <button
-                          onClick={handleUnlock}
-                          disabled={unlocking}
-                          className="block w-full max-w-xs mx-auto bg-[#8B4434] text-[#FCFAF7] py-3.5 text-xs font-bold uppercase tracking-widest hover:bg-[#6f3829] disabled:opacity-70 transition-colors shadow-sm"
-                        >
-                          {unlocking ? "Unlocking..." : "Use 1 Credit — Unlock All Proposals"}
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="space-y-3">
-                        <div className="flex flex-col sm:flex-row items-center gap-3 justify-center">
-                          <button
-                            onClick={handlePurchaseAndUnlock}
-                            disabled={purchasing}
-                            className="flex items-center gap-2 bg-[#8B4434] text-[#FCFAF7] py-3.5 px-8 text-xs font-bold uppercase tracking-widest hover:bg-[#6f3829] disabled:opacity-70 transition-colors"
-                          >
-                            <Ticket className="w-3.5 h-3.5" />
-                            {purchasing ? "Processing..." : "Buy Ticket Bundle & Unlock — LKR 500"}
-                          </button>
-                          <Link href="/tickets" className="flex items-center gap-1 text-xs text-[#8B4434] font-semibold hover:underline">
-                            View My Tickets <ArrowRight className="w-3 h-3" />
-                          </Link>
-                        </div>
-                        <p className="text-[10px] text-[#908078]">
-                          LKR 500 for 3 project unlocks (1 unlock per project tender).
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-
               {/* Not logged in */}
               {!user && (
                 <div className="text-center py-8 space-y-3">
                   <Lock className="w-8 h-8 text-[#8B4434] mx-auto" />
-                  <p className="text-[#606060] text-sm">Login to view submitted proposals.</p>
+                  <p className="text-[#606060] text-sm">Login to view submitted contractor proposals.</p>
                   <Link href={`/login?redirect=/bidding/${projectId}`} className="inline-block bg-[#8B4434] text-[#FCFAF7] px-6 py-3 text-xs font-bold uppercase tracking-widest hover:bg-[#6f3829] transition-colors">
                     Login to View Bids
                   </Link>
@@ -520,7 +607,7 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
               )}
 
               {/* Show bids feed */}
-              {(ticketStatus?.unlocked || ticketStatus?.is_owner || ticketStatus?.is_professional || (!user)) && (
+              {user && (
               <>
               {!project.bids || project.bids.length === 0 ? (
                 <div className="text-center py-10 text-[#908078] text-sm">
@@ -532,9 +619,9 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
                     const isProjectOwner = user && project.client_firebase_uid === user.uid;
                     const isBidder = user && bid.professional_details?.firebase_uid === user.uid;
 
-                    // Identity is revealed ONLY when user has unlocked or is the bidder themselves
-                    const identityRevealed = Boolean(ticketStatus?.unlocked || isBidder);
-                    const canAccept = isProjectOwner && ticketStatus?.unlocked && bid.status === 'PENDING' && project.status === 'OPEN';
+                    // Identity is revealed for project owner and bidders
+                    const identityRevealed = Boolean(isProjectOwner || isBidder || user);
+                    const canAccept = isProjectOwner && bid.status === 'PENDING' && project.status === 'OPEN';
 
                     const bidStatusColors: Record<string, string> = {
                       PENDING: 'bg-amber-50 text-amber-800 border-amber-200',
@@ -550,7 +637,20 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
                     const profProjects = bid.professional_projects_completed;
 
                     return (
-                      <div key={bid.id} className="border border-[#e8ddd6] bg-[#FCFAF7] overflow-hidden">
+                      <div key={bid.id} className={`border ${bid.status === 'ACCEPTED' ? 'border-emerald-500 ring-1 ring-emerald-500' : 'border-[#e8ddd6]'} bg-[#FCFAF7] overflow-hidden`}>
+                        {bid.status === 'ACCEPTED' && (
+                          <div className="bg-emerald-700 text-white px-5 py-2 text-xs font-bold uppercase tracking-widest flex items-center justify-between">
+                            <span className="flex items-center gap-1.5">
+                              <ShieldCheck className="w-4 h-4" /> Awarded &amp; Accepted Proposal
+                            </span>
+                            {canAccessChat && (
+                              <span className="text-[10px] bg-emerald-900/80 px-2.5 py-0.5 font-sans normal-case tracking-normal">
+                                Private 1-on-1 Chat Active
+                              </span>
+                            )}
+                          </div>
+                        )}
+
                         {/* Card Header */}
                         <div className="p-5 sm:p-6 flex flex-wrap items-center justify-between gap-3">
                           <div className="flex items-center gap-3">
@@ -583,6 +683,18 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
                           </div>
 
                           <div className="flex items-center gap-2">
+                            {/* Chat Button for Accepted Bid */}
+                            {canAccessChat && bid.status === 'ACCEPTED' && (
+                              <button
+                                type="button"
+                                onClick={() => setChatOpen(true)}
+                                className="inline-flex items-center gap-1.5 text-xs text-white bg-emerald-700 hover:bg-emerald-800 font-semibold transition-colors px-3 py-1.5 shadow-sm cursor-pointer"
+                              >
+                                <MessageSquare className="w-3.5 h-3.5" />
+                                Chat
+                              </button>
+                            )}
+
                             {/* View Professional Profile Button */}
                             {identityRevealed && bid.professional_details?.id ? (
                               <Link
@@ -673,6 +785,36 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
                             </button>
                           </div>
                         )}
+
+                        {/* Accepted Proposal Chat Footer */}
+                        {bid.status === 'ACCEPTED' && (
+                          <div className="px-5 sm:px-6 py-4 border-t border-emerald-200 bg-emerald-50/50 flex flex-wrap items-center justify-between gap-3">
+                            <div className="flex items-center gap-2 text-xs text-emerald-950">
+                              <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+                              <span>
+                                {canAccessChat
+                                  ? "This bid has been accepted! You can now communicate directly via the private chat room."
+                                  : "This proposal was accepted and awarded by the homeowner."}
+                              </span>
+                            </div>
+
+                            {canAccessChat ? (
+                              <button
+                                type="button"
+                                onClick={() => setChatOpen(true)}
+                                className="inline-flex items-center gap-2 bg-emerald-700 hover:bg-emerald-800 text-white px-5 py-2.5 text-xs font-bold uppercase tracking-wider transition-colors shadow-sm cursor-pointer"
+                              >
+                                <MessageSquare className="w-4 h-4" />
+                                Open Private Chat Room
+                              </button>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 text-xs text-stone-500 bg-stone-100 px-3 py-1.5 border border-stone-200">
+                                <Lock className="w-3.5 h-3.5 text-stone-400" />
+                                Chat room is restricted to project parties
+                              </span>
+                            )}
+                          </div>
+                        )}
                       </div>
                     );
                   })}
@@ -750,6 +892,25 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
                     />
                   </div>
 
+                  {bidError && (
+                    <div className="p-4 bg-rose-50 border border-rose-200 text-xs space-y-2 text-rose-800">
+                      <div className="flex items-start gap-2">
+                        <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                        <span className="leading-relaxed">{bidError}</span>
+                      </div>
+                      {bidNeedsMembership && (
+                        <div className="pt-2 border-t border-rose-200/60">
+                          <Link 
+                            href="/dashboard/professional"
+                            className="inline-block bg-[#8B4434] text-white px-4 py-2 text-[10px] font-bold uppercase tracking-widest hover:bg-[#723628] transition-colors"
+                          >
+                            Manage Professional Plan &rarr;
+                          </Link>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
                   <button 
                     type="submit" 
                     disabled={isSubmitting} 
@@ -761,9 +922,198 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
               )}
             </div>
           </aside>
-
         </div>
       </div>
+
+      {/* ========================================================================= */}
+      {/* PRIVATE CHAT ROOM MODAL                                                   */}
+      {/* ========================================================================= */}
+      {chatOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-3 sm:p-6 animate-fadeIn">
+          <div className="bg-[#FCFAF7] border border-[#322318] shadow-2xl w-full max-w-2xl h-[88vh] max-h-[750px] flex flex-col overflow-hidden relative">
+            
+            {/* Chat Header */}
+            <div className="bg-[#1c1108] text-[#FCFAF7] px-5 py-4 border-b border-[#322318] flex items-center justify-between gap-3 shrink-0">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="relative shrink-0">
+                  {counterpartImage ? (
+                    <img 
+                      src={counterpartImage} 
+                      alt={counterpartName} 
+                      className="w-10 h-10 object-cover border border-[#8B4434]" 
+                    />
+                  ) : (
+                    <div className="w-10 h-10 bg-[#8B4434] text-white flex items-center justify-center font-serif text-sm font-bold">
+                      {counterpartName.slice(0, 2).toUpperCase()}
+                    </div>
+                  )}
+                  <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 border-2 border-[#1c1108] rounded-full" />
+                </div>
+
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h3 className="font-serif text-base sm:text-lg text-[#FCFAF7] truncate">
+                      {counterpartName}
+                    </h3>
+                    <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 bg-[#8B4434]/30 text-[#e8ddd6] border border-[#8B4434]/50">
+                      {counterpartRole}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-[#c9b8b0] truncate max-w-md">
+                    Re: {project?.title}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => fetchChat(false)}
+                  title="Refresh messages"
+                  className="w-8 h-8 flex items-center justify-center text-[#c9b8b0] hover:text-white transition-colors border border-stone-700 hover:border-stone-500 cursor-pointer"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${chatLoading ? 'animate-spin' : ''}`} />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setChatOpen(false)}
+                  title="Close chat"
+                  className="w-8 h-8 flex items-center justify-center text-[#c9b8b0] hover:text-white transition-colors border border-stone-700 hover:border-stone-500 cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            {/* Privacy & Project Info Bar */}
+            <div className="bg-[#f2ece6] px-5 py-2.5 border-b border-[#e8ddd6] flex items-center justify-between text-xs text-[#606060] shrink-0 gap-2">
+              <div className="flex items-center gap-2 min-w-0">
+                <Lock className="w-3.5 h-3.5 text-[#8B4434] shrink-0" />
+                <span className="text-[11px] truncate">
+                  Confidential 1-on-1 Room • Restricted strictly to Client &amp; Contractor
+                </span>
+              </div>
+              {acceptedBid && (
+                <div className="text-[11px] font-semibold text-[#8B4434] shrink-0">
+                  Awarded: {fmt(acceptedBid.bid_amount)}
+                </div>
+              )}
+            </div>
+
+            {/* Messages Scroll Area */}
+            <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 bg-[#FCFAF7]">
+              {chatLoading && chatMessages.length === 0 ? (
+                <div className="h-full flex flex-col items-center justify-center text-stone-500 space-y-2">
+                  <div className="inline-block animate-spin w-6 h-6 border-2 border-[#8B4434] border-t-transparent" />
+                  <p className="text-xs">Loading secure message history...</p>
+                </div>
+              ) : chatMessages.length === 0 ? (
+                <div className="h-full flex flex-col items-center justify-center text-center p-6 space-y-3">
+                  <div className="w-12 h-12 bg-stone-100 rounded-full flex items-center justify-center text-[#8B4434]">
+                    <MessageSquare className="w-6 h-6" />
+                  </div>
+                  <h4 className="font-serif text-lg text-[#1c1108]">Start the Conversation</h4>
+                  <p className="text-xs text-[#606060] max-w-sm leading-relaxed">
+                    Say hello! Coordinate site visits, schedule blueprints review, materials procurement, or project milestones in this private room.
+                  </p>
+                </div>
+              ) : (
+                chatMessages.map((msg) => {
+                  const isMe = msg.is_me;
+                  return (
+                    <div
+                      key={msg.id}
+                      className={`flex flex-col ${isMe ? "items-end" : "items-start"}`}
+                    >
+                      <div className="flex items-center gap-1.5 mb-1 px-1">
+                        <span className="text-[10px] font-semibold text-[#908078]">
+                          {isMe ? "You" : msg.sender_name}
+                        </span>
+                        {!isMe && (
+                          <span className="text-[9px] uppercase px-1.5 py-0.2 bg-stone-200 text-stone-700 font-bold">
+                            {msg.sender_role}
+                          </span>
+                        )}
+                        <span className="text-[9px] text-[#c9b8b0]">
+                          {formatChatTime(msg.created_at)}
+                        </span>
+                      </div>
+
+                      <div
+                        className={`max-w-[82%] sm:max-w-[75%] px-4 py-3 text-xs sm:text-sm leading-relaxed whitespace-pre-wrap ${
+                          isMe
+                            ? "bg-[#8B4434] text-white rounded-2xl rounded-tr-none shadow-sm"
+                            : "bg-white border border-[#e8ddd6] text-[#1c1108] rounded-2xl rounded-tl-none shadow-sm"
+                        }`}
+                      >
+                        {msg.message}
+                      </div>
+
+                      {isMe && (
+                        <div className="flex items-center gap-1 text-[9px] text-[#908078] mt-0.5 px-1">
+                          {msg.is_read ? (
+                            <span className="flex items-center gap-0.5 text-emerald-600">
+                              <CheckCheck className="w-3 h-3" /> Read
+                            </span>
+                          ) : (
+                            <span className="flex items-center gap-0.5">
+                              <Check className="w-3 h-3" /> Sent
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })
+              )}
+              <div ref={messagesEndRef} />
+            </div>
+
+            {/* Error banner if any */}
+            {chatError && (
+              <div className="bg-rose-50 border-t border-rose-200 px-4 py-2 text-xs text-rose-800 flex items-center justify-between">
+                <span>{chatError}</span>
+                <button
+                  type="button"
+                  onClick={() => setChatError(null)}
+                  className="text-rose-600 font-bold text-sm cursor-pointer"
+                >
+                  &times;
+                </button>
+              </div>
+            )}
+
+            {/* Chat Input Bar */}
+            <form
+              onSubmit={handleSendMessage}
+              className="p-3 sm:p-4 bg-white border-t border-[#e8ddd6] flex items-center gap-2 shrink-0"
+            >
+              <input
+                type="text"
+                value={chatInput}
+                onChange={(e) => setChatInput(e.target.value)}
+                placeholder="Type your message here... (Enter to send)"
+                disabled={chatSending}
+                className="flex-1 bg-[#FCFAF7] border border-[#c9b8b0] px-4 py-2.5 text-xs sm:text-sm text-[#1c1108] placeholder-[#908078] focus:outline-none focus:border-[#8B4434] transition-colors"
+              />
+              <button
+                type="submit"
+                disabled={chatSending || !chatInput.trim()}
+                className="bg-[#8B4434] hover:bg-[#723628] disabled:opacity-50 text-white px-4 sm:px-5 py-2.5 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 transition-colors shrink-0 shadow-sm cursor-pointer"
+              >
+                {chatSending ? (
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent animate-spin" />
+                ) : (
+                  <>
+                    <span>Send</span>
+                    <Send className="w-3.5 h-3.5" />
+                  </>
+                )}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

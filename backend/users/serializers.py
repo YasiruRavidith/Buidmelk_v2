@@ -13,6 +13,7 @@ from .models import (
     HardwareShop,
     HardwareShopImage,
     HardwareShopItem,
+    PaymentTransaction,
 )
 
 
@@ -249,6 +250,8 @@ class ProfessionalProfileSerializer(serializers.ModelSerializer):
     portfolio_images = ProfessionalPortfolioImageSerializer(many=True, read_only=True)
     certification_images = ProfessionalCertificationImageSerializer(many=True, read_only=True)
     hardware_profile = HardwareOwnerProfileSerializer(read_only=True)
+    is_service_active = serializers.SerializerMethodField()
+    is_badge_active = serializers.SerializerMethodField()
 
     class Meta:
         model = ProfessionalProfile
@@ -257,8 +260,28 @@ class ProfessionalProfileSerializer(serializers.ModelSerializer):
             'years_of_experience', 'about', 'skills_specialization',
             'certifications', 'education', 'service_areas',
             'pricing_range', 'years_in_business', 'team_size', 'availability',
-            'is_verified', 'rating', 'projects_completed',
+            'is_verified', 'badge_expires_at', 'rating', 'projects_completed',
+            'registration_fee_paid', 'registration_fee_paid_at',
+            'service_fee_plan', 'service_fee_status', 'service_fee_expires_at',
+            'is_service_active', 'is_badge_active',
             'portfolio_images', 'certification_images', 'hardware_profile'
+        ]
+
+    def get_is_service_active(self, obj):
+        return obj.is_service_active()
+
+    def get_is_badge_active(self, obj):
+        return obj.is_badge_active()
+
+
+class PaymentTransactionSerializer(serializers.ModelSerializer):
+    transaction_type_display = serializers.CharField(source='get_transaction_type_display', read_only=True)
+
+    class Meta:
+        model = PaymentTransaction
+        fields = [
+            'id', 'transaction_type', 'transaction_type_display',
+            'amount', 'payment_method', 'reference_id', 'status', 'created_at'
         ]
 
 class CustomUserSerializer(serializers.ModelSerializer):

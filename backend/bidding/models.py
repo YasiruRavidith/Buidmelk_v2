@@ -45,28 +45,28 @@ class Bid(models.Model):
 
 
 class TicketBundle(models.Model):
-    """A purchased bundle of 3 project unlocks."""
+    """A purchased ticket or bundle of tickets for posting bidding projects."""
     BUNDLE_STATUS_CHOICES = (
         ('ACTIVE', 'Active'),
         ('EXHAUSTED', 'Exhausted'),
         ('EXPIRED', 'Expired'),
     )
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='ticket_bundles')
-    unlocks_total = models.PositiveIntegerField(default=3)
+    unlocks_total = models.PositiveIntegerField(default=1)
     unlocks_used = models.PositiveIntegerField(default=0)
-    price_paid = models.DecimalField(max_digits=10, decimal_places=2, default=500.00)
+    price_paid = models.DecimalField(max_digits=10, decimal_places=2, default=1500.00)
     status = models.CharField(max_length=20, choices=BUNDLE_STATUS_CHOICES, default='ACTIVE')
     transaction_ref = models.CharField(max_length=255, blank=True, null=True)
     purchased_at = models.DateTimeField(auto_now_add=True)
 
     def unlocks_remaining(self):
-        return self.unlocks_total - self.unlocks_used
+        return max(0, self.unlocks_total - self.unlocks_used)
 
     def is_usable(self):
         return self.status == 'ACTIVE' and self.unlocks_remaining() > 0
 
     def __str__(self):
-        return f"TicketBundle#{self.id} — {self.owner.email} ({self.unlocks_remaining()} remaining)"
+        return f"BiddingTicket#{self.id} — {self.owner.email} ({self.unlocks_remaining()} credits remaining)"
 
 
 class ProjectUnlock(models.Model):
@@ -81,3 +81,19 @@ class ProjectUnlock(models.Model):
 
     def __str__(self):
         return f"{self.user.email} unlocked '{self.project.title}'"
+
+
+class ProjectChatMessage(models.Model):
+    """Private chat message between project client and accepted professional."""
+    project = models.ForeignKey(ProjectPost, on_delete=models.CASCADE, related_name='chat_messages')
+    sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='project_chat_messages')
+    message = models.TextField()
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['created_at']
+
+    def __str__(self):
+        return f"Message by {self.sender.email} in '{self.project.title}' at {self.created_at}"
+

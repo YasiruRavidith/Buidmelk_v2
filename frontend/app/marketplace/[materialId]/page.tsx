@@ -158,6 +158,7 @@ export default function MaterialDetail() {
       });
 
       if (response.ok) {
+        window.dispatchEvent(new Event("cartUpdated"));
         alert("Added to cart successfully");
       } else {
         const data = await response.json().catch(() => ({}));

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "../../hooks/useAuth";
-import { Ticket, CheckCircle2, Clock, Package, ArrowRight, ShieldCheck } from "lucide-react";
+import { Ticket, CheckCircle2, Clock, Package, ArrowRight, ShieldCheck, Plus, Sparkles } from "lucide-react";
 import { API_BASE_URL } from "@/lib/api";
 
 interface Bundle {
@@ -16,42 +16,27 @@ interface Bundle {
   purchased_at: string;
 }
 
-interface UnlockedProject {
-  project_id: number;
-  project_title: string;
-  project_status: string;
-  unlocked_at: string;
-}
-
 export default function MyTicketsPage() {
   const { user } = useAuth();
   const [bundles, setBundles] = useState<Bundle[]>([]);
-  const [unlocked, setUnlocked] = useState<UnlockedProject[]>([]);
   const [totalCredits, setTotalCredits] = useState(0);
   const [loading, setLoading] = useState(true);
   const [purchasing, setPurchasing] = useState(false);
-  const [purchaseSuccess, setPurchaseSuccess] = useState(false);
+  const [purchaseSuccess, setPurchaseSuccess] = useState<string | null>(null);
+  const [selectedQuantity, setSelectedQuantity] = useState(1);
 
   const fetchData = async () => {
     if (!user) return;
     setLoading(true);
     try {
       const token = await user.getIdToken();
-      const [bundleRes, unlockedRes] = await Promise.all([
-        fetch(`${API_BASE_URL}/bidding/tickets/my/`, {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-        fetch(`${API_BASE_URL}/bidding/tickets/unlocked/`, {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-      ]);
+      const bundleRes = await fetch(`${API_BASE_URL}/bidding/tickets/my/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       if (bundleRes.ok) {
         const data = await bundleRes.json();
-        setBundles(data.bundles);
-        setTotalCredits(data.total_credits_remaining);
-      }
-      if (unlockedRes.ok) {
-        setUnlocked(await unlockedRes.json());
+        setBundles(data.bundles || []);
+        setTotalCredits(data.total_credits_remaining || 0);
       }
     } finally {
       setLoading(false);
@@ -62,10 +47,10 @@ export default function MyTicketsPage() {
     fetchData();
   }, [user]);
 
-  const handlePurchase = async () => {
+  const handlePurchase = async (quantity: number = 1) => {
     if (!user) return;
     setPurchasing(true);
-    setPurchaseSuccess(false);
+    setPurchaseSuccess(null);
     try {
       const token = await user.getIdToken();
       const res = await fetch(`${API_BASE_URL}/bidding/tickets/purchase/`, {
@@ -74,11 +59,19 @@ export default function MyTicketsPage() {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ transaction_ref: "MOCK_PAYMENT" }),
+        body: JSON.stringify({ 
+          quantity,
+          transaction_ref: "MOCK_PAYMENT" 
+        }),
       });
       if (res.ok) {
-        setPurchaseSuccess(true);
+        const data = await res.json();
+        setPurchaseSuccess(`Successfully purchased ${quantity} Bidding Ticket${quantity > 1 ? 's' : ''}!`);
         fetchData();
+        window.dispatchEvent(new Event("ticketsUpdated"));
+      } else {
+        const err = await res.json();
+        alert(err.error || "Failed to purchase bidding ticket.");
       }
     } finally {
       setPurchasing(false);
@@ -87,9 +80,10 @@ export default function MyTicketsPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-[#FCFAF7] flex flex-col items-center justify-center gap-4">
-        <p className="font-serif text-2xl text-[#1c1108]">Login Required</p>
-        <Link href="/login?redirect=/tickets" className="text-xs text-[#8B4434] uppercase tracking-wider underline">
+      <div className="min-h-screen bg-[#FCFAF7] flex flex-col items-center justify-center gap-4 text-[#1c1108]">
+        <p className="font-serif text-2xl">Login Required</p>
+        <p className="text-xs text-[#606060]">Please sign in to manage your project bidding tickets.</p>
+        <Link href="/login?redirect=/tickets" className="bg-[#8B4434] text-[#FCFAF7] px-6 py-2.5 text-xs font-semibold uppercase tracking-widest hover:bg-[#723628] transition-colors">
           Go to Login
         </Link>
       </div>
@@ -104,93 +98,168 @@ export default function MyTicketsPage() {
 
   return (
     <div className="min-h-screen bg-[#FCFAF7] text-[#1c1108]">
-      {/* Header */}
+      {/* Hero Header */}
       <div className="bg-[#1c1108] text-[#FCFAF7] py-14 px-4 sm:px-6 lg:px-8 border-b border-[#322318]">
         <div className="max-w-5xl mx-auto space-y-3">
-          <p className="text-[10px] uppercase tracking-[0.25em] text-[#8B4434] font-semibold">Access System</p>
-          <h1 className="font-serif text-4xl sm:text-5xl">My Tickets</h1>
-          <p className="text-[#c9b8b0] text-sm max-w-xl">
-            Each ticket bundle gives you 3 project unlocks. Use them to view bids and contact professionals.
+          <div className="inline-flex items-center gap-2 bg-[#8B4434]/20 border border-[#8B4434]/40 px-3 py-1 text-[10px] uppercase tracking-[0.25em] text-[#FCFAF7] font-semibold">
+            <Ticket className="w-3 h-3 text-[#8B4434]" /> Tender Marketplace
+          </div>
+          <h1 className="font-serif text-4xl sm:text-5xl">Bidding Tickets</h1>
+          <p className="text-[#c9b8b0] text-sm max-w-2xl leading-relaxed">
+            When you want to publish a project tender for competitive contractor bidding, 1 Bidding Ticket is required. 
+            Contacting professionals and reviewing proposals is <strong>100% free</strong> for homeowners.
           </p>
         </div>
       </div>
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10">
         {/* Credits Summary */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="bg-[#1c1108] text-[#FCFAF7] p-6 space-y-1">
-            <p className="text-[10px] uppercase tracking-[0.2em] text-[#8B4434] font-semibold">Available Credits</p>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+          <div className="bg-[#1c1108] text-[#FCFAF7] p-7 space-y-2 border border-[#322318] shadow-sm">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-[#8B4434] font-semibold">Available Bidding Tickets</p>
             <p className="font-serif text-5xl text-white">{totalCredits}</p>
-            <p className="text-xs text-[#908078]">project unlocks remaining</p>
+            <p className="text-xs text-[#908078]">project tender post credits remaining</p>
           </div>
-          <div className="bg-white border border-[#e8ddd6] p-6 space-y-1">
-            <p className="text-[10px] uppercase tracking-[0.2em] text-[#606060] font-semibold">Total Bundles</p>
-            <p className="font-serif text-5xl text-[#1c1108]">{bundles.length}</p>
-            <p className="text-xs text-[#908078]">purchased</p>
+          
+          <div className="bg-white border border-[#e8ddd6] p-7 space-y-2 shadow-sm">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-[#606060] font-semibold">Standard Ticket Price</p>
+            <p className="font-serif text-4xl text-[#8B4434]">LKR 1,500</p>
+            <p className="text-xs text-[#908078]">per project post &bull; valid anytime</p>
           </div>
-          <div className="bg-white border border-[#e8ddd6] p-6 space-y-1">
-            <p className="text-[10px] uppercase tracking-[0.2em] text-[#606060] font-semibold">Projects Unlocked</p>
-            <p className="font-serif text-5xl text-[#1c1108]">{unlocked.length}</p>
-            <p className="text-xs text-[#908078]">total</p>
+
+          <div className="bg-[#8B4434]/5 border border-[#8B4434]/20 p-7 space-y-3 flex flex-col justify-between shadow-sm">
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-[#8B4434] font-semibold">Ready to Post?</p>
+              <p className="text-xs text-[#606060] mt-1">Generate a quick structural BOQ estimation and publish your tender directly.</p>
+            </div>
+            <Link
+              href="/estimation"
+              className="inline-flex items-center justify-center gap-1.5 bg-[#8B4434] text-white px-4 py-2.5 text-xs font-semibold uppercase tracking-wider hover:bg-[#723628] transition-colors"
+            >
+              <Plus className="w-3.5 h-3.5" /> Start New Tender
+            </Link>
           </div>
         </div>
 
-        {/* Purchase Section */}
-        <div className="bg-white border border-[#e8ddd6] p-6 sm:p-8 space-y-6">
-          <div className="border-b border-[#e8ddd6] pb-4">
-            <h2 className="font-serif text-2xl text-[#1c1108]">Purchase a Ticket Bundle</h2>
-            <p className="text-[#606060] text-xs mt-1">
-              One bundle = 3 project unlocks. Valid until all credits are used.
-            </p>
+        {/* Purchase Options */}
+        <div className="bg-white border border-[#e8ddd6] p-6 sm:p-8 space-y-6 shadow-sm">
+          <div className="border-b border-[#e8ddd6] pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <h2 className="font-serif text-2xl text-[#1c1108]">Purchase Bidding Tickets</h2>
+              <p className="text-[#606060] text-xs mt-1">
+                Select your package below. Instant activation via mock payment gateway.
+              </p>
+            </div>
+            <div className="flex items-center gap-1.5 text-xs text-emerald-700 font-semibold bg-emerald-50 border border-emerald-200 px-3 py-1 self-start sm:self-auto">
+              <ShieldCheck className="w-3.5 h-3.5" /> Direct Contractor Bids
+            </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 p-5 border-2 border-[#8B4434]/30 bg-[#8B4434]/5">
-            <div className="space-y-1">
-              <div className="flex items-center gap-2">
-                <Package className="w-5 h-5 text-[#8B4434]" />
-                <span className="font-serif text-xl text-[#1c1108]">Standard Bundle</span>
+          <div className="grid sm:grid-cols-3 gap-5">
+            {/* 1 Ticket */}
+            <div className={`p-6 border-2 flex flex-col justify-between gap-6 transition-all ${selectedQuantity === 1 ? 'border-[#8B4434] bg-[#8B4434]/5 shadow-md' : 'border-[#e8ddd6] hover:border-[#8B4434]/40'}`}>
+              <div className="space-y-2">
+                <span className="text-[10px] uppercase tracking-widest text-[#8B4434] font-bold">Standard Single</span>
+                <h3 className="font-serif text-2xl text-[#1c1108]">1 Tender Post</h3>
+                <p className="text-xs text-[#606060] leading-relaxed">
+                  Ideal for a single home construction, renovation, or electrical installation.
+                </p>
               </div>
-              <p className="text-xs text-[#606060]">3 project unlocks &bull; View bids &bull; Contact professionals</p>
-              <div className="flex items-center gap-1.5 text-[10px] text-[#606060] pt-1">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                <span>Keeps all transactions on the platform</span>
+              <div className="space-y-4 pt-4 border-t border-[#e8ddd6]">
+                <div>
+                  <p className="font-serif text-3xl text-[#8B4434]">LKR 1,500</p>
+                  <p className="text-[10px] text-[#908078]">LKR 1,500 / ticket</p>
+                </div>
+                <button
+                  onClick={() => { setSelectedQuantity(1); handlePurchase(1); }}
+                  disabled={purchasing}
+                  className="w-full bg-[#8B4434] text-white py-3 text-xs font-bold uppercase tracking-widest hover:bg-[#723628] disabled:opacity-70 transition-colors"
+                >
+                  {purchasing && selectedQuantity === 1 ? "Processing..." : "Buy 1 Ticket"}
+                </button>
               </div>
             </div>
-            <div className="shrink-0 text-right space-y-3">
-              <p className="font-serif text-3xl text-[#8B4434]">LKR 500</p>
-              <button
-                onClick={handlePurchase}
-                disabled={purchasing}
-                className="bg-[#8B4434] text-[#FCFAF7] px-8 py-3 text-xs font-bold uppercase tracking-widest hover:bg-[#6f3829] disabled:opacity-70 transition-colors w-full"
-              >
-                {purchasing ? "Processing..." : "Buy Now"}
-              </button>
+
+            {/* 3 Tickets */}
+            <div className={`p-6 border-2 flex flex-col justify-between gap-6 relative transition-all ${selectedQuantity === 3 ? 'border-[#8B4434] bg-[#8B4434]/5 shadow-md' : 'border-[#e8ddd6] hover:border-[#8B4434]/40'}`}>
+              <div className="space-y-2">
+                <span className="text-[10px] uppercase tracking-widest text-[#8B4434] font-bold">Multi Project</span>
+                <h3 className="font-serif text-2xl text-[#1c1108]">3 Tender Posts</h3>
+                <p className="text-xs text-[#606060] leading-relaxed">
+                  Best for phased construction or hiring multiple trades (masonry, plumbing, painting).
+                </p>
+              </div>
+              <div className="space-y-4 pt-4 border-t border-[#e8ddd6]">
+                <div>
+                  <p className="font-serif text-3xl text-[#8B4434]">LKR 4,500</p>
+                  <p className="text-[10px] text-[#908078]">LKR 1,500 / ticket</p>
+                </div>
+                <button
+                  onClick={() => { setSelectedQuantity(3); handlePurchase(3); }}
+                  disabled={purchasing}
+                  className="w-full bg-[#8B4434] text-white py-3 text-xs font-bold uppercase tracking-widest hover:bg-[#723628] disabled:opacity-70 transition-colors"
+                >
+                  {purchasing && selectedQuantity === 3 ? "Processing..." : "Buy 3 Tickets"}
+                </button>
+              </div>
+            </div>
+
+            {/* 5 Tickets - Bundle Savings */}
+            <div className={`p-6 border-2 flex flex-col justify-between gap-6 relative transition-all ${selectedQuantity === 5 ? 'border-[#8B4434] bg-[#8B4434]/5 shadow-md' : 'border-[#8B4434]/50 bg-white hover:border-[#8B4434]'}`}>
+              <div className="absolute -top-3 right-4 bg-[#8B4434] text-white text-[9px] font-bold uppercase tracking-widest px-2.5 py-0.5 shadow-sm">
+                Save LKR 500
+              </div>
+              <div className="space-y-2">
+                <span className="text-[10px] uppercase tracking-widest text-[#8B4434] font-bold">Developer Bundle</span>
+                <h3 className="font-serif text-2xl text-[#1c1108]">5 Tender Posts</h3>
+                <p className="text-xs text-[#606060] leading-relaxed">
+                  Comprehensive bundle for developers and multi-unit home builders.
+                </p>
+              </div>
+              <div className="space-y-4 pt-4 border-t border-[#e8ddd6]">
+                <div>
+                  <p className="font-serif text-3xl text-[#8B4434]">LKR 7,000</p>
+                  <p className="text-[10px] text-emerald-700 font-semibold">Special Discount (Save LKR 500)</p>
+                </div>
+                <button
+                  onClick={() => { setSelectedQuantity(5); handlePurchase(5); }}
+                  disabled={purchasing}
+                  className="w-full bg-[#1c1108] text-white py-3 text-xs font-bold uppercase tracking-widest hover:bg-[#322318] disabled:opacity-70 transition-colors"
+                >
+                  {purchasing && selectedQuantity === 5 ? "Processing..." : "Buy 5 Tickets"}
+                </button>
+              </div>
             </div>
           </div>
 
           {purchaseSuccess && (
             <div className="flex items-center gap-2 text-emerald-700 text-sm bg-emerald-50 border border-emerald-200 p-4">
               <CheckCircle2 className="w-4 h-4 shrink-0" />
-              Bundle purchased! 3 new credits added to your account.
+              {purchaseSuccess}
             </div>
           )}
 
-          <p className="text-[10px] text-[#908078]">
-            Note: Payment gateway integration coming soon. Current purchases are instantly approved (demo mode).
-          </p>
+          <div className="bg-[#FCFAF7] border border-[#e8ddd6] p-4 text-xs text-[#606060] space-y-1">
+            <p className="font-semibold text-[#1c1108]">Platform Policy Reminder:</p>
+            <ul className="list-disc list-inside space-y-0.5 text-[11px] text-[#908078]">
+              <li>Bidding tickets are exclusively consumed when submitting/publishing project tenders.</li>
+              <li>Homeowners do NOT need tickets to browse professionals, view contact details, or review contractor proposals.</li>
+              <li>Unused ticket credits do not expire.</li>
+            </ul>
+          </div>
         </div>
 
-        {/* My Bundles */}
+        {/* Purchase History */}
         {bundles.length > 0 && (
           <div className="space-y-4">
-            <h2 className="font-serif text-2xl text-[#1c1108]">Purchase History</h2>
+            <h2 className="font-serif text-2xl text-[#1c1108]">Ticket History</h2>
             <div className="space-y-3">
               {bundles.map((b) => (
-                <div key={b.id} className="bg-white border border-[#e8ddd6] p-5 flex flex-wrap items-center justify-between gap-4">
+                <div key={b.id} className="bg-white border border-[#e8ddd6] p-5 flex flex-wrap items-center justify-between gap-4 shadow-sm">
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
                       <Ticket className="w-4 h-4 text-[#8B4434]" />
-                      <span className="font-semibold text-sm text-[#1c1108]">Bundle #{b.id}</span>
+                      <span className="font-semibold text-sm text-[#1c1108]">Bidding Ticket #{b.id}</span>
                       <span className={`px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider border ${statusColors[b.status] || ""}`}>
                         {b.status}
                       </span>
@@ -198,55 +267,31 @@ export default function MyTicketsPage() {
                     <p className="text-xs text-[#908078] flex items-center gap-1">
                       <Clock className="w-3 h-3" />
                       {new Date(b.purchased_at).toLocaleDateString("en-LK", {
-                        year: "numeric", month: "short", day: "numeric",
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
                       })}
                     </p>
                   </div>
-                  <div className="text-right space-y-0.5">
-                    <p className="text-xs text-[#606060]">
-                      <strong className="text-[#1c1108]">{b.unlocks_remaining}</strong> / {b.unlocks_total} unlocks remaining
-                    </p>
-                    <p className="text-xs text-[#908078]">Paid: LKR {b.price_paid}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Unlocked Projects */}
-        {unlocked.length > 0 && (
-          <div className="space-y-4">
-            <h2 className="font-serif text-2xl text-[#1c1108]">Unlocked Projects</h2>
-            <div className="space-y-3">
-              {unlocked.map((u) => (
-                <div key={u.project_id} className="bg-white border border-[#e8ddd6] p-5 flex items-center justify-between gap-4">
-                  <div className="space-y-0.5">
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                      <span className="font-semibold text-sm text-[#1c1108]">{u.project_title}</span>
+                  <div className="flex items-center gap-6">
+                    <div className="text-right">
+                      <p className="text-xs font-semibold text-[#1c1108]">
+                        {b.unlocks_remaining} of {b.unlocks_total} credit{b.unlocks_total > 1 ? 's' : ''} left
+                      </p>
+                      <p className="text-[10px] text-[#908078]">Paid LKR {Number(b.price_paid).toLocaleString('en-LK')}</p>
                     </div>
-                    <p className="text-xs text-[#908078] pl-6">
-                      Unlocked {new Date(u.unlocked_at).toLocaleDateString("en-LK", {
-                        year: "numeric", month: "short", day: "numeric",
-                      })}
-                    </p>
+                    {b.status === "ACTIVE" && b.unlocks_remaining > 0 && (
+                      <Link
+                        href="/estimation"
+                        className="bg-[#8B4434] text-white px-4 py-2 text-[10px] uppercase font-bold tracking-widest hover:bg-[#723628] transition-colors"
+                      >
+                        Use Ticket
+                      </Link>
+                    )}
                   </div>
-                  <Link
-                    href={`/bidding/${u.project_id}`}
-                    className="flex items-center gap-1 text-xs text-[#8B4434] font-semibold hover:underline"
-                  >
-                    View <ArrowRight className="w-3.5 h-3.5" />
-                  </Link>
                 </div>
               ))}
             </div>
-          </div>
-        )}
-
-        {loading && (
-          <div className="flex justify-center py-12">
-            <div className="animate-spin w-6 h-6 border-2 border-[#8B4434] border-t-transparent" />
           </div>
         )}
       </div>

@@ -90,13 +90,6 @@ export default function ProfessionalProfilePage() {
     title: string;
   } | null>(null);
 
-  // Ticket gate for contact info
-  const [contactUnlocked, setContactUnlocked] = useState(false);
-  const [ticketCredits, setTicketCredits] = useState(0);
-  const [unlocking, setUnlocking] = useState(false);
-  const [purchasing, setPurchasing] = useState(false);
-  const [ticketChecked, setTicketChecked] = useState(false);
-
   useEffect(() => {
     if (!id) return;
     async function fetchProfessional() {
@@ -123,72 +116,6 @@ export default function ProfessionalProfilePage() {
     }
     fetchReviews();
   }, [id]);
-
-  // Check ticket status for this professional's contact info
-  // We use a virtual project_id = 0 approach won't work — instead store a user-level unlock for professionals
-  // For now: we check if user has ANY active ticket credits (simpler UX for professionals)
-  useEffect(() => {
-    if (!user) return;
-    async function checkTickets() {
-      if (!user) return;
-      try {
-        const token = await user.getIdToken();
-        const res = await fetch(`${API_BASE_URL}/bidding/tickets/my/`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (res.ok) {
-          const data = await res.json();
-          setTicketCredits(data.total_credits_remaining);
-          // Professionals themselves and admins always see their own profile
-        }
-      } catch {}
-      setTicketChecked(true);
-    }
-    checkTickets();
-  }, [user]);
-
-  const handleUnlockContact = async () => {
-    if (!user) return;
-    setUnlocking(true);
-    try {
-      // Spend one credit from the user's bundle
-      const token = await user.getIdToken();
-      // We use a proxy: unlock "project 0" for this professional's contact
-      // Actually we'll just decrement credits locally for UX — in production this would be a real endpoint
-      // For now: use the purchase-and-reveal approach
-      const res = await fetch(`${API_BASE_URL}/bidding/tickets/my/`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (res.ok) {
-        const data = await res.json();
-        if (data.total_credits_remaining > 0) {
-          setContactUnlocked(true);
-          setTicketCredits(data.total_credits_remaining - 1);
-        }
-      }
-    } finally {
-      setUnlocking(false);
-    }
-  };
-
-  const handlePurchaseAndReveal = async () => {
-    if (!user) return;
-    setPurchasing(true);
-    try {
-      const token = await user.getIdToken();
-      const res = await fetch(`${API_BASE_URL}/bidding/tickets/purchase/`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ transaction_ref: "MOCK_PAYMENT" }),
-      });
-      if (res.ok) {
-        setContactUnlocked(true);
-        setTicketCredits(2); // 3 purchased - 1 used = 2 remaining
-      }
-    } finally {
-      setPurchasing(false);
-    }
-  };
 
   const handleSubmitReview = async () => {
     if (!user || !id) { alert("Please log in to write a review."); return; }
@@ -701,13 +628,12 @@ export default function ProfessionalProfilePage() {
                   </div>
                 )}
 
-                {/* TICKET GATE for sensitive contact info */}
+                {/* Sensitive contact info: Free for logged-in users */}
                 <div className="pt-3 border-t border-[#e8ddd6]">
-                  {contactUnlocked ? (
-                    /* ── Unlocked State ── */
+                  {user ? (
                     <div className="space-y-3">
                       <div className="flex items-center gap-1.5 text-[10px] text-emerald-700 font-semibold uppercase tracking-wider">
-                        <CheckCircle2 className="w-3.5 h-3.5" /> Contact Revealed
+                        <CheckCircle2 className="w-3.5 h-3.5" /> Direct Contact Information
                       </div>
                       <a
                         href={`mailto:${prof.email}`}
@@ -718,7 +644,7 @@ export default function ProfessionalProfilePage() {
                         </div>
                         <span className="text-xs text-[#1c1108] truncate">{prof.email}</span>
                       </a>
-                      {prof.phone_number && (
+                      {prof.phone_number ? (
                         <a
                           href={`tel:${prof.phone_number}`}
                           className="flex items-center gap-3 hover:text-[#8B4434] transition-colors group"
@@ -728,71 +654,22 @@ export default function ProfessionalProfilePage() {
                           </div>
                           <span className="text-xs text-[#1c1108]">{prof.phone_number}</span>
                         </a>
+                      ) : (
+                        <p className="text-xs text-[#908078] italic">Phone number not provided</p>
                       )}
                     </div>
-                  ) : !user ? (
+                  ) : (
                     /* ── Not logged in ── */
                     <div className="text-center space-y-3">
                       <div className="w-10 h-10 bg-[#1c1108] flex items-center justify-center mx-auto">
                         <Lock className="w-4 h-4 text-[#8B4434]" />
                       </div>
-                      <p className="text-xs text-[#606060]">Login to reveal contact details</p>
+                      <p className="text-xs text-[#606060]">Login to view direct contact details for free</p>
                       <Link
                         href={`/login?redirect=/professionals/${id}`}
                         className="block w-full bg-[#8B4434] text-[#FCFAF7] py-3 text-[10px] tracking-[0.26em] uppercase font-semibold hover:bg-[#6c3426] transition-colors text-center"
                       >
                         Login to View
-                      </Link>
-                    </div>
-                  ) : ticketCredits > 0 ? (
-                    /* ── Has credits ── */
-                    <div className="space-y-3">
-                      <div className="bg-[#FCFAF7] border border-[#e8ddd6] p-3 space-y-2">
-                        <div className="flex items-center gap-2">
-                          <Lock className="w-3.5 h-3.5 text-[#8B4434]" />
-                          <p className="text-xs font-semibold text-[#1c1108]">Contact details are private</p>
-                        </div>
-                        <p className="text-[10px] text-[#908078] leading-relaxed">
-                          Use 1 ticket credit to reveal name, email and phone number.
-                        </p>
-                        <p className="text-[10px] text-emerald-700 font-semibold">
-                          You have {ticketCredits} credit{ticketCredits !== 1 ? 's' : ''} available
-                        </p>
-                      </div>
-                      <button
-                        onClick={handleUnlockContact}
-                        disabled={unlocking}
-                        className="w-full bg-[#8B4434] text-[#FCFAF7] px-4 py-3.5 text-[10px] tracking-[0.26em] uppercase font-semibold hover:bg-[#6c3426] disabled:opacity-70 transition-colors flex items-center justify-center gap-2"
-                      >
-                        <Ticket className="w-3.5 h-3.5" />
-                        {unlocking ? "Revealing..." : "Use 1 Credit — Reveal Contact"}
-                      </button>
-                    </div>
-                  ) : (
-                    /* ── No credits — buy bundle ── */
-                    <div className="space-y-3">
-                      <div className="bg-[#FCFAF7] border border-[#e8ddd6] p-3 space-y-2">
-                        <div className="flex items-center gap-2">
-                          <Lock className="w-3.5 h-3.5 text-[#8B4434]" />
-                          <p className="text-xs font-semibold text-[#1c1108]">Contact details are private</p>
-                        </div>
-                        <p className="text-[10px] text-[#908078] leading-relaxed">
-                          Purchase a ticket bundle (3 unlocks for LKR 500) to view professional contact info.
-                        </p>
-                      </div>
-                      <button
-                        onClick={handlePurchaseAndReveal}
-                        disabled={purchasing}
-                        className="w-full bg-[#8B4434] text-[#FCFAF7] px-4 py-3.5 text-[10px] tracking-[0.26em] uppercase font-semibold hover:bg-[#6c3426] disabled:opacity-70 transition-colors flex items-center justify-center gap-2"
-                      >
-                        <Ticket className="w-3.5 h-3.5" />
-                        {purchasing ? "Processing..." : "Buy Bundle & Reveal — LKR 500"}
-                      </button>
-                      <Link
-                        href="/tickets"
-                        className="flex items-center justify-center gap-1 text-[10px] text-[#8B4434] font-semibold hover:underline"
-                      >
-                        View My Tickets <ArrowRight className="w-3 h-3" />
                       </Link>
                     </div>
                   )}

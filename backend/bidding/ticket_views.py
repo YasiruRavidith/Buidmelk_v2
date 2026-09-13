@@ -11,31 +11,57 @@ from .models import TicketBundle, ProjectUnlock, ProjectPost
 @permission_classes([IsAuthenticated])
 def purchase_ticket_bundle(request):
     """
-    Purchase a new ticket bundle (3 unlocks for LKR 500).
-    In the current mock flow, purchase is approved immediately.
+    Purchase bidding ticket(s) for posting project tenders.
+    Price is LKR 1,500 per ticket.
     """
     user = request.user
 
-    # Professionals / admins don't need tickets — reject the call
+    # Professionals / admins don't post client tenders
     if user.role in ('PROFESSIONAL', 'ADMIN'):
         return Response(
-            {"error": "Professionals do not need ticket bundles."},
+            {"error": "Only clients can purchase bidding tickets to post project tenders."},
             status=status.HTTP_400_BAD_REQUEST
         )
 
+    try:
+        quantity = int(request.data.get('quantity', 1))
+        if quantity < 1:
+            quantity = 1
+    except (ValueError, TypeError):
+        quantity = 1
+
+    unit_price = 1500.00
+    total_price = unit_price * quantity
+    ref = request.data.get('transaction_ref', 'MOCK_PAYMENT')
+
     bundle = TicketBundle.objects.create(
         owner=user,
-        unlocks_total=3,
+        unlocks_total=quantity,
         unlocks_used=0,
-        price_paid=500.00,
+        price_paid=total_price,
         status='ACTIVE',
-        transaction_ref=request.data.get('transaction_ref', 'MOCK_PAYMENT'),
+        transaction_ref=ref,
     )
 
+    try:
+        from users.models import PaymentTransaction
+        PaymentTransaction.objects.create(
+            user=user,
+            transaction_type='BIDDING_TICKET',
+            amount=total_price,
+            payment_method=request.data.get('payment_method', 'MOCK_PAYMENT'),
+            reference_id=ref,
+            status='COMPLETED'
+        )
+    except Exception as e:
+        pass
+
     return Response({
-        "message": "Ticket bundle purchased successfully.",
+        "message": f"{quantity} Bidding ticket(s) purchased successfully.",
         "bundle_id": bundle.id,
+        "quantity": quantity,
         "unlocks_remaining": bundle.unlocks_remaining(),
+        "total_credits_remaining": sum(b.unlocks_remaining() for b in TicketBundle.objects.filter(owner=user, status='ACTIVE')),
         "price_paid": str(bundle.price_paid),
     }, status=status.HTTP_201_CREATED)
 
@@ -44,57 +70,13 @@ def purchase_ticket_bundle(request):
 @permission_classes([IsAuthenticated])
 def unlock_project(request, project_id):
     """
-    Spend one unlock credit to unlock a specific project.
-    Returns the full bid list once unlocked.
+    In the new ticketing system, projects and bids do not require unlock credits.
+    Bidding tickets are used exclusively to publish tenders.
     """
-    user = request.user
-
-    # Professionals bypass entirely — no unlock needed
-    if user.role in ('PROFESSIONAL', 'ADMIN'):
-        return Response({"already_accessible": True})
-
-    # Check already unlocked
-    if ProjectUnlock.objects.filter(user=user, project_id=project_id).exists():
-        return Response({"already_unlocked": True, "message": "Project already unlocked."})
-
-    try:
-        project = ProjectPost.objects.get(id=project_id)
-    except ProjectPost.DoesNotExist:
-        return Response({"error": "Project not found."}, status=status.HTTP_404_NOT_FOUND)
-
-    # If ticket_required is False, no need to spend a credit
-    if not project.ticket_required:
-        return Response({"already_accessible": True})
-
-    # Find an active bundle with remaining credits
-    bundle = (
-        TicketBundle.objects
-        .filter(owner=user, status='ACTIVE')
-        .order_by('purchased_at')
-        .first()
-    )
-
-    if not bundle or not bundle.is_usable():
-        return Response(
-            {
-                "error": "No ticket credits remaining. Please purchase a ticket bundle first.",
-                "needs_purchase": True,
-            },
-            status=status.HTTP_402_PAYMENT_REQUIRED,
-        )
-
-    with db_transaction.atomic():
-        bundle.unlocks_used += 1
-        if bundle.unlocks_remaining() == 0:
-            bundle.status = 'EXHAUSTED'
-        bundle.save()
-
-        ProjectUnlock.objects.create(bundle=bundle, user=user, project=project)
-
     return Response({
+        "already_unlocked": True,
         "unlocked": True,
-        "unlocks_remaining": bundle.unlocks_remaining(),
-        "message": f"Project '{project.title}' unlocked successfully.",
+        "message": "Proposals and contact info are freely accessible. Bidding tickets are only consumed when posting tenders."
     }, status=status.HTTP_200_OK)
 
 
@@ -102,14 +84,10 @@ def unlock_project(request, project_id):
 @permission_classes([IsAuthenticated])
 def check_project_unlock(request, project_id):
     """
-    Returns whether the current user has unlocked the given project.
-    Also returns ticket credit summary.
+    Returns project access status and current bidding ticket credit balance.
+    Projects are accessible to their owners and professionals freely.
     """
     user = request.user
-
-    # Professionals always have access
-    if user.role in ('PROFESSIONAL', 'ADMIN'):
-        return Response({"unlocked": True, "is_professional": True})
 
     try:
         project = ProjectPost.objects.get(id=project_id)
@@ -117,21 +95,18 @@ def check_project_unlock(request, project_id):
         return Response({"error": "Project not found."}, status=status.HTTP_404_NOT_FOUND)
 
     is_owner = (project.client == user)
+    is_professional = (user.role == 'PROFESSIONAL')
 
-    if not project.ticket_required:
-        return Response({"unlocked": True, "is_owner": is_owner, "ticket_not_required": True})
-
-    is_unlocked = ProjectUnlock.objects.filter(user=user, project_id=project_id).exists()
-
-    # Count available credits
+    # Count available bidding post credits
     active_bundles = TicketBundle.objects.filter(owner=user, status='ACTIVE')
     credits_remaining = sum(b.unlocks_remaining() for b in active_bundles)
 
     return Response({
-        "unlocked": is_unlocked,
+        "unlocked": True,
         "is_owner": is_owner,
+        "is_professional": is_professional,
         "credits_remaining": credits_remaining,
-        "needs_purchase": not is_unlocked and credits_remaining == 0,
+        "needs_purchase": False,
     })
 
 
