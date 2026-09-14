@@ -59,7 +59,7 @@ export default function MyWorkerJobsPage() {
     return (
       <div className="min-h-screen bg-[#FCFAF7] flex flex-col items-center justify-center gap-4">
         <p className="font-serif text-2xl text-[#1c1108]">Login Required</p>
-        <Link href="/login?redirect=/workers/my-jobs" className="text-xs text-[#8B4434] uppercase tracking-wider underline">
+        <Link href="/login?redirect=/workers/my-jobs" className="text-xs text-[#EA580C] uppercase tracking-wider underline">
           Go to Login
         </Link>
       </div>
@@ -83,7 +83,7 @@ export default function MyWorkerJobsPage() {
       {/* Header */}
       <div className="bg-[#1c1108] text-[#FCFAF7] py-12 px-4 sm:px-6 lg:px-8 border-b border-[#322318]">
         <div className="max-w-5xl mx-auto space-y-3">
-          <p className="text-[10px] uppercase tracking-[0.25em] text-[#8B4434] font-semibold">Worker Marketplace</p>
+          <p className="text-[10px] uppercase tracking-[0.25em] text-[#EA580C] font-semibold">Worker Marketplace</p>
           <h1 className="font-serif text-4xl sm:text-5xl">My Activity</h1>
           <p className="text-[#c9b8b0] text-sm">Manage jobs you have posted and track your job applications.</p>
         </div>
@@ -91,7 +91,7 @@ export default function MyWorkerJobsPage() {
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
         {/* Tab Switcher */}
-        <div className="flex border border-[#e8ddd6] overflow-hidden">
+        <div className="flex border border-[#e8ddd6] overflow-hidden rounded-2xl">
           <button
             onClick={() => setTab("posted")}
             className={`flex-1 py-3 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors ${
@@ -118,7 +118,7 @@ export default function MyWorkerJobsPage() {
 
         {loading ? (
           <div className="flex justify-center py-16">
-            <div className="animate-spin w-7 h-7 border-2 border-[#8B4434] border-t-transparent" />
+            <div className="animate-spin w-7 h-7 border-2 border-[#EA580C] border-t-transparent" />
           </div>
         ) : tab === "posted" ? (
           <div className="space-y-4">
@@ -126,18 +126,18 @@ export default function MyWorkerJobsPage() {
               <h2 className="font-serif text-xl text-[#1c1108]">Posted Jobs</h2>
               <Link
                 href="/workers/post"
-                className="inline-flex items-center gap-1.5 bg-[#8B4434] text-[#FCFAF7] px-4 py-2 text-[10px] font-bold uppercase tracking-widest hover:bg-[#6f3829] transition-colors"
+                className="inline-flex items-center gap-1.5 bg-[#EA580C] text-[#FCFAF7] px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-[#C2410C] transition-colors"
               >
                 <Plus className="w-3.5 h-3.5" /> Post New Job
               </Link>
             </div>
             {postedJobs.length === 0 ? (
-              <div className="bg-white border border-[#e8ddd6] p-12 text-center space-y-4">
+              <div className="bg-white border border-[#e8ddd6] p-12 rounded-2xl text-center space-y-4">
                 <Briefcase className="w-10 h-10 text-[#e8ddd6] mx-auto" />
                 <p className="text-[#606060] text-sm">You have not posted any jobs yet.</p>
                 <Link
                   href="/workers/post"
-                  className="inline-block bg-[#8B4434] text-[#FCFAF7] px-6 py-3 text-xs font-bold uppercase tracking-widest hover:bg-[#6f3829] transition-colors"
+                  className="inline-block bg-[#EA580C] text-[#FCFAF7] px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-[#C2410C] transition-colors"
                 >
                   Post Your First Job
                 </Link>
@@ -145,13 +145,13 @@ export default function MyWorkerJobsPage() {
             ) : (
               <div className="space-y-3">
                 {postedJobs.map((job: any) => (
-                  <div key={job.id} className="bg-white border border-[#e8ddd6] p-5 flex flex-wrap items-center justify-between gap-4">
+                  <div key={job.id} className="bg-white border border-[#e8ddd6] p-5 rounded-2xl flex flex-wrap items-center justify-between gap-4">
                     <div className="space-y-1.5">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className={`px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider border ${TYPE_COLORS[job.worker_type] || ""}`}>
+                        <span className={`px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider border rounded-full ${TYPE_COLORS[job.worker_type] || ""}`}>
                           {job.worker_type.replace("_", " ")}
                         </span>
-                        <span className={`px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider border ${jobStatusColors[job.status] || ""}`}>
+                        <span className={`px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider border rounded-full ${jobStatusColors[job.status] || ""}`}>
                           {job.status}
                         </span>
                       </div>
@@ -164,7 +164,7 @@ export default function MyWorkerJobsPage() {
                     </div>
                     <Link
                       href={`/workers/${job.id}`}
-                      className="flex items-center gap-1 text-xs text-[#8B4434] font-semibold hover:underline"
+                      className="flex items-center gap-1 text-xs text-[#EA580C] font-semibold hover:underline"
                     >
                       Manage <ArrowRight className="w-3.5 h-3.5" />
                     </Link>
@@ -177,12 +177,12 @@ export default function MyWorkerJobsPage() {
           <div className="space-y-4">
             <h2 className="font-serif text-xl text-[#1c1108]">My Applications</h2>
             {applications.length === 0 ? (
-              <div className="bg-white border border-[#e8ddd6] p-12 text-center space-y-4">
+              <div className="bg-white border border-[#e8ddd6] p-12 rounded-2xl text-center space-y-4">
                 <Send className="w-10 h-10 text-[#e8ddd6] mx-auto" />
                 <p className="text-[#606060] text-sm">You have not applied to any jobs yet.</p>
                 <Link
                   href="/workers"
-                  className="inline-block bg-[#8B4434] text-[#FCFAF7] px-6 py-3 text-xs font-bold uppercase tracking-widest hover:bg-[#6f3829] transition-colors"
+                  className="inline-block bg-[#EA580C] text-[#FCFAF7] px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-[#C2410C] transition-colors"
                 >
                   Browse Available Jobs
                 </Link>
@@ -190,12 +190,12 @@ export default function MyWorkerJobsPage() {
             ) : (
               <div className="space-y-3">
                 {applications.map((app: any) => (
-                  <div key={app.id} className="bg-white border border-[#e8ddd6] p-5 flex flex-wrap items-center justify-between gap-4">
+                  <div key={app.id} className="bg-white border border-[#e8ddd6] p-5 rounded-2xl flex flex-wrap items-center justify-between gap-4">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
                         {app.status === "ACCEPTED" && <CheckCircle2 className="w-4 h-4 text-emerald-600" />}
                         <h3 className="font-semibold text-sm text-[#1c1108]">{app.job_title}</h3>
-                        <span className={`px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider border ${appStatusColors[app.status] || ""}`}>
+                        <span className={`px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider border rounded-full ${appStatusColors[app.status] || ""}`}>
                           {app.status}
                         </span>
                       </div>
@@ -208,7 +208,7 @@ export default function MyWorkerJobsPage() {
                     </div>
                     <Link
                       href={`/workers/${app.job}`}
-                      className="flex items-center gap-1 text-xs text-[#8B4434] font-semibold hover:underline"
+                      className="flex items-center gap-1 text-xs text-[#EA580C] font-semibold hover:underline"
                     >
                       View Job <ArrowRight className="w-3.5 h-3.5" />
                     </Link>

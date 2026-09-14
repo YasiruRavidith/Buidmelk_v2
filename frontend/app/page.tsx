@@ -274,12 +274,12 @@ export default function Home() {
       </section>
 
       {/* SECTION 1: VERIFIED PROFESSIONALS (Big photos, minimal text, 4 in a row, <> controls) */}
-      <section className="bg-white py-14 sm:py-20 border-b border-[#8B4434]/10">
+      <section className="bg-white py-14 sm:py-20 border-b border-[#EA580C]/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12">
           {/* Section Header */}
           <div className="flex items-end justify-between gap-6 mb-8">
             <div>
-              <p className="text-[9px] uppercase tracking-[0.25em] text-[#8B4434] font-semibold mb-1.5">
+              <p className="text-[9px] uppercase tracking-[0.25em] text-[#EA580C] font-semibold mb-1.5">
                 Verified Directory
               </p>
               <h2 className="font-serif text-3xl md:text-4xl text-[#1c1108]">
@@ -292,10 +292,10 @@ export default function Home() {
               <button
                 onClick={handlePrevPros}
                 disabled={verifiedPros.length <= 4}
-                className={`w-9 h-9 rounded-full border border-[#8B4434]/30 flex items-center justify-center transition-all ${
+                className={`w-9 h-9 rounded-full border border-[#EA580C]/30 flex items-center justify-center transition-all ${
                   verifiedPros.length <= 4
-                    ? 'opacity-30 cursor-not-allowed text-[#8B4434]/50'
-                    : 'text-[#8B4434] hover:bg-[#8B4434] hover:text-white active:scale-95'
+                    ? 'opacity-30 cursor-not-allowed text-[#EA580C]/50'
+                    : 'text-[#EA580C] hover:bg-[#EA580C] hover:text-white active:scale-95'
                 }`}
                 title="Previous"
                 aria-label="Previous"
@@ -305,10 +305,10 @@ export default function Home() {
               <button
                 onClick={handleNextPros}
                 disabled={verifiedPros.length <= 4}
-                className={`w-9 h-9 rounded-full border border-[#8B4434]/30 flex items-center justify-center transition-all ${
+                className={`w-9 h-9 rounded-full border border-[#EA580C]/30 flex items-center justify-center transition-all ${
                   verifiedPros.length <= 4
-                    ? 'opacity-30 cursor-not-allowed text-[#8B4434]/50'
-                    : 'text-[#8B4434] hover:bg-[#8B4434] hover:text-white active:scale-95'
+                    ? 'opacity-30 cursor-not-allowed text-[#EA580C]/50'
+                    : 'text-[#EA580C] hover:bg-[#EA580C] hover:text-white active:scale-95'
                 }`}
                 title="Next"
                 aria-label="Next"
@@ -317,7 +317,7 @@ export default function Home() {
               </button>
               <Link
                 href="/professionals"
-                className="hidden md:inline-flex items-center gap-1 text-[11px] uppercase tracking-[0.15em] text-[#8B4434] font-semibold hover:underline ml-2"
+                className="hidden md:inline-flex items-center gap-1 text-[11px] uppercase tracking-[0.15em] text-[#EA580C] font-semibold hover:underline ml-2"
               >
                 <span>All Pros</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -346,10 +346,10 @@ export default function Home() {
                   <Link
                     href={`/professionals/${prof.id}`}
                     key={`${prof.id}-${idx}`}
-                    className="group bg-white border border-[#8B4434]/15 hover:border-[#8B4434] transition-all duration-300 shadow-sm hover:shadow-lg flex flex-col overflow-hidden"
+                    className="group bg-white border border-[#EA580C]/15 hover:border-[#EA580C] transition-all duration-300 shadow-sm hover:shadow-lg flex flex-col overflow-hidden rounded-2xl"
                   >
                     {/* BIG Photo Container */}
-                    <div className="relative h-64 sm:h-72 w-full bg-stone-100 overflow-hidden">
+                    <div className="relative h-64 sm:h-72 w-full bg-stone-100 overflow-hidden rounded-t-2xl">
                       <img
                         src={photoUrl}
                         alt={displayName}
@@ -361,7 +361,7 @@ export default function Home() {
                         <span>Verified</span>
                       </div>
                       {/* Profession Overlay Pill */}
-                      <div className="absolute bottom-3 left-3 bg-[#1c1108]/85 backdrop-blur-md text-white text-[9px] uppercase tracking-widest font-semibold px-2.5 py-1 rounded-sm">
+                      <div className="absolute bottom-3 left-3 bg-[#1c1108]/85 backdrop-blur-md text-white text-[9px] uppercase tracking-widest font-semibold px-2.5 py-1 rounded-full">
                         {p?.profession_type || 'PROFESSIONAL'}
                       </div>
                     </div>
@@ -369,22 +369,22 @@ export default function Home() {
                     {/* Minimal Sleek Content */}
                     <div className="p-4 flex flex-col justify-between flex-1">
                       <div>
-                        <h3 className="font-serif text-lg text-[#1c1108] group-hover:text-[#8B4434] transition-colors truncate">
+                        <h3 className="font-serif text-lg text-[#1c1108] group-hover:text-[#EA580C] transition-colors truncate">
                           {displayName}
                         </h3>
                         <p className="text-xs text-[#606060] flex items-center gap-1 mt-0.5">
-                          <MapPin className="w-3 h-3 text-[#8B4434]" />
+                          <MapPin className="w-3 h-3 text-[#EA580C]" />
                           <span className="truncate">{p?.location || 'Western Province'}</span>
                         </p>
                       </div>
 
-                      <div className="mt-3 pt-3 border-t border-[#8B4434]/10 flex items-center justify-between text-xs">
-                        <div className="flex items-center gap-1 font-semibold text-[#b44d08]">
+                      <div className="mt-3 pt-3 border-t border-[#EA580C]/10 flex items-center justify-between text-xs">
+                        <div className="flex items-center gap-1 font-semibold text-[#EA580C]">
                           <Star className="w-3.5 h-3.5 fill-current" />
                           <span>{p?.rating ? Number(p.rating).toFixed(1) : '4.8'}</span>
                           <span className="text-[10px] text-[#908078] font-normal">({p?.projects_completed ?? 12})</span>
                         </div>
-                        <span className="text-[11px] font-semibold text-[#8B4434] group-hover:underline flex items-center gap-0.5">
+                        <span className="text-[11px] font-semibold text-[#EA580C] group-hover:underline flex items-center gap-0.5">
                           View Profile &rarr;
                         </span>
                       </div>
@@ -402,22 +402,22 @@ export default function Home() {
       </section>
 
       {/* SECTION 2: BEST SELLING MATERIALS (4 in a row, simple & clean) */}
-      <section className="bg-[#FAEBE7] py-14 sm:py-20 border-b border-[#8B4434]/10">
+      <section className="bg-[#FFEDD5] py-14 sm:py-20 border-b border-[#EA580C]/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12">
           {/* Section Header */}
           <div className="flex items-end justify-between gap-6 mb-8">
             <div>
-              <p className="text-[9px] uppercase tracking-[0.25em] text-[#8B4434] font-semibold mb-1.5">
+              <p className="text-[9px] uppercase tracking-[0.25em] text-[#EA580C] font-semibold mb-1.5">
                 Marketplace Supplies
               </p>
-              <h2 className="font-serif text-3xl md:text-4xl text-[#8B4434]">
+              <h2 className="font-serif text-3xl md:text-4xl text-[#EA580C]">
                 Best Selling Materials
               </h2>
             </div>
 
             <Link
               href="/marketplace"
-              className="inline-flex items-center gap-1 text-[11px] uppercase tracking-[0.15em] text-[#8B4434] font-semibold hover:underline shrink-0"
+              className="inline-flex items-center gap-1 text-[11px] uppercase tracking-[0.15em] text-[#EA580C] font-semibold hover:underline shrink-0"
             >
               <span>Explore All</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -428,7 +428,7 @@ export default function Home() {
           {materialsLoading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {[...Array(4)].map((_, i) => (
-                <div key={i} className="h-72 bg-white/60 animate-pulse" />
+                <div key={i} className="h-72 bg-white/60 animate-pulse rounded-2xl" />
               ))}
             </div>
           ) : bestSellingMaterials.length > 0 ? (
@@ -441,16 +441,16 @@ export default function Home() {
                 return (
                   <div
                     key={mat.id}
-                    className="bg-white border border-[#8B4434]/15 hover:border-[#8B4434] transition-all duration-300 flex flex-col justify-between shadow-sm hover:shadow-md group overflow-hidden"
+                    className="bg-white border border-[#EA580C]/15 hover:border-[#EA580C] transition-all duration-300 flex flex-col justify-between shadow-sm hover:shadow-md group overflow-hidden rounded-2xl"
                   >
                     {/* Material Image */}
-                    <div className="relative h-44 w-full bg-stone-100 overflow-hidden">
+                    <div className="relative h-44 w-full bg-stone-100 overflow-hidden rounded-t-2xl">
                       <img
                         src={imgUrl}
                         alt={mat.name}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
-                      <span className="absolute top-3 left-3 bg-[#1c1108]/85 text-white text-[9px] uppercase tracking-wider font-semibold px-2 py-0.5">
+                      <span className="absolute top-3 left-3 bg-[#1c1108]/85 text-white text-[9px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded-full">
                         {mat.category_name || 'Material'}
                       </span>
                     </div>
@@ -458,7 +458,7 @@ export default function Home() {
                     {/* Simple Content */}
                     <div className="p-4 flex flex-col justify-between flex-1 space-y-3">
                       <div>
-                        <h3 className="font-serif text-base text-[#1c1108] group-hover:text-[#8B4434] transition-colors line-clamp-1">
+                        <h3 className="font-serif text-base text-[#1c1108] group-hover:text-[#EA580C] transition-colors line-clamp-1">
                           {mat.name}
                         </h3>
                         <p className="text-[11px] text-[#606060] truncate mt-0.5">
@@ -466,8 +466,8 @@ export default function Home() {
                         </p>
                       </div>
 
-                      <div className="pt-2 border-t border-[#8B4434]/10 flex items-baseline justify-between">
-                        <p className="font-serif text-lg font-bold text-[#8B4434]">
+                      <div className="pt-2 border-t border-[#EA580C]/10 flex items-baseline justify-between">
+                        <p className="font-serif text-lg font-bold text-[#EA580C]">
                           {fmtPrice(mat.current_price)}
                         </p>
                         {mat.unit && (
@@ -478,17 +478,17 @@ export default function Home() {
                       <div className="grid grid-cols-2 gap-2 pt-1">
                         <Link
                           href={`/marketplace/${mat.id}`}
-                          className="border border-[#8B4434]/30 text-[#8B4434] hover:bg-[#8B4434]/5 py-2 text-center text-[10px] font-semibold uppercase tracking-wider transition-colors"
+                          className="border border-[#EA580C]/30 text-[#EA580C] hover:bg-[#EA580C]/5 py-2 text-center text-[10px] font-semibold uppercase tracking-wider rounded-xl transition-colors"
                         >
                           Details
                         </Link>
                         <button
                           onClick={() => handleAddToCart(mat)}
                           disabled={isAdding}
-                          className={`flex items-center justify-center gap-1 py-2 text-[10px] font-semibold uppercase tracking-wider transition-all text-white ${
+                          className={`flex items-center justify-center gap-1 py-2 text-[10px] font-semibold uppercase tracking-wider rounded-xl transition-all text-white ${
                             isAdded
                               ? 'bg-emerald-600'
-                              : 'bg-[#8B4434] hover:bg-[#723628] active:scale-95'
+                              : 'bg-[#EA580C] hover:bg-[#C2410C] active:scale-95'
                           }`}
                         >
                           {isAdded ? (
@@ -512,7 +512,7 @@ export default function Home() {
               })}
             </div>
           ) : (
-            <p className="text-xs text-[#8B4434]/80 py-8 text-center">
+            <p className="text-xs text-[#EA580C]/80 py-8 text-center">
               No materials listed at this moment.
             </p>
           )}
@@ -520,20 +520,20 @@ export default function Home() {
       </section>
 
       {/* SECTION 3: FEATURED PROJECTS */}
-      <section className="bg-[#FCFAF7] py-14 sm:py-24 border-b border-[#8B4434]/10">
+      <section className="bg-[#FCFAF7] py-14 sm:py-24 border-b border-[#EA580C]/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12">
           <div className="flex items-end justify-between gap-6 mb-10">
             <div>
-              <p className="text-[9px] uppercase tracking-[0.2em] text-[#8B4434]/70 font-semibold mb-1.5">
+              <p className="text-[9px] uppercase tracking-[0.2em] text-[#EA580C]/70 font-semibold mb-1.5">
                 Architectural Showcase
               </p>
-              <h2 className="font-serif text-3xl md:text-4xl text-[#8B4434]">
+              <h2 className="font-serif text-3xl md:text-4xl text-[#EA580C]">
                 Featured Projects
               </h2>
             </div>
             <Link
               href="/bidding"
-              className="text-[9px] uppercase tracking-[0.2em] text-[#8B4434] font-semibold border-b border-[#8B4434]/30 pb-1 hover:border-[#8B4434] transition-colors"
+              className="text-[9px] uppercase tracking-[0.2em] text-[#EA580C] font-semibold border-b border-[#EA580C]/30 pb-1 hover:border-[#EA580C] transition-colors"
             >
               Open Projects &rarr;
             </Link>
@@ -541,7 +541,7 @@ export default function Home() {
 
           <div className="grid gap-8 md:grid-cols-12">
             <article className="md:col-span-8">
-              <div className="relative h-[260px] sm:h-[320px] md:h-[360px] overflow-hidden bg-[#efe6df] border border-[#8B4434]/10">
+              <div className="relative h-[260px] sm:h-[320px] md:h-[360px] overflow-hidden bg-[#efe6df] border border-[#EA580C]/10 rounded-2xl shadow-sm">
                 <img
                   src="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?q=80&w=1600&auto=format&fit=crop"
                   alt="The Monolith Pavilion"
@@ -550,15 +550,15 @@ export default function Home() {
               </div>
               <div className="mt-3 flex items-start justify-between gap-4">
                 <div>
-                  <h3 className="font-serif text-xl text-[#8B4434]">The Monolith Pavilion</h3>
-                  <p className="text-[9px] uppercase tracking-[0.2em] text-[#8B4434]/70 mt-0.5">Zurich, Switzerland</p>
+                  <h3 className="font-serif text-xl text-[#EA580C]">The Monolith Pavilion</h3>
+                  <p className="text-[9px] uppercase tracking-[0.2em] text-[#EA580C]/70 mt-0.5">Zurich, Switzerland</p>
                 </div>
-                <p className="text-[9px] uppercase tracking-[0.2em] text-[#8B4434]/70">2023</p>
+                <p className="text-[9px] uppercase tracking-[0.2em] text-[#EA580C]/70">2023</p>
               </div>
             </article>
 
             <article className="md:col-span-4 md:mt-10">
-              <div className="relative h-[260px] sm:h-[320px] md:h-[260px] overflow-hidden bg-[#efe6df] border border-[#8B4434]/10">
+              <div className="relative h-[260px] sm:h-[320px] md:h-[260px] overflow-hidden bg-[#efe6df] border border-[#EA580C]/10 rounded-2xl shadow-sm">
                 <img
                   src="https://images.unsplash.com/photo-1511818966892-d7d671e672a2?q=80&w=1400&auto=format&fit=crop"
                   alt="Kensington Retreat"
@@ -567,15 +567,15 @@ export default function Home() {
               </div>
               <div className="mt-3 flex items-start justify-between gap-4">
                 <div>
-                  <h3 className="font-serif text-xl text-[#8B4434]">Kensington Retreat</h3>
-                  <p className="text-[9px] uppercase tracking-[0.2em] text-[#8B4434]/70 mt-0.5">London, UK</p>
+                  <h3 className="font-serif text-xl text-[#EA580C]">Kensington Retreat</h3>
+                  <p className="text-[9px] uppercase tracking-[0.2em] text-[#EA580C]/70 mt-0.5">London, UK</p>
                 </div>
-                <p className="text-[9px] uppercase tracking-[0.2em] text-[#8B4434]/70">2022</p>
+                <p className="text-[9px] uppercase tracking-[0.2em] text-[#EA580C]/70">2022</p>
               </div>
             </article>
 
             <article className="md:col-span-4 md:mt-4">
-              <div className="relative h-[260px] sm:h-[320px] md:h-[340px] overflow-hidden bg-[#efe6df] border border-[#8B4434]/10">
+              <div className="relative h-[260px] sm:h-[320px] md:h-[340px] overflow-hidden bg-[#efe6df] border border-[#EA580C]/10 rounded-2xl shadow-sm">
                 <img
                   src="https://images.unsplash.com/photo-1494526585095-c41746248156?q=80&w=1400&auto=format&fit=crop"
                   alt="Obsidian Gallery"
@@ -584,15 +584,15 @@ export default function Home() {
               </div>
               <div className="mt-3 flex items-start justify-between gap-4">
                 <div>
-                  <h3 className="font-serif text-xl text-[#8B4434]">Obsidian Gallery</h3>
-                  <p className="text-[9px] uppercase tracking-[0.2em] text-[#8B4434]/70 mt-0.5">Tokyo, Japan</p>
+                  <h3 className="font-serif text-xl text-[#EA580C]">Obsidian Gallery</h3>
+                  <p className="text-[9px] uppercase tracking-[0.2em] text-[#EA580C]/70 mt-0.5">Tokyo, Japan</p>
                 </div>
-                <p className="text-[9px] uppercase tracking-[0.2em] text-[#8B4434]/70">2024</p>
+                <p className="text-[9px] uppercase tracking-[0.2em] text-[#EA580C]/70">2024</p>
               </div>
             </article>
 
             <article className="md:col-span-8 md:mt-12">
-              <div className="relative h-[260px] sm:h-[320px] md:h-[340px] overflow-hidden bg-[#efe6df] border border-[#8B4434]/10">
+              <div className="relative h-[260px] sm:h-[320px] md:h-[340px] overflow-hidden bg-[#efe6df] border border-[#EA580C]/10 rounded-2xl shadow-sm">
                 <img
                   src="https://images.unsplash.com/photo-1511818966892-d7d671e672a2?q=80&w=1400&auto=format&fit=crop"
                   alt="Aegean Residence"
@@ -601,10 +601,10 @@ export default function Home() {
               </div>
               <div className="mt-3 flex items-start justify-between gap-4">
                 <div>
-                  <h3 className="font-serif text-xl text-[#8B4434]">Aegean Residence</h3>
-                  <p className="text-[9px] uppercase tracking-[0.2em] text-[#8B4434]/70 mt-0.5">Mykonos, Greece</p>
+                  <h3 className="font-serif text-xl text-[#EA580C]">Aegean Residence</h3>
+                  <p className="text-[9px] uppercase tracking-[0.2em] text-[#EA580C]/70 mt-0.5">Mykonos, Greece</p>
                 </div>
-                <p className="text-[9px] uppercase tracking-[0.2em] text-[#8B4434]/70">2021</p>
+                <p className="text-[9px] uppercase tracking-[0.2em] text-[#EA580C]/70">2021</p>
               </div>
             </article>
           </div>
@@ -615,7 +615,7 @@ export default function Home() {
       <section className="bg-[#FCFAF7] max-w-7xl mx-auto px-4 sm:px-6 md:px-12 py-14 sm:py-24 flex flex-col lg:flex-row gap-10 lg:gap-20">
         {/* Left column: Overview */}
         <div className="lg:w-1/3 space-y-4">
-          <p className="text-[9px] uppercase tracking-[0.25em] text-[#8B4434] font-semibold">
+          <p className="text-[9px] uppercase tracking-[0.25em] text-[#EA580C] font-semibold">
             The Platform
           </p>
           <h2 className="font-serif text-3xl sm:text-4xl text-[#1c1108] leading-tight">
@@ -629,64 +629,64 @@ export default function Home() {
         {/* Right column: 4 Simple Value Cards & Quick Actions */}
         <div className="lg:w-2/3 space-y-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="p-5 bg-white border border-[#8B4434]/15">
+            <div className="p-5 bg-white border border-[#EA580C]/15 rounded-2xl shadow-2xs">
               <p className="font-serif text-base text-[#1c1108] font-semibold mb-1">AI Cost Estimation</p>
               <p className="text-xs text-[#606060]">Instant structural BOQ detailing linked directly to current Sri Lankan market prices.</p>
             </div>
-            <div className="p-5 bg-white border border-[#8B4434]/15">
+            <div className="p-5 bg-white border border-[#EA580C]/15 rounded-2xl shadow-2xs">
               <p className="font-serif text-base text-[#1c1108] font-semibold mb-1">Verified Network</p>
               <p className="text-xs text-[#606060]">Directly hire certified architects, engineers, and builders with zero contact fees.</p>
             </div>
-            <div className="p-5 bg-white border border-[#8B4434]/15">
+            <div className="p-5 bg-white border border-[#EA580C]/15 rounded-2xl shadow-2xs">
               <p className="font-serif text-base text-[#1c1108] font-semibold mb-1">Open Bidding Space</p>
               <p className="text-xs text-[#606060]">Publish your tender with 1 ticket and compare competitive bids from top professionals.</p>
             </div>
-            <div className="p-5 bg-white border border-[#8B4434]/15">
+            <div className="p-5 bg-white border border-[#EA580C]/15 rounded-2xl shadow-2xs">
               <p className="font-serif text-base text-[#1c1108] font-semibold mb-1">Direct Supplies</p>
               <p className="text-xs text-[#606060]">Source authentic cement, steel, bricks, and electricals with transparent pricing.</p>
             </div>
           </div>
 
           {/* Quick Action Buttons */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-4 border-t border-[#8B4434]/15">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-4 border-t border-[#EA580C]/15">
             <Link
               href="/professionals"
-              className="group flex items-center justify-between border border-[#8B4434] p-5 hover:bg-[#8B4434] transition-colors"
+              className="group flex items-center justify-between border border-[#EA580C] p-5 hover:bg-[#EA580C] rounded-2xl transition-all shadow-xs"
             >
-              <span className="text-xs uppercase tracking-widest font-semibold text-[#8B4434] group-hover:text-white">
+              <span className="text-xs uppercase tracking-widest font-semibold text-[#EA580C] group-hover:text-white">
                 Find Professionals
               </span>
-              <span className="text-base text-[#8B4434] group-hover:text-white group-hover:translate-x-1 transition-transform">&rarr;</span>
+              <span className="text-base text-[#EA580C] group-hover:text-white group-hover:translate-x-1 transition-transform">&rarr;</span>
             </Link>
 
             <Link
               href="/estimation"
-              className="group flex items-center justify-between border border-[#8B4434] p-5 hover:bg-[#8B4434] transition-colors"
+              className="group flex items-center justify-between border border-[#EA580C] p-5 hover:bg-[#EA580C] rounded-2xl transition-all shadow-xs"
             >
-              <span className="text-xs uppercase tracking-widest font-semibold text-[#8B4434] group-hover:text-white">
+              <span className="text-xs uppercase tracking-widest font-semibold text-[#EA580C] group-hover:text-white">
                 Start an Estimation
               </span>
-              <span className="text-base text-[#8B4434] group-hover:text-white group-hover:translate-x-1 transition-transform">&rarr;</span>
+              <span className="text-base text-[#EA580C] group-hover:text-white group-hover:translate-x-1 transition-transform">&rarr;</span>
             </Link>
 
             <Link
               href="/bidding"
-              className="group flex items-center justify-between border border-[#8B4434] p-5 hover:bg-[#8B4434] transition-colors"
+              className="group flex items-center justify-between border border-[#EA580C] p-5 hover:bg-[#EA580C] rounded-2xl transition-all shadow-xs"
             >
-              <span className="text-xs uppercase tracking-widest font-semibold text-[#8B4434] group-hover:text-white">
+              <span className="text-xs uppercase tracking-widest font-semibold text-[#EA580C] group-hover:text-white">
                 Project Bidding Space
               </span>
-              <span className="text-base text-[#8B4434] group-hover:text-white group-hover:translate-x-1 transition-transform">&rarr;</span>
+              <span className="text-base text-[#EA580C] group-hover:text-white group-hover:translate-x-1 transition-transform">&rarr;</span>
             </Link>
 
             <Link
               href="/marketplace"
-              className="group flex items-center justify-between border border-[#8B4434] p-5 hover:bg-[#8B4434] transition-colors"
+              className="group flex items-center justify-between border border-[#EA580C] p-5 hover:bg-[#EA580C] rounded-2xl transition-all shadow-xs"
             >
-              <span className="text-xs uppercase tracking-widest font-semibold text-[#8B4434] group-hover:text-white">
+              <span className="text-xs uppercase tracking-widest font-semibold text-[#EA580C] group-hover:text-white">
                 Material Marketplace
               </span>
-              <span className="text-base text-[#8B4434] group-hover:text-white group-hover:translate-x-1 transition-transform">&rarr;</span>
+              <span className="text-base text-[#EA580C] group-hover:text-white group-hover:translate-x-1 transition-transform">&rarr;</span>
             </Link>
           </div>
         </div>

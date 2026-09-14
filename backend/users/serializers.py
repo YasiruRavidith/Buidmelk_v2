@@ -325,6 +325,40 @@ class CustomUserSerializer(serializers.ModelSerializer):
         if full_url:
             data['profile_image'] = full_url
             data['profile_image_url'] = full_url
+
+        # Protect professional contact details at API level
+        if instance.role == 'PROFESSIONAL':
+            requester = self.context.get('requester')
+            if not requester:
+                request = self.context.get('request')
+                if request:
+                    requester = getattr(request, 'user', None)
+
+            is_owner = bool(requester and requester.is_authenticated and requester.id == instance.id)
+            contact_unlocked = is_owner
+
+            if not contact_unlocked and requester and requester.is_authenticated:
+                prof_profile = getattr(instance, 'professional_profile', None)
+                is_qs = prof_profile and prof_profile.profession_type == 'QS'
+                if is_qs:
+                    from bidding.models import QSConnectionUnlock
+                    contact_unlocked = QSConnectionUnlock.objects.filter(
+                        client=requester, qs_professional=instance
+                    ).exists()
+                else:
+                    from bidding.models import ProjectPost
+                    contact_unlocked = ProjectPost.objects.filter(
+                        client=requester, bids__professional=instance, bids__status='ACCEPTED'
+                    ).exists()
+
+            data['contact_unlocked'] = contact_unlocked
+            if not contact_unlocked:
+                # Mask contact info completely so real phone and email never leave the server
+                data['email'] = "••••••••••••@••••••.lk"
+                data['phone_number'] = "+94 •• ••• ••••"
+        else:
+            data['contact_unlocked'] = True
+
         return data
 
 

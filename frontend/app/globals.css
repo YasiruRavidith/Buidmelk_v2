@@ -8,9 +8,10 @@
 :root {
   --background: #FCFAF7; 
   --foreground: #1c1108;
-  --color-terracotta: #8B4434;
+  --color-terracotta: #EA580C;
+  --color-orange: #EA580C;
   --color-base: #FCFAF7;
-  --color-blush: #FAEBE7;
+  --color-blush: #FFEDD5;
   --color-text: #1c1108;
 }
 
@@ -44,17 +45,28 @@ html {
   overflow-x: hidden;
 }
 
+@layer base {
+  button:not([class*="rounded-"]) {
+    border-radius: 0.75rem;
+  }
+  input:not([class*="rounded-"]),
+  select:not([class*="rounded-"]),
+  textarea:not([class*="rounded-"]) {
+    border-radius: 0.75rem;
+  }
+}
+
 @layer components {
   .btn-primary {
-    @apply bg-[#8B4434] text-[#FCFAF7] px-8 py-4 text-[10px] tracking-[0.2em] uppercase font-semibold hover:bg-[#6c3426] transition-colors shadow-none rounded-none;
+    @apply bg-[#EA580C] text-white px-8 py-4 text-[10px] tracking-[0.2em] uppercase font-semibold hover:bg-[#C2410C] transition-colors shadow-sm rounded-xl;
   }
   .btn-secondary {
-    @apply border border-[#8B4434] text-[#8B4434] bg-transparent px-8 py-4 text-[10px] tracking-[0.2em] uppercase font-semibold hover:bg-[#8B4434]/5 transition-colors shadow-none rounded-none;
+    @apply border border-[#EA580C] text-[#EA580C] bg-transparent px-8 py-4 text-[10px] tracking-[0.2em] uppercase font-semibold hover:bg-[#EA580C]/10 transition-colors shadow-sm rounded-xl;
   }
   .btn-outline {
-    @apply border border-[#8B4434] text-[#8B4434] bg-transparent px-8 py-4 text-[10px] tracking-[0.2em] uppercase font-semibold hover:bg-[#8B4434]/5 transition-colors shadow-none rounded-none;
+    @apply border border-[#EA580C] text-[#EA580C] bg-transparent px-8 py-4 text-[10px] tracking-[0.2em] uppercase font-semibold hover:bg-[#EA580C]/10 transition-colors shadow-sm rounded-xl;
   }
   .card-luxury {
-    @apply bg-[#FCFAF7] rounded-none shadow-none p-8 border border-[#8B4434]/10 transition-all hover:border-[#8B4434]/30;
+    @apply bg-[#FCFAF7] rounded-2xl shadow-sm p-8 border border-[#EA580C]/10 transition-all hover:border-[#EA580C]/30;
   }
 }

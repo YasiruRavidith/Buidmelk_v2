@@ -624,12 +624,12 @@ export default function HardwareShopsPage() {
   return (
     <DashboardShell navItems={navItems}>
       <header className="flex flex-col gap-4">
-        <Link href="/dashboard/hardware" className="text-[#8B4434] font-semibold uppercase tracking-widest text-sm">
+        <Link href="/dashboard/hardware" className="text-[#EA580C] font-semibold uppercase tracking-widest text-sm">
           ← Back to dashboard
         </Link>
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <p className="text-[#8B4434] font-semibold tracking-widest uppercase text-sm">Hardware Owner</p>
+            <p className="text-[#EA580C] font-semibold tracking-widest uppercase text-sm">Hardware Owner</p>
             <h1 className="font-serif text-4xl text-stone-900">Manage Your Shops</h1>
             <p className="text-stone-500 mt-2">Add multiple hardware shops and update their public details.</p>
           </div>
@@ -676,7 +676,7 @@ export default function HardwareShopsPage() {
               <input
                 value={shopName}
                 onChange={(event) => setShopName(event.target.value)}
-                className="w-full border border-stone-300 text-stone-700 rounded-lg px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
+                className="w-full border border-stone-300 text-stone-700 rounded-xl px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
                 placeholder="Required"
               />
             </div>
@@ -685,7 +685,7 @@ export default function HardwareShopsPage() {
               <input
                 value={shopPhone}
                 onChange={(event) => setShopPhone(event.target.value)}
-                className="w-full border border-stone-300 text-stone-700 rounded-lg px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
+                className="w-full border border-stone-300 text-stone-700 rounded-xl px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
                 placeholder="Optional"
               />
             </div>
@@ -695,7 +695,7 @@ export default function HardwareShopsPage() {
                 type="email"
                 value={shopEmail}
                 onChange={(event) => setShopEmail(event.target.value)}
-                className="w-full border border-stone-300 text-stone-700 rounded-lg px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
+                className="w-full border border-stone-300 text-stone-700 rounded-xl px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
                 placeholder="Optional"
               />
             </div>
@@ -704,7 +704,7 @@ export default function HardwareShopsPage() {
               <input
                 value={businessRegistration}
                 onChange={(event) => setBusinessRegistration(event.target.value)}
-                className="w-full border border-stone-300 text-stone-700 rounded-lg px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
+                className="w-full border border-stone-300 text-stone-700 rounded-xl px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
                 placeholder="Optional"
               />
             </div>
@@ -713,7 +713,7 @@ export default function HardwareShopsPage() {
               <input
                 value={openingHours}
                 onChange={(event) => setOpeningHours(event.target.value)}
-                className="w-full border border-stone-300 text-stone-700 rounded-lg px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
+                className="w-full border border-stone-300 text-stone-700 rounded-xl px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
                 placeholder="e.g., Mon - Sat, 8:00 AM - 6:00 PM"
               />
             </div>
@@ -723,7 +723,7 @@ export default function HardwareShopsPage() {
                 type="url"
                 value={googleMapsLink}
                 onChange={(event) => setGoogleMapsLink(event.target.value)}
-                className="w-full border border-stone-300 text-stone-700 rounded-lg px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
+                className="w-full border border-stone-300 text-stone-700 rounded-xl px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
                 placeholder="Optional"
               />
             </div>
@@ -733,7 +733,7 @@ export default function HardwareShopsPage() {
                 value={shopAddress}
                 onChange={(event) => setShopAddress(event.target.value)}
                 rows={3}
-                className="w-full border border-stone-300 text-stone-700 rounded-lg px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
+                className="w-full border border-stone-300 text-stone-700 rounded-xl px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
                 placeholder="Optional"
               />
             </div>
@@ -743,12 +743,12 @@ export default function HardwareShopsPage() {
                 value={services}
                 onChange={(event) => setServices(event.target.value)}
                 rows={3}
-                className="w-full border border-stone-300 text-stone-700 rounded-lg px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
+                className="w-full border border-stone-300 text-stone-700 rounded-xl px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
                 placeholder="Optional"
               />
             </div>
             {formError && (
-              <div className="md:col-span-2 text-sm text-red-600 bg-red-50 border border-red-100 rounded-lg px-4 py-3">
+              <div className="md:col-span-2 text-sm text-red-600 bg-red-50 border border-red-100 rounded-xl px-4 py-3">
                 {formError}
               </div>
             )}
@@ -783,7 +783,7 @@ export default function HardwareShopsPage() {
               <input
                 value={editShopName}
                 onChange={(event) => setEditShopName(event.target.value)}
-                className="w-full border border-stone-300 text-stone-700 rounded-lg px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
+                className="w-full border border-stone-300 text-stone-700 rounded-xl px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
               />
             </div>
             <div>
@@ -791,7 +791,7 @@ export default function HardwareShopsPage() {
               <input
                 value={editShopPhone}
                 onChange={(event) => setEditShopPhone(event.target.value)}
-                className="w-full border border-stone-300 text-stone-700 rounded-lg px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
+                className="w-full border border-stone-300 text-stone-700 rounded-xl px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
               />
             </div>
             <div>
@@ -800,7 +800,7 @@ export default function HardwareShopsPage() {
                 type="email"
                 value={editShopEmail}
                 onChange={(event) => setEditShopEmail(event.target.value)}
-                className="w-full border border-stone-300 text-stone-700 rounded-lg px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
+                className="w-full border border-stone-300 text-stone-700 rounded-xl px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
               />
             </div>
             <div>
@@ -808,7 +808,7 @@ export default function HardwareShopsPage() {
               <input
                 value={editBusinessRegistration}
                 onChange={(event) => setEditBusinessRegistration(event.target.value)}
-                className="w-full border border-stone-300 text-stone-700 rounded-lg px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
+                className="w-full border border-stone-300 text-stone-700 rounded-xl px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
               />
             </div>
             <div>
@@ -816,7 +816,7 @@ export default function HardwareShopsPage() {
               <input
                 value={editOpeningHours}
                 onChange={(event) => setEditOpeningHours(event.target.value)}
-                className="w-full border border-stone-300 text-stone-700 rounded-lg px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
+                className="w-full border border-stone-300 text-stone-700 rounded-xl px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
               />
             </div>
             <div>
@@ -825,7 +825,7 @@ export default function HardwareShopsPage() {
                 type="url"
                 value={editGoogleMapsLink}
                 onChange={(event) => setEditGoogleMapsLink(event.target.value)}
-                className="w-full border border-stone-300 text-stone-700 rounded-lg px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
+                className="w-full border border-stone-300 text-stone-700 rounded-xl px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
               />
             </div>
             <div className="md:col-span-2">
@@ -834,7 +834,7 @@ export default function HardwareShopsPage() {
                 value={editShopAddress}
                 onChange={(event) => setEditShopAddress(event.target.value)}
                 rows={3}
-                className="w-full border border-stone-300 text-stone-700 rounded-lg px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
+                className="w-full border border-stone-300 text-stone-700 rounded-xl px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
               />
             </div>
             <div className="md:col-span-2">
@@ -843,13 +843,13 @@ export default function HardwareShopsPage() {
                 value={editServices}
                 onChange={(event) => setEditServices(event.target.value)}
                 rows={3}
-                className="w-full border border-stone-300 text-stone-700 rounded-lg px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
+                className="w-full border border-stone-300 text-stone-700 rounded-xl px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
               />
             </div>
           </div>
 
           {editError && (
-            <div className="text-sm text-red-600 bg-red-50 border border-red-100 rounded-lg px-4 py-3">
+            <div className="text-sm text-red-600 bg-red-50 border border-red-100 rounded-xl px-4 py-3">
               {editError}
             </div>
           )}
@@ -911,7 +911,7 @@ export default function HardwareShopsPage() {
               {activeShop.gallery_images && activeShop.gallery_images.length > 0 ? (
                 <div className="grid grid-cols-3 gap-2">
                   {activeShop.gallery_images.map((image) => (
-                    <div key={image.id} className="relative group h-20 rounded-lg border border-stone-200 overflow-hidden bg-stone-50">
+                    <div key={image.id} className="relative group h-20 rounded-xl border border-stone-200 overflow-hidden bg-stone-50">
                       <Image
                         src={normalizeMediaUrl(backendBaseUrl, image.image_url || image.image)}
                         alt="Gallery"
@@ -980,7 +980,7 @@ export default function HardwareShopsPage() {
                   value={selectedMaterialId}
                   onChange={(event) => setSelectedMaterialId(event.target.value)}
                   disabled={isMaterialsLoading}
-                  className="w-full border border-stone-300 text-stone-700 rounded-lg px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors disabled:opacity-70"
+                  className="w-full border border-stone-300 text-stone-700 rounded-xl px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors disabled:opacity-70"
                 >
                   <option value="" disabled>
                     {isMaterialsLoading ? "Loading..." : "Select a material"}
@@ -1004,14 +1004,14 @@ export default function HardwareShopsPage() {
                   min="0"
                   value={stockQuantity}
                   onChange={(event) => setStockQuantity(event.target.value)}
-                  className="w-full border border-stone-300 text-stone-700 rounded-lg px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
+                  className="w-full border border-stone-300 text-stone-700 rounded-xl px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
                   placeholder="0"
                 />
               </div>
             </div>
 
             {itemsError && (
-              <div className="text-sm text-red-600 bg-red-50 border border-red-100 rounded-lg px-4 py-3">
+              <div className="text-sm text-red-600 bg-red-50 border border-red-100 rounded-xl px-4 py-3">
                 {itemsError}
               </div>
             )}
@@ -1068,7 +1068,7 @@ export default function HardwareShopsPage() {
                                 [item.id]: event.target.value,
                               }))
                             }
-                            className="w-32 border border-stone-300 text-stone-700 rounded-lg px-3 py-2 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
+                            className="w-32 border border-stone-300 text-stone-700 rounded-xl px-3 py-2 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
                           />
                           <button
                             type="button"
@@ -1082,7 +1082,7 @@ export default function HardwareShopsPage() {
 
                         <Link
                           href={`/marketplace/${item.material}`}
-                          className="inline-flex w-fit rounded-lg border border-stone-300 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-stone-700 transition-colors hover:border-orange-500 hover:text-orange-600"
+                          className="inline-flex w-fit rounded-xl border border-stone-300 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-stone-700 transition-colors hover:border-orange-500 hover:text-orange-600"
                         >
                           View Details
                         </Link>

@@ -183,7 +183,7 @@ export default function ShopDetailPage() {
         </div>
 
         <div className="max-w-7xl mx-auto px-6 pb-16 lg:pb-20 space-y-8">
-          <div className="relative h-96 md:h-120 bg-stone-100 overflow-hidden rounded-none border border-stone-200 shadow-sm">
+          <div className="relative h-96 md:h-120 bg-stone-100 overflow-hidden rounded-2xl border border-stone-200 shadow-sm">
             {shop.banner_image_url ? (
               <img
                 src={shop.banner_image_url}
@@ -212,7 +212,7 @@ export default function ShopDetailPage() {
           {shop.gallery_images && shop.gallery_images.length > 0 ? (
             <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
               {shop.gallery_images.map((image, index) => (
-                <div key={`${image.image_url}-${index}`} className="relative aspect-square overflow-hidden rounded-none border border-stone-200 bg-stone-100 shadow-sm">
+                <div key={`${image.image_url}-${index}`} className="relative aspect-square overflow-hidden rounded-2xl border border-stone-200 bg-stone-100 shadow-sm">
                   {image.image_url ? (
                     <img
                       src={image.image_url}
@@ -229,30 +229,30 @@ export default function ShopDetailPage() {
           ) : null}
 
           <div className="grid gap-4 sm:grid-cols-3">
-            <div className="bg-white border border-stone-200 rounded-none p-4 shadow-sm">
+            <div className="bg-white border border-stone-200 rounded-2xl p-4 shadow-sm">
               <div className="flex items-center gap-2 text-xs uppercase tracking-wide text-stone-500 mb-2"><Star className="h-4 w-4 text-orange-500" /> Rating</div>
               <p className="text-2xl font-serif text-stone-900">{averageRating}</p>
             </div>
-            <div className="bg-white border border-stone-200 rounded-none p-4 shadow-sm">
-              <div className="flex items-center gap-2 text-xs uppercase tracking-wide text-stone-500 mb-2"><Clock3 className="h-4 w-4 text-[#8B4434]" /> Hours</div>
+            <div className="bg-white border border-stone-200 rounded-2xl p-4 shadow-sm">
+              <div className="flex items-center gap-2 text-xs uppercase tracking-wide text-stone-500 mb-2"><Clock3 className="h-4 w-4 text-[#EA580C]" /> Hours</div>
               <p className="text-lg font-semibold text-stone-900">{shop.opening_hours || 'Not listed'}</p>
             </div>
-            <div className="bg-white border border-stone-200 rounded-none p-4 shadow-sm">
-              <div className="flex items-center gap-2 text-xs uppercase tracking-wide text-stone-500 mb-2"><CheckCircle2 className="h-4 w-4 text-[#8B4434]" /> Reviews</div>
+            <div className="bg-white border border-stone-200 rounded-2xl p-4 shadow-sm">
+              <div className="flex items-center gap-2 text-xs uppercase tracking-wide text-stone-500 mb-2"><CheckCircle2 className="h-4 w-4 text-[#EA580C]" /> Reviews</div>
               <p className="text-lg font-semibold text-stone-900">{reviews.length} total</p>
             </div>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <a href={`tel:${shop.shop_phone || ''}`} className="bg-white border border-stone-200 rounded-none p-4 flex items-center gap-3 shadow-sm hover:border-[#8B4434]/30 transition-colors">
-              <Phone className="h-5 w-5 text-[#8B4434]" />
+            <a href={`tel:${shop.shop_phone || ''}`} className="bg-white border border-stone-200 rounded-2xl p-4 flex items-center gap-3 shadow-sm hover:border-[#EA580C]/30 transition-colors">
+              <Phone className="h-5 w-5 text-[#EA580C]" />
               <div>
                 <p className="text-[10px] uppercase tracking-[0.3em] text-stone-500">Phone</p>
                 <p className="text-sm font-semibold text-stone-900">{shop.shop_phone || 'Phone not listed'}</p>
               </div>
             </a>
-            <a href={mapLinkHref} target="_blank" rel="noreferrer" className="bg-white border border-stone-200 rounded-none p-4 flex items-center gap-3 shadow-sm hover:border-[#8B4434]/30 transition-colors">
-              <MapPin className="h-5 w-5 text-[#8B4434]" />
+            <a href={mapLinkHref} target="_blank" rel="noreferrer" className="bg-white border border-stone-200 rounded-2xl p-4 flex items-center gap-3 shadow-sm hover:border-[#EA580C]/30 transition-colors">
+              <MapPin className="h-5 w-5 text-[#EA580C]" />
               <div>
                 <p className="text-[10px] uppercase tracking-[0.3em] text-stone-500">Location</p>
                 <p className="text-sm font-semibold text-stone-900">Open in Maps</p>
@@ -261,17 +261,17 @@ export default function ShopDetailPage() {
           </div>
 
           <div className="grid gap-4 md:grid-cols-2">
-            <div className="bg-white border border-stone-200 rounded-none p-5 shadow-sm space-y-4">
+            <div className="bg-white border border-stone-200 rounded-2xl p-5 shadow-sm space-y-4">
               <h2 className="font-serif text-2xl text-stone-900">Store Details</h2>
               <div className="grid gap-3 text-sm text-stone-600">
-                <div className="flex items-start gap-3"><CalendarDays className="mt-0.5 h-4 w-4 text-[#8B4434]" /><span>{shop.services || 'No services listed'}</span></div>
-                <div className="flex items-start gap-3"><Car className="mt-0.5 h-4 w-4 text-[#8B4434]" /><span>{shop.shop_email || 'Email not listed'}</span></div>
+                <div className="flex items-start gap-3"><CalendarDays className="mt-0.5 h-4 w-4 text-[#EA580C]" /><span>{shop.services || 'No services listed'}</span></div>
+                <div className="flex items-start gap-3"><Car className="mt-0.5 h-4 w-4 text-[#EA580C]" /><span>{shop.shop_email || 'Email not listed'}</span></div>
               </div>
             </div>
 
-            <div className="bg-white border border-stone-200 rounded-none p-5 shadow-sm space-y-4">
+            <div className="bg-white border border-stone-200 rounded-2xl p-5 shadow-sm space-y-4">
               <h2 className="font-serif text-2xl text-stone-900">Location</h2>
-              <div className="relative aspect-16/10 overflow-hidden border border-stone-200 bg-stone-100">
+              <div className="relative aspect-16/10 overflow-hidden rounded-xl border border-stone-200 bg-stone-100">
                 <iframe
                   title={`${shop.shop_name} location map`}
                   src={mapEmbedUrl}
@@ -296,7 +296,7 @@ export default function ShopDetailPage() {
 
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {shop.items?.length ? shop.items.map((item) => (
-              <div key={item.id} className="rounded-none border border-stone-200 bg-white shadow-sm overflow-hidden flex flex-col">
+              <div key={item.id} className="rounded-2xl border border-stone-200 bg-white shadow-sm overflow-hidden flex flex-col">
                 <div className="relative aspect-[4/3] bg-stone-100 border-b border-stone-200 overflow-hidden">
                   {item.image_url ? (
                     <img
@@ -330,14 +330,14 @@ export default function ShopDetailPage() {
                   </div>
                   <Link
                     href={`/marketplace/${item.material}`}
-                    className="inline-flex justify-center rounded-none border border-stone-300 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-stone-700 transition-colors hover:border-[#8B4434] hover:text-[#8B4434]"
+                    className="inline-flex justify-center rounded-xl border border-stone-300 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-stone-700 transition-colors hover:border-[#EA580C] hover:text-[#EA580C]"
                   >
                     View Details
                   </Link>
                 </div>
               </div>
             )) : (
-              <div className="rounded-none border border-dashed border-stone-300 bg-white p-8 text-stone-600">No shop items listed yet.</div>
+              <div className="rounded-2xl border border-dashed border-stone-300 bg-white p-8 text-stone-600">No shop items listed yet.</div>
             )}
           </div>
         </section>
@@ -345,17 +345,17 @@ export default function ShopDetailPage() {
         <section className="space-y-4">
           <h2 className="font-serif text-3xl text-stone-900">Reviews</h2>
           <div className="grid gap-6 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
-            <div className="bg-white border border-stone-200 rounded-none p-6 shadow-sm space-y-4">
+            <div className="bg-white border border-stone-200 rounded-2xl p-6 shadow-sm space-y-4">
               <h3 className="font-serif text-2xl text-stone-900">Write a review</h3>
               <label className="block text-sm text-stone-600">
                 Rating
-                <select value={reviewRating} onChange={(event) => setReviewRating(Number(event.target.value))} className="mt-2 w-full rounded-none border border-stone-200 bg-stone-50 px-3 py-2 text-stone-900 outline-none focus:border-[#8B4434]/40">
+                <select value={reviewRating} onChange={(event) => setReviewRating(Number(event.target.value))} className="mt-2 w-full rounded-xl border border-stone-200 bg-stone-50 px-3 py-2 text-stone-900 outline-none focus:border-[#EA580C]/40">
                   {[5, 4, 3, 2, 1].map((value) => <option key={value} value={value}>{value} star{value > 1 ? 's' : ''}</option>)}
                 </select>
               </label>
               <label className="block text-sm text-stone-600">
                 Review
-                <textarea value={reviewComment} onChange={(event) => setReviewComment(event.target.value)} rows={5} placeholder="Write your review..." className="mt-2 w-full rounded-none border border-stone-200 bg-stone-50 px-3 py-2 text-stone-900 outline-none placeholder:text-stone-400 focus:border-[#8B4434]/40" />
+                <textarea value={reviewComment} onChange={(event) => setReviewComment(event.target.value)} rows={5} placeholder="Write your review..." className="mt-2 w-full rounded-xl border border-stone-200 bg-stone-50 px-3 py-2 text-stone-900 outline-none placeholder:text-stone-400 focus:border-[#EA580C]/40" />
               </label>
               <button onClick={handleSubmitReview} disabled={reviewSaving} className="btn-primary px-5 py-3">
                 {reviewSaving ? 'Saving...' : 'Submit Review'}
@@ -364,14 +364,14 @@ export default function ShopDetailPage() {
 
             <div className="space-y-3">
               {reviews.length > 0 ? reviews.map((review) => (
-                <div key={review.id} className="rounded-none border border-stone-200 bg-white p-5 shadow-sm">
+                <div key={review.id} className="rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
                   <div className="flex items-center justify-between gap-3 text-sm">
                     <span className="font-semibold text-stone-900">{review.author_name}</span>
                     <span className="text-orange-500">{'★'.repeat(review.rating)}<span className="text-stone-300">{'★'.repeat(5 - review.rating)}</span></span>
                   </div>
                   {review.comment ? <p className="mt-2 text-sm text-stone-600">{review.comment}</p> : null}
                 </div>
-              )) : <div className="rounded-none border border-stone-200 bg-stone-50 p-6 text-sm text-stone-600">No reviews yet.</div>}
+              )) : <div className="rounded-2xl border border-stone-200 bg-stone-50 p-6 text-sm text-stone-600">No reviews yet.</div>}
             </div>
           </div>
         </section>

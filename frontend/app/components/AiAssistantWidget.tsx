@@ -219,46 +219,37 @@ export default function AiAssistantWidget() {
         {!isOpen && (
           <button
             onClick={() => setIsOpen(true)}
-            className="group relative flex items-center gap-3 bg-gradient-to-r from-[#8B4434] via-[#6f3829] to-[#1c1108] text-[#FCFAF7] px-5 py-3.5 shadow-2xl hover:shadow-[0_8px_30px_rgba(139,68,52,0.4)] transition-all duration-300 transform hover:-translate-y-1 active:translate-y-0 border border-[#FCFAF7]/20"
+            aria-label="Open AI Assistant"
+            className="group relative flex items-center justify-center w-14 h-14 bg-[#EA580C] hover:bg-[#C2410C] text-white rounded-full shadow-2xl hover:shadow-[0_8px_30px_rgba(234,88,12,0.4)] transition-all duration-300 transform hover:scale-105 active:scale-95 border border-white/20"
           >
-            <div className="relative">
-              <Sparkles className="w-5 h-5 text-amber-300 animate-pulse" />
-              <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-400 rounded-full border-2 border-[#1c1108]" />
+            <div className="relative flex items-center justify-center">
+              <Sparkles className="w-6 h-6 text-white" />
+              <span className="absolute -top-1.5 -right-1.5 w-3 h-3 bg-emerald-400 rounded-full border-2 border-[#EA580C]" />
             </div>
-            <div className="text-left hidden sm:block">
-              <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-amber-200">AI Assistant</p>
-              
-            </div>
-            <span className="bg-white/10 text-[10px] uppercase tracking-wider px-2 py-0.5 font-bold rounded-none ml-1">
-              Ask AI
-            </span>
           </button>
         )}
       </div>
 
       {/* ── CHAT POPUP WIDGET ── */}
       {isOpen && (
-        <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 w-[95vw] sm:w-[440px] max-w-[95vw] h-[620px] max-h-[85vh] z-50 bg-[#FCFAF7] border border-[#322318] shadow-[0_20px_50px_rgba(28,17,8,0.3)] flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-5 duration-300">
+        <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 w-[95vw] sm:w-[440px] max-w-[95vw] h-[620px] max-h-[85vh] z-50 bg-[#FCFAF7] border border-[#322318] shadow-[0_20px_50px_rgba(28,17,8,0.3)] flex flex-col overflow-hidden rounded-3xl animate-in fade-in slide-in-from-bottom-5 duration-300">
 
           {/* Header */}
           <div className="bg-[#1c1108] text-[#FCFAF7] px-5 py-4 flex items-center justify-between border-b border-[#322318]">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 bg-gradient-to-br from-[#8B4434] to-[#6f3829] border border-amber-300/30 flex items-center justify-center shrink-0">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#EA580C] to-[#C2410C] border border-amber-300/30 flex items-center justify-center shrink-0">
                 <Bot className="w-5 h-5 text-amber-200" />
               </div>
               <div>
                 <h3 className="font-serif text-base text-[#FCFAF7] font-semibold flex items-center gap-2">
                   BuildMe AI Assistant
-                  <span className="text-[9px] bg-emerald-950 text-emerald-300 border border-emerald-800/60 px-2 py-0.5 font-sans font-bold uppercase tracking-wider">
-                    Free
-                  </span>
                 </h3>
                 <p className="text-[10px] text-[#c9b8b0] tracking-wide">Database &amp; Material Buying Advisor</p>
               </div>
             </div>
             <button
               onClick={() => setIsOpen(false)}
-              className="p-1.5 text-[#c9b8b0] hover:text-white hover:bg-white/10 transition-colors"
+              className="p-1.5 rounded-full text-[#c9b8b0] hover:text-white hover:bg-white/10 transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
@@ -268,19 +259,19 @@ export default function AiAssistantWidget() {
           <div className="bg-[#1c1108]/95 px-4 py-2.5 flex items-center gap-2 overflow-x-auto border-b border-[#322318] scrollbar-none text-[10px]">
             <button
               onClick={() => handleSendMessage("Calculate bricks and cement for 1000 sqft house")}
-              className="shrink-0 bg-[#8B4434]/30 hover:bg-[#8B4434] text-amber-100 border border-[#8B4434]/40 px-3 py-1 transition-colors"
+              className="shrink-0 bg-[#EA580C]/30 hover:bg-[#EA580C] text-amber-100 border border-[#EA580C]/40 px-3 py-1 rounded-full transition-colors"
             >
               🧱 1000 sqft Materials
             </button>
             <button
               onClick={() => handleSendMessage("Bulk order cement, steel and sand")}
-              className="shrink-0 bg-[#8B4434]/30 hover:bg-[#8B4434] text-amber-100 border border-[#8B4434]/40 px-3 py-1 transition-colors"
+              className="shrink-0 bg-[#EA580C]/30 hover:bg-[#EA580C] text-amber-100 border border-[#EA580C]/40 px-3 py-1 rounded-full transition-colors"
             >
               📦 Bulk Buying List
             </button>
             <button
               onClick={() => handleSendMessage("Search material prices in database")}
-              className="shrink-0 bg-[#8B4434]/30 hover:bg-[#8B4434] text-amber-100 border border-[#8B4434]/40 px-3 py-1 transition-colors"
+              className="shrink-0 bg-[#EA580C]/30 hover:bg-[#EA580C] text-amber-100 border border-[#EA580C]/40 px-3 py-1 rounded-full transition-colors"
             >
               💰 Price Database
             </button>
@@ -296,8 +287,8 @@ export default function AiAssistantWidget() {
                 <div
                   className={`max-w-[88%] p-3.5 ${
                     msg.sender === "user"
-                      ? "bg-[#8B4434] text-white border border-[#6f3829]"
-                      : "bg-white text-[#1c1108] border border-[#e8ddd6] shadow-sm"
+                      ? "bg-[#EA580C] text-white border border-[#C2410C] rounded-2xl rounded-tr-xs"
+                      : "bg-white text-[#1c1108] border border-[#e8ddd6] shadow-sm rounded-2xl rounded-tl-xs"
                   }`}
                 >
                   {/* Sender label */}
@@ -315,13 +306,13 @@ export default function AiAssistantWidget() {
                   {msg.recommendedMaterials && msg.recommendedMaterials.length > 0 && (
                     <div className="mt-4 pt-3 border-t border-[#e8ddd6] space-y-3">
                       <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#8B4434] flex items-center gap-1">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-[#EA580C] flex items-center gap-1">
                           <Package className="w-3 h-3" /> Recommended Marketplace Materials
                         </span>
                         <button
                           onClick={() => handleAddAllToCart(msg.recommendedMaterials!)}
                           disabled={addingAll}
-                          className="text-[9px] bg-[#8B4434] text-white font-bold uppercase tracking-wider px-2.5 py-1 hover:bg-[#6f3829] disabled:opacity-50 transition-colors"
+                          className="text-[9px] bg-[#EA580C] text-white font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg hover:bg-[#C2410C] disabled:opacity-50 transition-colors"
                         >
                           {addingAll ? "Adding All..." : "+ Add All to Cart"}
                         </button>
@@ -333,18 +324,18 @@ export default function AiAssistantWidget() {
                           return (
                             <div
                               key={mat.id}
-                              className="bg-[#FCFAF7] border border-[#e8ddd6] p-3 flex flex-wrap items-center justify-between gap-2 shadow-2xs hover:border-[#8B4434]/40 transition-colors"
+                              className="bg-[#FCFAF7] border border-[#e8ddd6] p-3 rounded-xl flex flex-wrap items-center justify-between gap-2 shadow-2xs hover:border-[#EA580C]/40 transition-colors"
                             >
                               <div className="min-w-0 flex-1">
-                                <span className="text-[8px] bg-[#8B4434]/10 text-[#8B4434] font-bold uppercase tracking-wider px-1.5 py-0.5">
+                                <span className="text-[8px] bg-[#EA580C]/10 text-[#EA580C] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-md">
                                   {mat.category}
                                 </span>
                                 <h5 className="font-semibold text-xs text-[#1c1108] truncate mt-0.5">{mat.name}</h5>
                                 <div className="flex flex-wrap items-center gap-2 text-[10px] text-[#606060] mt-1">
-                                  <span className="font-serif font-bold text-[#8B4434]">
+                                  <span className="font-serif font-bold text-[#EA580C]">
                                     {fmt(mat.unit_price)} / {mat.unit}
                                   </span>
-                                  <span className="text-emerald-800 font-semibold bg-emerald-50 px-1.5 py-0.2 border border-emerald-200">
+                                  <span className="text-emerald-800 font-semibold bg-emerald-50 px-1.5 py-0.2 border border-emerald-200 rounded-md">
                                     {mat.bulk_label}
                                   </span>
                                 </div>
@@ -353,10 +344,10 @@ export default function AiAssistantWidget() {
                               <button
                                 onClick={() => handleAddToCart(mat)}
                                 disabled={isAdded}
-                                className={`shrink-0 flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-3 py-2 transition-colors ${
+                                className={`shrink-0 flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-3 py-2 rounded-lg transition-colors ${
                                   isAdded
                                     ? "bg-emerald-700 text-white"
-                                    : "bg-[#1c1108] text-[#FCFAF7] hover:bg-[#8B4434]"
+                                    : "bg-[#1c1108] text-[#FCFAF7] hover:bg-[#EA580C]"
                                 }`}
                               >
                                 {isAdded ? (
@@ -380,8 +371,8 @@ export default function AiAssistantWidget() {
             ))}
 
             {loading && (
-              <div className="flex items-center gap-2 text-[#8B4434] bg-white border border-[#e8ddd6] p-3 max-w-[70%] text-xs font-serif italic">
-                <div className="w-4 h-4 border-2 border-[#8B4434] border-t-transparent rounded-full animate-spin" />
+              <div className="flex items-center gap-2 text-[#EA580C] bg-white border border-[#e8ddd6] p-3 rounded-2xl max-w-[70%] text-xs font-serif italic">
+                <div className="w-4 h-4 border-2 border-[#EA580C] border-t-transparent rounded-full animate-spin" />
                 Analyzing material database &amp; calculations...
               </div>
             )}
@@ -390,10 +381,10 @@ export default function AiAssistantWidget() {
 
           {/* Load Estimation Quick Selector Drawer */}
           {showEstDropdown && (
-            <div className="bg-white border-t border-[#e8ddd6] p-3 shadow-lg max-h-48 overflow-y-auto space-y-2">
-              <div className="flex items-center justify-between text-[10px] uppercase font-bold text-[#8B4434] border-b border-[#e8ddd6] pb-1">
+            <div className="bg-white border-t border-[#e8ddd6] p-3 shadow-lg max-h-48 overflow-y-auto space-y-2 rounded-t-2xl">
+              <div className="flex items-center justify-between text-[10px] uppercase font-bold text-[#EA580C] border-b border-[#e8ddd6] pb-1">
                 <span>Select Saved AI Estimation</span>
-                <button onClick={() => setShowEstDropdown(false)} className="text-[#606060] hover:text-black">
+                <button onClick={() => setShowEstDropdown(false)} className="text-[#606060] hover:text-black p-1 rounded-full">
                   <X className="w-3.5 h-3.5" />
                 </button>
               </div>
@@ -406,7 +397,7 @@ export default function AiAssistantWidget() {
                   <button
                     key={est.id}
                     onClick={() => handleSendMessage(`Load material list for estimation '${est.title}'`, est.id)}
-                    className="w-full text-left p-2 bg-[#FCFAF7] border border-[#e8ddd6] hover:border-[#8B4434] transition-colors flex items-center justify-between text-xs"
+                    className="w-full text-left p-2.5 bg-[#FCFAF7] border border-[#e8ddd6] hover:border-[#EA580C] rounded-xl transition-colors flex items-center justify-between text-xs"
                   >
                     <div>
                       <p className="font-semibold text-[#1c1108]">{est.title}</p>
@@ -414,7 +405,7 @@ export default function AiAssistantWidget() {
                         {est.sqft} sqft • {est.floors} floor(s) • {est.quality}
                       </p>
                     </div>
-                    <ArrowRight className="w-3.5 h-3.5 text-[#8B4434]" />
+                    <ArrowRight className="w-3.5 h-3.5 text-[#EA580C]" />
                   </button>
                 ))
               )}
@@ -439,7 +430,7 @@ export default function AiAssistantWidget() {
                     handleSendMessage("List my saved estimations");
                   }
                 }}
-                className="p-2.5 bg-[#FCFAF7] border border-[#e8ddd6] hover:border-[#8B4434] text-[#8B4434] transition-colors shrink-0"
+                className="p-2.5 bg-[#FCFAF7] border border-[#e8ddd6] hover:border-[#EA580C] text-[#EA580C] rounded-xl transition-colors shrink-0"
                 title="Load AI Estimation Project"
               >
                 <Calculator className="w-4 h-4" />
@@ -450,13 +441,13 @@ export default function AiAssistantWidget() {
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
                 placeholder="Ask about materials or ask to calculate (e.g. 1200 sqft)..."
-                className="flex-1 bg-[#FCFAF7] border border-[#e8ddd6] px-3 py-2.5 text-xs text-[#1c1108] placeholder-[#908078] focus:outline-none focus:border-[#8B4434]"
+                className="flex-1 bg-[#FCFAF7] border border-[#e8ddd6] px-3.5 py-2.5 text-xs text-[#1c1108] placeholder-[#908078] rounded-xl focus:outline-none focus:border-[#EA580C]"
               />
 
               <button
                 type="submit"
                 disabled={loading || !inputMessage.trim()}
-                className="bg-[#8B4434] text-white p-2.5 hover:bg-[#6f3829] disabled:opacity-50 transition-colors shrink-0"
+                className="bg-[#EA580C] text-white p-2.5 rounded-xl hover:bg-[#C2410C] disabled:opacity-50 transition-colors shrink-0"
               >
                 <Send className="w-4 h-4" />
               </button>

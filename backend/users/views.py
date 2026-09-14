@@ -886,8 +886,9 @@ def delete_hardware_shop_item(request, item_id: int):
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def list_professionals(request):
+    requester, _ = _resolve_user(request)
     professionals = CustomUser.objects.filter(role='PROFESSIONAL')
-    serializer = CustomUserSerializer(professionals, many=True, context={'request': request})
+    serializer = CustomUserSerializer(professionals, many=True, context={'request': request, 'requester': requester})
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -914,7 +915,8 @@ def get_public_hardware_shop(request, shop_id):
 def get_professional(request, prof_id):
     try:
         professional = CustomUser.objects.get(id=prof_id, role='PROFESSIONAL')
-        serializer = CustomUserSerializer(professional, context={'request': request})
+        requester, _ = _resolve_user(request)
+        serializer = CustomUserSerializer(professional, context={'request': request, 'requester': requester})
         return Response(serializer.data, status=status.HTTP_200_OK)
     except CustomUser.DoesNotExist:
         return Response({'error': 'Professional not found'}, status=status.HTTP_404_NOT_FOUND)

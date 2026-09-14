@@ -256,7 +256,7 @@ Looking for verified professionals to bid on this construction project. We have 
                 target="_blank"
                 rel="noreferrer"
                 download={`estimation-${data.id || 'report'}.pdf`}
-                className="inline-flex items-center justify-center bg-orange-600 text-white px-6 py-3 text-sm font-semibold tracking-wide uppercase hover:bg-orange-700 transition-colors"
+                className="inline-flex items-center justify-center bg-orange-600 text-white px-6 py-3 rounded-xl text-sm font-semibold tracking-wide uppercase hover:bg-orange-700 transition-colors"
               >
                 Download PDF Report
               </a>
@@ -322,7 +322,7 @@ Looking for verified professionals to bid on this construction project. We have 
           <div className="space-y-6">
             {!isPublishing ? (
               <div className="bg-gradient-to-br from-[#fbf8f5] to-[#f4ede7] border border-[#e8ddd6] rounded-2xl p-6 sm:p-8 shadow-sm">
-                <div className="flex items-center gap-2 text-[#8B4434] text-xs uppercase tracking-[0.25em] font-semibold mb-2">
+                <div className="flex items-center gap-2 text-[#EA580C] text-xs uppercase tracking-[0.25em] font-semibold mb-2">
                   <ShieldCheck className="w-4 h-4" />
                   <span>Open Tender Bidding</span>
                 </div>
@@ -343,7 +343,7 @@ Looking for verified professionals to bid on this construction project. We have 
                         </span>
                       </div>
                       {backendUser?.role && (
-                        <span className="text-[10px] uppercase tracking-wider font-semibold text-[#8B4434] bg-[#8B4434]/10 px-2 py-0.5 rounded">
+                        <span className="text-[10px] uppercase tracking-wider font-semibold text-[#EA580C] bg-[#EA580C]/10 px-2 py-0.5 rounded">
                           {backendUser.role}
                         </span>
                       )}
@@ -351,7 +351,7 @@ Looking for verified professionals to bid on this construction project. We have 
                     <button
                       type="button"
                       onClick={() => setIsPublishing(true)}
-                      className="w-full bg-[#8B4434] text-white py-3.5 px-6 rounded-none text-xs uppercase tracking-[0.22em] font-semibold hover:bg-[#6c3426] transition-colors shadow-sm flex items-center justify-center gap-2 cursor-pointer"
+                      className="w-full bg-[#EA580C] text-white py-3.5 px-6 rounded-xl text-xs uppercase tracking-[0.22em] font-semibold hover:bg-[#C2410C] transition-colors shadow-sm flex items-center justify-center gap-2 cursor-pointer"
                     >
                       <span>Publish Project for Bids</span>
                       <ArrowRight className="w-4 h-4" />
@@ -375,7 +375,7 @@ Looking for verified professionals to bid on this construction project. We have 
 
                     <Link
                       href={`/login?redirect=${encodeURIComponent(`/estimation/result${data?.id ? `?id=${data.id}` : ""}`)}`}
-                      className="block text-center w-full bg-[#8B4434] text-white py-3.5 px-6 text-xs uppercase tracking-[0.22em] font-semibold hover:bg-[#6c3426] transition-colors shadow-sm cursor-pointer"
+                      className="block text-center w-full bg-[#EA580C] text-white py-3.5 px-6 rounded-xl text-xs uppercase tracking-[0.22em] font-semibold hover:bg-[#C2410C] transition-colors shadow-sm cursor-pointer"
                     >
                       Sign In / Register to Publish
                     </Link>
@@ -396,7 +396,7 @@ Looking for verified professionals to bid on this construction project. We have 
                 </div>
                 
                 {errorMsg && (
-                  <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-red-700 text-xs">
+                  <div className="bg-red-50 border border-red-200 rounded-xl p-3 text-red-700 text-xs">
                     {errorMsg}
                   </div>
                 )}
@@ -408,7 +408,7 @@ Looking for verified professionals to bid on this construction project. We have 
                     type="text" 
                     value={title} 
                     onChange={e => setTitle(e.target.value)}
-                    className="w-full border border-stone-300 rounded-lg px-4 py-3 bg-stone-50 text-stone-900 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none" 
+                    className="w-full border border-stone-300 rounded-xl px-4 py-3 bg-stone-50 text-stone-900 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none" 
                   />
                 </div>
 
@@ -420,7 +420,7 @@ Looking for verified professionals to bid on this construction project. We have 
                     value={location} 
                     onChange={e => setLocation(e.target.value)}
                     placeholder="e.g. Colombo, Kandy, Galle"
-                    className="w-full border border-stone-300 rounded-lg px-4 py-3 bg-stone-50 text-stone-900 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none" 
+                    className="w-full border border-stone-300 rounded-xl px-4 py-3 bg-stone-50 text-stone-900 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none" 
                   />
                 </div>
 
@@ -431,7 +431,7 @@ Looking for verified professionals to bid on this construction project. We have 
                     type="text" 
                     value={budgetRange} 
                     onChange={e => setBudgetRange(e.target.value)}
-                    className="w-full border border-stone-300 rounded-lg px-4 py-3 bg-stone-50 text-stone-900 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none" 
+                    className="w-full border border-stone-300 rounded-xl px-4 py-3 bg-stone-50 text-stone-900 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none" 
                   />
                 </div>
 
@@ -442,13 +442,13 @@ Looking for verified professionals to bid on this construction project. We have 
                     value={description} 
                     onChange={e => setDescription(e.target.value)} 
                     rows={8}
-                    className="w-full border border-stone-300 rounded-lg px-4 py-3 bg-stone-50 text-stone-900 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none text-sm leading-relaxed" 
+                    className="w-full border border-stone-300 rounded-xl px-4 py-3 bg-stone-50 text-stone-900 focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 outline-none text-sm leading-relaxed" 
                   />
                 </div>
 
                 {/* Ticket status pill */}
                 {user && ticketBalance !== null && (
-                  <div className={`p-3 border flex items-center justify-between text-xs ${ticketBalance > 0 ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-amber-50 border-amber-200 text-amber-800'}`}>
+                  <div className={`p-3 border rounded-xl flex items-center justify-between text-xs ${ticketBalance > 0 ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-amber-50 border-amber-200 text-amber-800'}`}>
                     <div className="flex items-center gap-2">
                       <Ticket className="w-4 h-4" />
                       <span>
@@ -477,9 +477,9 @@ Looking for verified professionals to bid on this construction project. We have 
             {/* Ticket purchase prompt modal */}
             {showTicketModal && (
               <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-                <div className="bg-white max-w-md w-full p-6 sm:p-8 space-y-6 shadow-2xl border border-stone-200">
+                <div className="bg-white max-w-md w-full p-6 sm:p-8 space-y-6 shadow-2xl border border-stone-200 rounded-3xl">
                   <div className="flex items-center gap-3 border-b border-stone-200 pb-4">
-                    <div className="w-10 h-10 bg-[#8B4434]/10 flex items-center justify-center text-[#8B4434]">
+                    <div className="w-10 h-10 bg-[#EA580C]/10 rounded-xl flex items-center justify-center text-[#EA580C]">
                       <Ticket className="w-5 h-5" />
                     </div>
                     <div>
@@ -493,7 +493,7 @@ Looking for verified professionals to bid on this construction project. We have 
                     Verified contractors will submit competitive proposals which you can review freely.
                   </p>
 
-                  <div className="p-4 bg-stone-50 border border-stone-200 space-y-1 text-xs">
+                  <div className="p-4 bg-stone-50 border border-stone-200 rounded-xl space-y-1 text-xs">
                     <div className="flex justify-between font-semibold text-stone-900">
                       <span>Bidding Ticket (1 Tender)</span>
                       <span>LKR 1,500</span>
@@ -505,13 +505,13 @@ Looking for verified professionals to bid on this construction project. We have 
                     <button
                       onClick={handleBuyTicketAndPublish}
                       disabled={purchasingTicket}
-                      className="w-full bg-[#8B4434] text-white py-3.5 text-xs font-bold uppercase tracking-widest hover:bg-[#723628] disabled:opacity-70 transition-colors"
+                      className="w-full bg-[#EA580C] text-white py-3.5 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-[#C2410C] disabled:opacity-70 transition-colors"
                     >
                       {purchasingTicket ? "Purchasing & Publishing..." : "Buy Ticket & Publish Now (LKR 1,500)"}
                     </button>
                     <button
                       onClick={() => setShowTicketModal(false)}
-                      className="w-full text-xs text-stone-500 hover:text-stone-800 py-1"
+                      className="w-full text-xs text-stone-500 hover:text-stone-800 py-2 rounded-xl"
                     >
                       Cancel
                     </button>

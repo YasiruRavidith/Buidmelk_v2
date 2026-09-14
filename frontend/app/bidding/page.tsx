@@ -113,18 +113,18 @@ export default function BiddingFeed() {
     <div className="min-h-screen bg-[#FCFAF7] text-[#1c1108]">
       {/* Top Banner / Hero Header */}
       <div className="bg-[#1c1108] text-[#FCFAF7] relative overflow-hidden py-10 sm:py-14 px-4 sm:px-6 lg:px-8 border-b border-[#322318]">
-        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#8B4434_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none" />
+        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#EA580C_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none" />
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div>
-              <p className="text-xs uppercase tracking-[0.25em] text-[#8B4434] font-semibold mb-2">Open Tenders &amp; Requests</p>
+              <p className="text-xs uppercase tracking-[0.25em] text-[#EA580C] font-semibold mb-2">Open Tenders &amp; Requests</p>
               <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-normal text-[#FCFAF7]">Bidding Feed</h1>
               <p className="text-[#c9b8b0] mt-2 text-sm sm:text-base max-w-xl">
                 Explore active construction tenders, review project requirements, and submit competitive proposals.
               </p>
             </div>
             {user && (
-              <Link href="/estimation" className="btn-primary bg-[#8B4434] hover:bg-[#723628] text-white text-xs tracking-wider uppercase py-3.5 px-6 self-start md:self-auto whitespace-nowrap shadow-lg">
+              <Link href="/estimation" className="btn-primary bg-[#EA580C] hover:bg-[#C2410C] text-white text-xs tracking-wider uppercase py-3.5 px-6 self-start md:self-auto whitespace-nowrap shadow-lg">
                 + Post New Project
               </Link>
             )}
@@ -142,16 +142,16 @@ export default function BiddingFeed() {
                 placeholder="Search projects..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                className="w-full bg-white border border-[#e8ddd6] px-4 py-2.5 text-sm text-[#1c1108] placeholder-[#908078] focus:outline-none focus:border-[#8B4434]"
+                className="w-full bg-white border border-[#e8ddd6] px-4 py-2.5 text-sm text-[#1c1108] placeholder-[#908078] focus:outline-none focus:border-[#EA580C] rounded-xl"
               />
             </div>
             <button
               onClick={() => setIsMobileFilterOpen(true)}
-              className="flex items-center gap-2 bg-[#1c1108] text-[#FCFAF7] px-4 py-2.5 text-xs uppercase tracking-wider font-medium"
+              className="flex items-center gap-2 bg-[#1c1108] text-[#FCFAF7] px-4 py-2.5 text-xs uppercase tracking-wider font-medium rounded-xl"
             >
               <span>Filters</span>
               {activeFilterCount > 0 && (
-                <span className="bg-[#8B4434] text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-bold">
+                <span className="bg-[#EA580C] text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px] font-bold">
                   {activeFilterCount}
                 </span>
               )}
@@ -162,13 +162,13 @@ export default function BiddingFeed() {
         <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-8 items-start">
           
           {/* Desktop Filter Sidebar */}
-          <aside className="hidden lg:block sticky top-8 space-y-6 bg-white border border-[#e8ddd6] p-6 shadow-sm">
+          <aside className="hidden lg:block sticky top-8 space-y-6 bg-white border border-[#e8ddd6] p-6 shadow-sm rounded-2xl">
             <div className="flex items-center justify-between border-b border-[#e8ddd6] pb-4">
               <h2 className="font-serif text-lg text-[#1c1108]">Filter Projects</h2>
               {activeFilterCount > 0 && (
                 <button 
                   onClick={clearFilters}
-                  className="text-xs text-[#8B4434] hover:underline font-medium"
+                  className="text-xs text-[#EA580C] hover:underline font-medium"
                 >
                   Reset all
                 </button>
@@ -184,7 +184,7 @@ export default function BiddingFeed() {
                   placeholder="e.g. Modern Villa, Colombo..."
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
-                  className="w-full bg-[#FCFAF7] border border-[#e8ddd6] px-3.5 py-2 text-sm text-[#1c1108] placeholder-[#908078] focus:outline-none focus:border-[#8B4434]"
+                  className="w-full bg-[#FCFAF7] border border-[#e8ddd6] px-3.5 py-2 text-sm text-[#1c1108] placeholder-[#908078] focus:outline-none focus:border-[#EA580C] rounded-xl"
                 />
               </div>
             </div>
@@ -199,13 +199,13 @@ export default function BiddingFeed() {
                   { id: "CLOSED", label: "Closed Tenders" },
                   { id: "AWARDED", label: "Awarded" },
                 ].map((st) => (
-                  <label key={st.id} className="flex items-center gap-2 text-sm text-[#1c1108] cursor-pointer py-1 hover:text-[#8B4434]">
+                  <label key={st.id} className="flex items-center gap-2 text-sm text-[#1c1108] cursor-pointer py-1 hover:text-[#EA580C]">
                     <input
                       type="radio"
                       name="desktop-status"
                       checked={selectedStatus === st.id}
                       onChange={() => setSelectedStatus(st.id)}
-                      className="accent-[#8B4434]"
+                      className="accent-[#EA580C]"
                     />
                     <span>{st.label}</span>
                   </label>
@@ -221,7 +221,7 @@ export default function BiddingFeed() {
                 placeholder="e.g. Kandy, Galle..."
                 value={locationQuery}
                 onChange={e => setLocationQuery(e.target.value)}
-                className="w-full bg-[#FCFAF7] border border-[#e8ddd6] px-3.5 py-2 text-sm text-[#1c1108] placeholder-[#908078] focus:outline-none focus:border-[#8B4434]"
+                className="w-full bg-[#FCFAF7] border border-[#e8ddd6] px-3.5 py-2 text-sm text-[#1c1108] placeholder-[#908078] focus:outline-none focus:border-[#EA580C] rounded-xl"
               />
             </div>
 
@@ -233,7 +233,7 @@ export default function BiddingFeed() {
                 placeholder="e.g. 15 Million, 25M..."
                 value={budgetQuery}
                 onChange={e => setBudgetQuery(e.target.value)}
-                className="w-full bg-[#FCFAF7] border border-[#e8ddd6] px-3.5 py-2 text-sm text-[#1c1108] placeholder-[#908078] focus:outline-none focus:border-[#8B4434]"
+                className="w-full bg-[#FCFAF7] border border-[#e8ddd6] px-3.5 py-2 text-sm text-[#1c1108] placeholder-[#908078] focus:outline-none focus:border-[#EA580C] rounded-xl"
               />
             </div>
 
@@ -241,7 +241,7 @@ export default function BiddingFeed() {
               <div className="pt-2 border-t border-[#e8ddd6]">
                 <button
                   onClick={clearFilters}
-                  className="w-full text-center py-2 text-xs uppercase tracking-wider border border-[#8B4434] text-[#8B4434] hover:bg-[#8B4434] hover:text-white transition-colors"
+                  className="w-full text-center py-2 text-xs uppercase tracking-wider border border-[#EA580C] text-[#EA580C] hover:bg-[#EA580C] hover:text-white transition-colors rounded-xl"
                 >
                   Clear Filters ({activeFilterCount})
                 </button>
@@ -263,19 +263,19 @@ export default function BiddingFeed() {
               {activeFilterCount > 0 && (
                 <div className="flex flex-wrap gap-2 items-center">
                   {selectedStatus !== "ALL" && (
-                    <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-[#8B4434]/10 text-[#8B4434] text-xs">
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-[#EA580C]/10 text-[#EA580C] text-xs rounded-full">
                       Status: {selectedStatus}
                       <button onClick={() => setSelectedStatus("ALL")} className="hover:text-black">x</button>
                     </span>
                   )}
                   {locationQuery && (
-                    <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-[#8B4434]/10 text-[#8B4434] text-xs">
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-[#EA580C]/10 text-[#EA580C] text-xs rounded-full">
                       Location: {locationQuery}
                       <button onClick={() => setLocationQuery("")} className="hover:text-black">x</button>
                     </span>
                   )}
                   {budgetQuery && (
-                    <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-[#8B4434]/10 text-[#8B4434] text-xs">
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-[#EA580C]/10 text-[#EA580C] text-xs rounded-full">
                       Budget: {budgetQuery}
                       <button onClick={() => setBudgetQuery("")} className="hover:text-black">x</button>
                     </span>
@@ -286,11 +286,11 @@ export default function BiddingFeed() {
 
             {loading ? (
               <div className="text-center py-24 text-[#606060]">
-                <div className="inline-block animate-spin w-8 h-8 border-2 border-[#8B4434] border-t-transparent mb-3" />
+                <div className="inline-block animate-spin w-8 h-8 border-2 border-[#EA580C] border-t-transparent mb-3" />
                 <p className="text-sm">Fetching construction tenders...</p>
               </div>
             ) : filteredProjects.length === 0 ? (
-              <div className="text-center py-20 bg-white border border-[#e8ddd6] p-8 space-y-4">
+              <div className="text-center py-20 bg-white border border-[#e8ddd6] p-8 space-y-4 rounded-2xl">
                 <p className="text-[#606060] text-lg font-serif">No matching tenders found.</p>
                 <p className="text-xs text-[#908078] max-w-md mx-auto">
                   Try adjusting your filter search criteria or reset filters to browse all projects.
@@ -314,26 +314,26 @@ export default function BiddingFeed() {
                   return (
                     <div
                       key={project.id}
-                      className="bg-white border border-[#e8ddd6] p-6 sm:p-8 shadow-sm flex flex-col justify-between gap-6 hover:border-[#8B4434]/50 transition-all hover:shadow-md group"
+                      className="bg-white border border-[#e8ddd6] p-6 sm:p-8 shadow-sm flex flex-col justify-between gap-6 hover:border-[#EA580C]/50 transition-all hover:shadow-md group rounded-2xl"
                     >
                       <div className="space-y-4">
                         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#FCFAF7] pb-3">
                           <div className="flex items-center gap-2">
-                            <span className={`px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider border ${statusStyles[project.status?.toUpperCase()] || 'bg-stone-50 text-stone-700 border-stone-200'}`}>
+                            <span className={`px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider border rounded-full ${statusStyles[project.status?.toUpperCase()] || 'bg-stone-50 text-stone-700 border-stone-200'}`}>
                               {project.status}
                             </span>
                             <span className="text-xs text-[#908078]">
                               Posted {fmtDate(project.created_at)}
                             </span>
                           </div>
-                          <span className="text-xs text-[#606060] font-medium bg-[#FCFAF7] px-3 py-1 border border-[#e8ddd6]">
+                          <span className="text-xs text-[#606060] font-medium bg-[#FCFAF7] px-3 py-1 border border-[#e8ddd6] rounded-full">
                             Client: <strong className="text-[#1c1108]">{project.client_name}</strong>
                           </span>
                         </div>
 
                         <div>
                           <Link href={`/bidding/${project.id}`}>
-                            <h2 className="font-serif text-xl sm:text-2xl text-[#1c1108] group-hover:text-[#8B4434] transition-colors">
+                            <h2 className="font-serif text-xl sm:text-2xl text-[#1c1108] group-hover:text-[#EA580C] transition-colors">
                               {project.title}
                             </h2>
                           </Link>
@@ -346,15 +346,15 @@ export default function BiddingFeed() {
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 border-t border-[#e8ddd6]">
                         <div className="flex flex-wrap gap-4 sm:gap-6 text-xs text-[#606060]">
                           <div className="flex items-center gap-1.5 font-medium">
-                            <span className="text-[#8B4434] uppercase text-[10px] font-bold tracking-wider">Location:</span>
+                            <span className="text-[#EA580C] uppercase text-[10px] font-bold tracking-wider">Location:</span>
                             <span>{project.location}</span>
                           </div>
                           <div className="flex items-center gap-1.5 font-medium">
-                            <span className="text-[#8B4434] uppercase text-[10px] font-bold tracking-wider">Budget:</span>
+                            <span className="text-[#EA580C] uppercase text-[10px] font-bold tracking-wider">Budget:</span>
                             <span>{project.budget_range}</span>
                           </div>
                           <div className="flex items-center gap-1.5 font-medium">
-                            <span className="text-[#8B4434] uppercase text-[10px] font-bold tracking-wider">Bids:</span>
+                            <span className="text-[#EA580C] uppercase text-[10px] font-bold tracking-wider">Bids:</span>
                             <span>{project.bids_count} submitted</span>
                           </div>
                         </div>
@@ -386,12 +386,12 @@ export default function BiddingFeed() {
           />
 
           {/* Drawer Box */}
-          <div className="relative z-[70] bg-[#FCFAF7] border-t border-[#e8ddd6] p-6 space-y-6 max-h-[85vh] overflow-y-auto shadow-2xl rounded-t-2xl">
+          <div className="relative z-[70] bg-[#FCFAF7] border-t border-[#e8ddd6] p-6 space-y-6 max-h-[85vh] overflow-y-auto shadow-2xl rounded-t-3xl">
             <div className="flex items-center justify-between border-b border-[#e8ddd6] pb-4">
               <h3 className="font-serif text-xl text-[#1c1108]">Filter Projects</h3>
               <button
                 onClick={() => setIsMobileFilterOpen(false)}
-                className="w-8 h-8 flex items-center justify-center text-lg text-[#606060]"
+                className="w-8 h-8 flex items-center justify-center text-lg text-[#606060] rounded-full hover:bg-stone-100"
               >
                 x
               </button>
@@ -410,7 +410,7 @@ export default function BiddingFeed() {
                   <button
                     key={st.id}
                     onClick={() => setSelectedStatus(st.id)}
-                    className={`py-2 px-3 text-xs border text-center font-medium transition-colors ${
+                    className={`py-2 px-3 text-xs border text-center font-medium transition-colors rounded-xl ${
                       selectedStatus === st.id
                         ? "bg-[#1c1108] text-[#FCFAF7] border-[#1c1108]"
                         : "bg-white text-[#1c1108] border-[#e8ddd6]"
@@ -430,7 +430,7 @@ export default function BiddingFeed() {
                 placeholder="e.g. Colombo, Kandy..."
                 value={locationQuery}
                 onChange={e => setLocationQuery(e.target.value)}
-                className="w-full bg-white border border-[#e8ddd6] p-3 text-sm text-[#1c1108] focus:outline-none focus:border-[#8B4434]"
+                className="w-full bg-white border border-[#e8ddd6] p-3 text-sm text-[#1c1108] focus:outline-none focus:border-[#EA580C] rounded-xl"
               />
             </div>
 
@@ -442,20 +442,20 @@ export default function BiddingFeed() {
                 placeholder="e.g. 20M, 50 Million..."
                 value={budgetQuery}
                 onChange={e => setBudgetQuery(e.target.value)}
-                className="w-full bg-white border border-[#e8ddd6] p-3 text-sm text-[#1c1108] focus:outline-none focus:border-[#8B4434]"
+                className="w-full bg-white border border-[#e8ddd6] p-3 text-sm text-[#1c1108] focus:outline-none focus:border-[#EA580C] rounded-xl"
               />
             </div>
 
             <div className="pt-4 border-t border-[#e8ddd6] flex gap-3">
               <button
                 onClick={clearFilters}
-                className="flex-1 py-3 text-xs uppercase tracking-wider border border-[#8B4434] text-[#8B4434]"
+                className="flex-1 py-3 text-xs uppercase tracking-wider border border-[#EA580C] text-[#EA580C] rounded-xl font-semibold hover:bg-[#EA580C] hover:text-white transition-colors"
               >
                 Reset
               </button>
               <button
                 onClick={() => setIsMobileFilterOpen(false)}
-                className="flex-1 py-3 text-xs uppercase tracking-wider bg-[#1c1108] text-white"
+                className="flex-1 py-3 text-xs uppercase tracking-wider bg-[#1c1108] text-white rounded-xl font-semibold hover:bg-[#322318] transition-colors"
               >
                 Apply Filters ({filteredProjects.length})
               </button>
@@ -466,4 +466,4 @@ export default function BiddingFeed() {
     </div>
   );
 }
-
+

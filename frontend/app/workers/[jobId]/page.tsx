@@ -133,7 +133,7 @@ export default function JobDetailPage({ params }: { params: Promise<{ jobId: str
   if (loading) {
     return (
       <div className="min-h-screen bg-[#FCFAF7] flex flex-col items-center justify-center text-[#606060]">
-        <div className="animate-spin w-8 h-8 border-2 border-[#8B4434] border-t-transparent mb-3" />
+        <div className="animate-spin w-8 h-8 border-2 border-[#EA580C] border-t-transparent mb-3" />
         <p className="text-sm">Loading job details...</p>
       </div>
     );
@@ -143,7 +143,7 @@ export default function JobDetailPage({ params }: { params: Promise<{ jobId: str
     return (
       <div className="min-h-screen bg-[#FCFAF7] flex flex-col items-center justify-center gap-4 text-[#1c1108]">
         <p className="font-serif text-2xl">Job Not Found</p>
-        <Link href="/workers" className="text-xs uppercase tracking-wider text-[#8B4434] underline">
+        <Link href="/workers" className="text-xs uppercase tracking-wider text-[#EA580C] underline">
           Back to Worker Marketplace
         </Link>
       </div>
@@ -165,29 +165,29 @@ export default function JobDetailPage({ params }: { params: Promise<{ jobId: str
     <div className="min-h-screen bg-[#FCFAF7] text-[#1c1108]">
       {/* Dark Header */}
       <div className="bg-[#1c1108] text-[#FCFAF7] relative overflow-hidden py-12 sm:py-16 px-4 sm:px-6 lg:px-8 border-b border-[#322318]">
-        <div className="absolute inset-0 opacity-[0.06] bg-[radial-gradient(#8B4434_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none" />
+        <div className="absolute inset-0 opacity-[0.06] bg-[radial-gradient(#EA580C_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none" />
         <div className="max-w-6xl mx-auto relative z-10 space-y-4">
           <Link
             href="/workers"
-            className="inline-flex items-center gap-1 text-xs uppercase tracking-widest text-[#8B4434] hover:text-white font-semibold transition-colors"
+            className="inline-flex items-center gap-1 text-xs uppercase tracking-widest text-[#EA580C] hover:text-white font-semibold transition-colors"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             Worker Marketplace
           </Link>
 
           <div className="flex flex-wrap items-center gap-2.5">
-            <span className={`px-3 py-1 text-xs font-bold uppercase tracking-wider border ${colorClass}`}>
+            <span className={`px-3.5 py-1 text-xs font-bold uppercase tracking-wider border rounded-full ${colorClass}`}>
               {job.worker_type.replace("_", " ")}
             </span>
             {isToday && (
-              <span className="px-3 py-1 text-xs font-bold uppercase tracking-wider bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center gap-1">
+              <span className="px-3.5 py-1 text-xs font-bold uppercase tracking-wider bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-full flex items-center gap-1">
                 <Zap className="w-3 h-3" />
                 Needed Today
               </span>
             )}
-            <span className={`px-3 py-1 text-xs font-bold uppercase tracking-wider border ${
+            <span className={`px-3.5 py-1 text-xs font-bold uppercase tracking-wider border rounded-full ${
               job.status === "OPEN"
-                ? "bg-[#8B4434]/20 text-[#e8a090] border-[#8B4434]/30"
+                ? "bg-[#EA580C]/20 text-[#FDBA74] border-[#EA580C]/30"
                 : "bg-stone-800 text-stone-400 border-stone-700"
             }`}>
               {job.status}
@@ -198,11 +198,11 @@ export default function JobDetailPage({ params }: { params: Promise<{ jobId: str
 
           <div className="flex flex-wrap gap-6 pt-4 border-t border-[#322318] text-xs text-[#c9b8b0]">
             <div className="flex items-center gap-2">
-              <MapPin className="w-3.5 h-3.5 text-[#8B4434]" />
+              <MapPin className="w-3.5 h-3.5 text-[#EA580C]" />
               <span>{job.location}</span>
             </div>
             <div className="flex items-center gap-2">
-              <Calendar className="w-3.5 h-3.5 text-[#8B4434]" />
+              <Calendar className="w-3.5 h-3.5 text-[#EA580C]" />
               <span>
                 {new Date(job.job_date).toLocaleDateString("en-LK", {
                   weekday: "long", year: "numeric", month: "long", day: "numeric",
@@ -210,7 +210,7 @@ export default function JobDetailPage({ params }: { params: Promise<{ jobId: str
               </span>
             </div>
             <div className="flex items-center gap-2">
-              <Users className="w-3.5 h-3.5 text-[#8B4434]" />
+              <Users className="w-3.5 h-3.5 text-[#EA580C]" />
               <span>
                 <strong className="text-white">{spotsLeft}</strong> of {job.workers_needed} spot{job.workers_needed > 1 ? "s" : ""} remaining
               </span>
@@ -218,7 +218,7 @@ export default function JobDetailPage({ params }: { params: Promise<{ jobId: str
             {job.daily_rate && (
               <div>
                 <span className="text-[#908078] uppercase tracking-wider text-[10px] block">Daily Rate</span>
-                <span className="text-[#8B4434] font-serif text-sm font-bold">{fmt(job.daily_rate)}</span>
+                <span className="text-[#EA580C] font-serif text-sm font-bold">{fmt(job.daily_rate)}</span>
               </div>
             )}
           </div>
@@ -231,7 +231,7 @@ export default function JobDetailPage({ params }: { params: Promise<{ jobId: str
           {/* Left */}
           <div className="space-y-8">
             {/* Description */}
-            <div className="bg-white border border-[#e8ddd6] p-6 sm:p-8 space-y-4">
+            <div className="bg-white border border-[#e8ddd6] p-6 sm:p-8 rounded-2xl space-y-4">
               <h2 className="font-serif text-2xl text-[#1c1108] border-b border-[#e8ddd6] pb-4">Job Details</h2>
               {job.description ? (
                 <p className="text-[#606060] text-sm leading-relaxed whitespace-pre-wrap">{job.description}</p>
@@ -245,7 +245,7 @@ export default function JobDetailPage({ params }: { params: Promise<{ jobId: str
 
             {/* Applicants list — only visible to job poster */}
             {isOwner && (
-              <div className="bg-white border border-[#e8ddd6] p-6 sm:p-8 space-y-6">
+              <div className="bg-white border border-[#e8ddd6] p-6 sm:p-8 rounded-2xl space-y-6">
                 <h2 className="font-serif text-2xl text-[#1c1108] border-b border-[#e8ddd6] pb-4">
                   Applicants ({job.applications?.length || 0})
                 </h2>
@@ -254,7 +254,7 @@ export default function JobDetailPage({ params }: { params: Promise<{ jobId: str
                 ) : (
                   <div className="space-y-4">
                     {job.applications.map((app: any) => (
-                      <div key={app.id} className="p-5 border border-[#e8ddd6] bg-[#FCFAF7] space-y-3">
+                      <div key={app.id} className="p-5 border border-[#e8ddd6] bg-[#FCFAF7] space-y-3 rounded-xl">
                         <div className="flex items-center justify-between flex-wrap gap-2">
                           <div>
                             <p className="font-semibold text-sm text-[#1c1108]">
@@ -262,7 +262,7 @@ export default function JobDetailPage({ params }: { params: Promise<{ jobId: str
                             </p>
                             <p className="text-xs text-[#908078]">{app.worker_details?.email}</p>
                           </div>
-                          <span className={`px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider border ${appStatusColors[app.status] || ""}`}>
+                          <span className={`px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider border rounded-full ${appStatusColors[app.status] || ""}`}>
                             {app.status}
                           </span>
                         </div>
@@ -274,13 +274,13 @@ export default function JobDetailPage({ params }: { params: Promise<{ jobId: str
                             <button
                               onClick={() => handleAccept(app.id)}
                               disabled={acceptingId === app.id}
-                              className="px-4 py-2 bg-[#8B4434] text-[#FCFAF7] text-[10px] font-bold uppercase tracking-widest hover:bg-[#6f3829] disabled:opacity-50 transition-colors"
+                              className="px-4 py-2 bg-[#EA580C] text-[#FCFAF7] text-[10px] font-bold uppercase tracking-widest hover:bg-[#C2410C] disabled:opacity-50 rounded-xl transition-colors"
                             >
                               {acceptingId === app.id ? "Accepting..." : "Accept"}
                             </button>
                             <button
                               onClick={() => handleReject(app.id)}
-                              className="px-4 py-2 border border-[#e8ddd6] text-[#606060] text-[10px] font-bold uppercase tracking-widest hover:border-rose-300 hover:text-rose-700 transition-colors"
+                              className="px-4 py-2 border border-[#e8ddd6] text-[#606060] text-[10px] font-bold uppercase tracking-widest hover:border-rose-300 hover:text-rose-700 rounded-xl transition-colors"
                             >
                               Reject
                             </button>
@@ -301,15 +301,15 @@ export default function JobDetailPage({ params }: { params: Promise<{ jobId: str
 
           {/* Right Sidebar — Apply Panel */}
           <aside className="lg:sticky lg:top-8 space-y-4">
-            <div className="bg-white border border-[#e8ddd6] p-6 space-y-6">
+            <div className="bg-white border border-[#e8ddd6] p-6 rounded-2xl space-y-6">
               <div className="border-b border-[#e8ddd6] pb-4">
-                <p className="text-[10px] uppercase tracking-[0.2em] text-[#8B4434] font-semibold">For Workers</p>
+                <p className="text-[10px] uppercase tracking-[0.2em] text-[#EA580C] font-semibold">For Workers</p>
                 <h3 className="font-serif text-2xl text-[#1c1108]">Apply Instantly</h3>
               </div>
 
               {/* Already accepted my app */}
               {myApplication ? (
-                <div className={`p-5 border space-y-2 ${appStatusColors[myApplication.status] || ""}`}>
+                <div className={`p-5 border space-y-2 rounded-xl ${appStatusColors[myApplication.status] || ""}`}>
                   <p className="text-xs font-bold uppercase tracking-wider">Application Status</p>
                   <p className="text-2xl font-serif font-semibold">{myApplication.status}</p>
                   {myApplication.status === "ACCEPTED" && (
@@ -325,7 +325,7 @@ export default function JobDetailPage({ params }: { params: Promise<{ jobId: str
                   )}
                 </div>
               ) : job.status !== "OPEN" || !job.is_still_open ? (
-                <div className="p-5 bg-stone-50 border border-stone-200 text-center">
+                <div className="p-5 bg-stone-50 border border-stone-200 rounded-xl text-center">
                   <Briefcase className="w-8 h-8 text-stone-400 mx-auto mb-2" />
                   <p className="text-sm font-semibold text-stone-700">
                     {job.status === "FILLED" ? "All spots filled" : "This job is closed"}
@@ -337,7 +337,7 @@ export default function JobDetailPage({ params }: { params: Promise<{ jobId: str
                   <p className="text-[#606060] text-xs">Login to apply for this job.</p>
                   <Link
                     href={`/login?redirect=/workers/${jobId}`}
-                    className="block w-full bg-[#8B4434] text-[#FCFAF7] py-3 text-xs font-bold uppercase tracking-widest hover:bg-[#6f3829] transition-colors text-center"
+                    className="block w-full bg-[#EA580C] text-[#FCFAF7] py-3 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-[#C2410C] transition-colors text-center"
                   >
                     Login to Apply
                   </Link>
@@ -356,12 +356,12 @@ export default function JobDetailPage({ params }: { params: Promise<{ jobId: str
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
                       rows={4}
-                      className="w-full bg-[#FCFAF7] border border-[#e8ddd6] p-3 text-sm text-[#1c1108] placeholder-[#908078] focus:outline-none focus:border-[#8B4434] resize-none"
+                      className="w-full bg-[#FCFAF7] border border-[#e8ddd6] p-3 text-sm text-[#1c1108] placeholder-[#908078] focus:outline-none focus:border-[#EA580C] resize-none rounded-xl"
                       placeholder="Describe your experience, availability..."
                     />
                   </div>
                   {applyError && (
-                    <div className="flex items-center gap-2 text-rose-700 text-xs bg-rose-50 border border-rose-200 p-3">
+                    <div className="flex items-center gap-2 text-rose-700 text-xs bg-rose-50 border border-rose-200 rounded-xl p-3">
                       <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                       {applyError}
                     </div>
@@ -369,7 +369,7 @@ export default function JobDetailPage({ params }: { params: Promise<{ jobId: str
                   <button
                     type="submit"
                     disabled={applying}
-                    className="w-full bg-[#8B4434] text-[#FCFAF7] py-3.5 text-xs font-bold uppercase tracking-widest hover:bg-[#6f3829] disabled:opacity-70 transition-colors flex items-center justify-center gap-2"
+                    className="w-full bg-[#EA580C] text-[#FCFAF7] py-3.5 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-[#C2410C] disabled:opacity-70 transition-colors flex items-center justify-center gap-2"
                   >
                     <Send className="w-3.5 h-3.5" />
                     {applying ? "Submitting..." : "Apply Now — Free"}
@@ -382,8 +382,8 @@ export default function JobDetailPage({ params }: { params: Promise<{ jobId: str
             </div>
 
             {/* Quick info card */}
-            <div className="bg-[#1c1108] text-[#FCFAF7] p-5 space-y-3">
-              <p className="text-[10px] uppercase tracking-[0.2em] text-[#8B4434] font-semibold">Job Summary</p>
+            <div className="bg-[#1c1108] text-[#FCFAF7] p-5 rounded-2xl space-y-3">
+              <p className="text-[10px] uppercase tracking-[0.2em] text-[#EA580C] font-semibold">Job Summary</p>
               <div className="space-y-2 text-xs text-[#c9b8b0]">
                 <div className="flex justify-between">
                   <span>Workers needed</span>
@@ -400,7 +400,7 @@ export default function JobDetailPage({ params }: { params: Promise<{ jobId: str
                 {job.daily_rate && (
                   <div className="flex justify-between">
                     <span>Daily rate</span>
-                    <span className="font-semibold text-[#8B4434]">{fmt(job.daily_rate)}</span>
+                    <span className="font-semibold text-[#EA580C]">{fmt(job.daily_rate)}</span>
                   </div>
                 )}
               </div>

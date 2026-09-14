@@ -240,7 +240,7 @@ export default function PendingRequestsPage() {
   return (
     <DashboardShell navItems={navItems}>
       <header className="pb-6 border-b border-[#efe6df] space-y-1">
-        <p className="text-[#8B4434] font-semibold tracking-widest uppercase text-xs">Activity Center</p>
+        <p className="text-[#EA580C] font-semibold tracking-widest uppercase text-xs">Activity Center</p>
         <h1 className="font-serif text-3xl sm:text-4xl text-[#281713]">My Proposals &amp; Requests</h1>
         <p className="text-xs text-[#606060]">
           Manage your submitted proposals, withdraw bids, and review project inquiries.
@@ -248,10 +248,10 @@ export default function PendingRequestsPage() {
       </header>
 
       {/* SECTION 1: MY SUBMITTED BIDS / PROPOSALS (FOR PROFESSIONALS & EVERYONE) */}
-      <section className="bg-white border border-[#efe6df] p-6 rounded-none space-y-6 shadow-xs">
+      <section className="bg-white border border-[#efe6df] p-6 rounded-2xl space-y-6 shadow-xs">
         <div className="flex items-center justify-between border-b border-[#efe6df] pb-4">
           <div>
-            <p className="text-xs uppercase tracking-widest text-[#8B4434] font-semibold">Contractor / Professional</p>
+            <p className="text-xs uppercase tracking-widest text-[#EA580C] font-semibold">Contractor / Professional</p>
             <h2 className="font-serif text-2xl text-[#281713]">My Submitted Bids ({myBids.length})</h2>
           </div>
           <Link
@@ -266,7 +266,7 @@ export default function PendingRequestsPage() {
           <div className="py-8 text-center text-xs text-[#606060]">Loading your submitted bids...</div>
         ) : myBids.length === 0 ? (
           <div className="border border-dashed border-[#efe6df] p-8 text-center space-y-3">
-            <Briefcase className="w-8 h-8 text-[#8B4434]/30 mx-auto" />
+            <Briefcase className="w-8 h-8 text-[#EA580C]/30 mx-auto" />
             <p className="text-sm font-serif text-[#281713]">No bids submitted yet</p>
             <p className="text-xs text-[#606060] max-w-sm mx-auto">
               Browse open project tenders on the bidding feed and submit competitive proposals.
@@ -280,7 +280,7 @@ export default function PendingRequestsPage() {
             {myBids.map((bid) => (
               <div
                 key={bid.id}
-                className="border border-[#efe6df] bg-[#FCFAF7] p-5 space-y-4 transition-colors hover:border-[#8B4434]/40"
+                className="border border-[#efe6df] bg-[#FCFAF7] p-5 rounded-2xl space-y-4 transition-colors hover:border-[#EA580C]/40"
               >
                 {/* Header Row */}
                 <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#efe6df] pb-3">
@@ -294,12 +294,12 @@ export default function PendingRequestsPage() {
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <span className={`px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider border ${statusColors[bid.status] || "bg-stone-50 text-stone-700"}`}>
+                    <span className={`px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider border rounded-full ${statusColors[bid.status] || "bg-stone-50 text-stone-700"}`}>
                       {bid.status}
                     </span>
                     <Link
                       href={`/bidding/${bid.project}`}
-                      className="text-xs text-[#8B4434] font-semibold hover:underline inline-flex items-center gap-1 border border-[#8B4434]/20 px-3 py-1 bg-white"
+                      className="text-xs text-[#EA580C] font-semibold hover:underline inline-flex items-center gap-1 border border-[#EA580C]/20 px-3 py-1 rounded-xl bg-white"
                     >
                       View Tender <ExternalLink className="w-3 h-3" />
                     </Link>
@@ -310,7 +310,7 @@ export default function PendingRequestsPage() {
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-xs">
                   <div>
                     <span className="text-[10px] uppercase tracking-wider text-[#908078] font-semibold block">Your Bid Amount</span>
-                    <span className="font-serif text-lg font-bold text-[#8B4434]">{fmt(bid.bid_amount)}</span>
+                    <span className="font-serif text-lg font-bold text-[#EA580C]">{fmt(bid.bid_amount)}</span>
                   </div>
                   <div>
                     <span className="text-[10px] uppercase tracking-wider text-[#908078] font-semibold block">Timeline</span>
@@ -328,7 +328,7 @@ export default function PendingRequestsPage() {
 
                 {/* Cover letter snippet */}
                 {bid.cover_letter && (
-                  <div className="bg-white border border-[#efe6df] p-3 text-xs text-[#606060] leading-relaxed">
+                  <div className="bg-white border border-[#efe6df] p-3 rounded-xl text-xs text-[#606060] leading-relaxed">
                     <p className="text-[9px] uppercase tracking-wider font-semibold text-[#908078] mb-1">Cover Letter Snippet</p>
                     <p className="line-clamp-2">{bid.cover_letter}</p>
                   </div>
@@ -344,7 +344,7 @@ export default function PendingRequestsPage() {
                     type="button"
                     onClick={() => handleDeleteBid(bid.id)}
                     disabled={deletingBidId === bid.id}
-                    className="inline-flex items-center gap-1.5 text-xs text-rose-700 font-semibold hover:bg-rose-50 border border-rose-200 px-3 py-1.5 transition-colors disabled:opacity-50"
+                    className="inline-flex items-center gap-1.5 text-xs text-rose-700 font-semibold hover:bg-rose-50 border border-rose-200 px-3 py-1.5 rounded-xl transition-colors disabled:opacity-50"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                     {deletingBidId === bid.id ? "Deleting..." : "Delete Bid"}
@@ -357,10 +357,10 @@ export default function PendingRequestsPage() {
       </section>
 
       {/* SECTION 2: MY POSTED PROJECTS / TENDERS (FOR CLIENTS / OWNERS) */}
-      <section className="bg-white border border-[#efe6df] p-6 rounded-none space-y-6 shadow-xs">
+      <section className="bg-white border border-[#efe6df] p-6 rounded-2xl space-y-6 shadow-xs">
         <div className="flex items-center justify-between border-b border-[#efe6df] pb-4">
           <div>
-            <p className="text-xs uppercase tracking-widest text-[#8B4434] font-semibold">Homeowner / Client</p>
+            <p className="text-xs uppercase tracking-widest text-[#EA580C] font-semibold">Homeowner / Client</p>
             <h2 className="font-serif text-2xl text-[#281713]">My Posted Project Tenders ({myProjects.length})</h2>
           </div>
           <Link
@@ -375,7 +375,7 @@ export default function PendingRequestsPage() {
           <div className="py-8 text-center text-xs text-[#606060]">Loading posted project tenders...</div>
         ) : myProjects.length === 0 ? (
           <div className="border border-dashed border-[#efe6df] p-8 text-center space-y-3">
-            <FileText className="w-8 h-8 text-[#8B4434]/30 mx-auto" />
+            <FileText className="w-8 h-8 text-[#EA580C]/30 mx-auto" />
             <p className="text-sm font-serif text-[#281713]">No posted tenders found</p>
             <p className="text-xs text-[#606060] max-w-sm mx-auto">
               Post a project tender to invite certified contractors and engineers to submit competitive bids.
@@ -386,16 +386,16 @@ export default function PendingRequestsPage() {
             {myProjects.map((proj) => (
               <div
                 key={proj.id}
-                className="border border-[#efe6df] bg-[#FCFAF7] p-5 space-y-3 transition-colors hover:border-[#8B4434]/40"
+                className="border border-[#efe6df] bg-[#FCFAF7] p-5 rounded-2xl space-y-3 transition-colors hover:border-[#EA580C]/40"
               >
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
                     <h3 className="font-serif text-lg font-semibold text-[#281713]">{proj.title}</h3>
                     <p className="text-xs text-[#606060] mt-0.5">
-                      Location: {proj.location} • Budget: <span className="font-semibold text-[#8B4434]">{proj.budget_range}</span>
+                      Location: {proj.location} • Budget: <span className="font-semibold text-[#EA580C]">{proj.budget_range}</span>
                     </p>
                   </div>
-                  <span className={`px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider border ${statusColors[proj.status] || "bg-stone-50 text-stone-700"}`}>
+                  <span className={`px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider border rounded-full ${statusColors[proj.status] || "bg-stone-50 text-stone-700"}`}>
                     {proj.status}
                   </span>
                 </div>
@@ -406,7 +406,7 @@ export default function PendingRequestsPage() {
                   </span>
                   <Link
                     href={`/bidding/${proj.id}`}
-                    className="btn-primary text-[10px] uppercase tracking-widest px-4 py-2"
+                    className="btn-primary text-[10px] uppercase tracking-widest px-4 py-2 rounded-xl"
                   >
                     View Proposals &amp; Unlock
                   </Link>

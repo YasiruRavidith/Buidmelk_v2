@@ -7,21 +7,21 @@ import { Building2, Hammer, Layers, Clock, Sparkles } from "lucide-react";
 import { API_BASE_URL } from "@/lib/api";
 
 /* ─── Shared Input/Select Styles ─────────────────────────────── */
-const input = "w-full border-b border-[#c9b8b0] bg-transparent px-0 py-3 text-[#281713] placeholder:text-[#8B4434]/30 focus:outline-none focus:border-[#8B4434] transition-colors text-sm";
-const selectCls = "w-full border-b border-[#c9b8b0] bg-transparent px-0 py-3 text-[#281713] focus:outline-none focus:border-[#8B4434] transition-colors text-sm appearance-none cursor-pointer";
+const input = "w-full border-b border-[#c9b8b0] bg-transparent px-0 py-3 text-[#281713] placeholder:text-[#EA580C]/30 focus:outline-none focus:border-[#EA580C] transition-colors text-sm";
+const selectCls = "w-full border-b border-[#c9b8b0] bg-transparent px-0 py-3 text-[#281713] focus:outline-none focus:border-[#EA580C] transition-colors text-sm appearance-none cursor-pointer";
 
 function SectionHeader({ number, icon, title, subtitle }: { number: string; icon: React.ReactNode; title: string; subtitle: string }) {
   return (
     <div className="flex items-start gap-4 mb-8">
       <div className="shrink-0 flex flex-col items-center">
-        <span className="text-[#8B4434]/40 font-serif text-xs tracking-widest">{number}</span>
-        <div className="mt-2 w-10 h-10 border border-[#8B4434]/20 flex items-center justify-center text-[#8B4434]">
+        <span className="text-[#EA580C]/40 font-serif text-xs tracking-widest">{number}</span>
+        <div className="mt-2 w-10 h-10 border border-[#EA580C]/20 rounded-xl flex items-center justify-center text-[#EA580C]">
           {icon}
         </div>
       </div>
       <div>
         <h2 className="font-serif text-2xl text-[#281713] leading-tight">{title}</h2>
-        <p className="text-sm text-[#8B4434]/60 mt-1">{subtitle}</p>
+        <p className="text-sm text-[#EA580C]/60 mt-1">{subtitle}</p>
       </div>
     </div>
   );
@@ -29,7 +29,7 @@ function SectionHeader({ number, icon, title, subtitle }: { number: string; icon
 
 function FieldLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p className="text-[10px] uppercase tracking-[0.28em] text-[#8B4434]/60 font-semibold mb-2">{children}</p>
+    <p className="text-[10px] uppercase tracking-[0.28em] text-[#EA580C]/60 font-semibold mb-2">{children}</p>
   );
 }
 
@@ -121,11 +121,11 @@ export default function SmartEstimation() {
         {/* Decorative grid lines */}
         <div className="absolute inset-0 opacity-[0.04]" style={{backgroundImage: 'repeating-linear-gradient(0deg, #FCFAF7 0px, #FCFAF7 1px, transparent 1px, transparent 60px), repeating-linear-gradient(90deg, #FCFAF7 0px, #FCFAF7 1px, transparent 1px, transparent 60px)'}} />
         {/* Glow accent */}
-        <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-[#8B4434]/20 blur-[80px]" />
+        <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-[#EA580C]/20 blur-[80px]" />
 
         <div className="relative z-10 max-w-5xl mx-auto">
           <div className="flex items-center gap-3 mb-6">
-            <Sparkles className="h-4 w-4 text-[#8B4434]" />
+            <Sparkles className="h-4 w-4 text-[#EA580C]" />
             <span className="text-[10px] uppercase tracking-[0.35em] text-[#FCFAF7]/50 font-semibold">AI-Powered Engine</span>
           </div>
           <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl text-[#FCFAF7] leading-[1.05]">
@@ -156,14 +156,14 @@ export default function SmartEstimation() {
 
         {/* Project name banner */}
         <div className="mb-12 pb-8 border-b border-[#e8ddd6]">
-          <p className="text-[10px] uppercase tracking-[0.35em] text-[#8B4434]/60 font-semibold mb-3">Your Project</p>
+          <p className="text-[10px] uppercase tracking-[0.35em] text-[#EA580C]/60 font-semibold mb-3">Your Project</p>
           <input
             required
             type="text"
             value={projectTitle}
             onChange={(e) => setProjectTitle(e.target.value)}
             placeholder="Enter your project name…"
-            className="w-full bg-transparent font-serif text-3xl sm:text-4xl lg:text-5xl text-[#281713] placeholder:text-[#8B4434]/20 border-none outline-none focus:outline-none"
+            className="w-full bg-transparent font-serif text-3xl sm:text-4xl lg:text-5xl text-[#281713] placeholder:text-[#EA580C]/20 border-none outline-none focus:outline-none"
           />
         </div>
 
@@ -343,15 +343,15 @@ export default function SmartEstimation() {
                   onChange={(e) => setAdditionalNotes(e.target.value)}
                   rows={3}
                   placeholder="Site conditions, design preferences, special requirements…"
-                  className="w-full border-b border-[#c9b8b0] bg-transparent px-0 py-3 text-[#281713] placeholder:text-[#8B4434]/30 focus:outline-none focus:border-[#8B4434] transition-colors text-sm resize-none"
+                  className="w-full border-b border-[#c9b8b0] bg-transparent px-0 py-3 text-[#281713] placeholder:text-[#EA580C]/30 focus:outline-none focus:border-[#EA580C] transition-colors text-sm resize-none"
                 />
               </div>
             </div>
           </div>
 
           {/* ── Live Summary Strip ── */}
-          <div className="border border-[#e8ddd6] bg-white p-5 sm:p-8">
-            <p className="text-[10px] uppercase tracking-[0.3em] text-[#8B4434]/60 font-semibold mb-5">Estimate Summary</p>
+          <div className="border border-[#e8ddd6] bg-white p-5 sm:p-8 rounded-2xl shadow-sm">
+            <p className="text-[10px] uppercase tracking-[0.3em] text-[#EA580C]/60 font-semibold mb-5">Estimate Summary</p>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 text-sm">
               {[
                 { label: "Project", value: projectTitle || "—" },
@@ -363,8 +363,8 @@ export default function SmartEstimation() {
                 { label: "Timeline", value: timelineTarget },
                 { label: "Interior", value: interiorLevel },
               ].map(item => (
-                <div key={item.label} className="border-l-2 border-[#8B4434]/15 pl-3">
-                  <p className="text-[10px] uppercase tracking-[0.22em] text-[#8B4434]/50 mb-1">{item.label}</p>
+                <div key={item.label} className="border-l-2 border-[#EA580C]/15 pl-3">
+                  <p className="text-[10px] uppercase tracking-[0.22em] text-[#EA580C]/50 mb-1">{item.label}</p>
                   <p className="text-[#281713] font-medium text-xs sm:text-sm truncate">{item.value}</p>
                 </div>
               ))}
@@ -376,7 +376,7 @@ export default function SmartEstimation() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full sm:w-auto flex-1 bg-[#281713] text-[#FCFAF7] px-10 py-5 text-[11px] tracking-[0.28em] uppercase font-semibold hover:bg-[#8B4434] transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+              className="w-full sm:w-auto flex-1 bg-[#281713] text-[#FCFAF7] px-10 py-5 rounded-xl text-[11px] tracking-[0.28em] uppercase font-semibold hover:bg-[#EA580C] transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
             >
               {loading ? (
                 <>
@@ -390,7 +390,7 @@ export default function SmartEstimation() {
                 </>
               )}
             </button>
-            <p className="text-[11px] text-[#8B4434]/50 text-center sm:text-left">
+            <p className="text-[11px] text-[#EA580C]/50 text-center sm:text-left">
               Powered by live Sri Lankan market data · ±5% accuracy
             </p>
           </div>

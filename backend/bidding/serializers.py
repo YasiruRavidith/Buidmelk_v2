@@ -1,7 +1,25 @@
+import re
 from rest_framework import serializers
 from .models import ProjectPost, Bid, ProjectChatMessage, QSChatMessage
 from users.serializers import CustomUserSerializer
 from estimations.serializers import EstimationHistorySerializer
+
+CONTACT_CENSOR_PATTERN = re.compile(
+    r'([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})|'
+    r'((?:\+?94[\s.-]?)?0?7[0-8][\s.-]?\d{3}[\s.-]?\d{4})|'
+    r'((?:\+?94[\s.-]?)?0?(?:11|2[1-7]|3[1-8]|4[1-7]|5[1-7]|6[3-7]|81|91)[\s.-]?\d{3}[\s.-]?\d{4})|'
+    r'(\b(?:\+?\d{1,3}[\s.-]?)?\(?\d{2,4}\)?[\s.-]?\d{3,4}[\s.-]?\d{3,4}\b)|'
+    r'(\b\d{9,12}\b)',
+    re.IGNORECASE
+)
+
+def censor_contact_info(text: str) -> str:
+    if not text:
+        return text
+    def _repl(match):
+        val = match.group(0)
+        return "•" * min(max(len(val), 8), 16)
+    return CONTACT_CENSOR_PATTERN.sub(_repl, text)
 
 class BidSerializer(serializers.ModelSerializer):
     professional_details = CustomUserSerializer(source='professional', read_only=True)
@@ -93,6 +111,12 @@ class ProjectChatMessageSerializer(serializers.ModelSerializer):
             return obj.sender_id == request_user.id
         return False
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if data.get('message'):
+            data['message'] = censor_contact_info(data['message'])
+        return data
+
 
 class QSChatMessageSerializer(serializers.ModelSerializer):
     sender_id = serializers.IntegerField(source='sender.id', read_only=True)
@@ -127,5 +151,11 @@ class QSChatMessageSerializer(serializers.ModelSerializer):
         if request_user:
             return obj.sender_id == request_user.id
         return False
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if data.get('message'):
+            data['message'] = censor_contact_info(data['message'])
+        return data
 
 

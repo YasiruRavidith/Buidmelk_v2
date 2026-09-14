@@ -162,7 +162,7 @@ export default function ProfessionalTypeDashboard({ params }: { params: Promise<
       {/* Header */}
       <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 pb-6 border-b border-[#efe6df]">
         <div>
-          <p className="text-[#8B4434] font-semibold tracking-widest uppercase text-xs mb-1">
+          <p className="text-[#EA580C] font-semibold tracking-widest uppercase text-xs mb-1">
             Professional Portal
           </p>
           <h1 className="font-serif text-3xl sm:text-4xl text-[#281713]">{config.title}</h1>
@@ -185,39 +185,39 @@ export default function ProfessionalTypeDashboard({ params }: { params: Promise<
 
       {/* KPI Cards */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        <div className="bg-white border border-[#efe6df] p-5 rounded-none shadow-xs space-y-3">
+        <div className="bg-white border border-[#efe6df] p-5 rounded-2xl shadow-xs space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-[#8B4434]/70">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-[#EA580C]/70">
               Submitted Proposals
             </span>
-            <Briefcase className="w-4 h-4 text-[#8B4434]" />
+            <Briefcase className="w-4 h-4 text-[#EA580C]" />
           </div>
           <div className="text-3xl font-serif font-bold text-[#281713]">{bidsCount}</div>
           <p className="text-[11px] text-[#606060]">Active bids &amp; submissions</p>
         </div>
 
-        <div className="bg-white border border-[#efe6df] p-5 rounded-none shadow-xs space-y-3">
+        <div className="bg-white border border-[#efe6df] p-5 rounded-2xl shadow-xs space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-[#8B4434]/70">Inquiries</span>
-            <Inbox className="w-4 h-4 text-[#8B4434]" />
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-[#EA580C]/70">Inquiries</span>
+            <Inbox className="w-4 h-4 text-[#EA580C]" />
           </div>
           <div className="text-3xl font-serif font-bold text-[#281713]">0</div>
           <p className="text-[11px] text-[#606060]">New client messages</p>
         </div>
 
-        <div className="bg-white border border-[#efe6df] p-5 rounded-none shadow-xs space-y-3">
+        <div className="bg-white border border-[#efe6df] p-5 rounded-2xl shadow-xs space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-[#8B4434]/70">Verification</span>
-            <UserCheck className="w-4 h-4 text-[#8B4434]" />
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-[#EA580C]/70">Verification</span>
+            <UserCheck className="w-4 h-4 text-[#EA580C]" />
           </div>
           <div className="text-3xl font-serif font-bold text-[#281713]">Active</div>
           <p className="text-[11px] text-[#606060]">Verified professional status</p>
         </div>
 
-        <div className="bg-white border border-[#efe6df] p-5 rounded-none shadow-xs space-y-3">
+        <div className="bg-white border border-[#efe6df] p-5 rounded-2xl shadow-xs space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-[#8B4434]/70">Rating</span>
-            <Award className="w-4 h-4 text-[#8B4434]" />
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-[#EA580C]/70">Rating</span>
+            <Award className="w-4 h-4 text-[#EA580C]" />
           </div>
           <div className="text-3xl font-serif font-bold text-[#281713]">5.0</div>
           <p className="text-[11px] text-[#606060]">Client satisfaction score</p>
@@ -226,11 +226,11 @@ export default function ProfessionalTypeDashboard({ params }: { params: Promise<
 
       {/* Main Grid Section */}
       <div className="grid md:grid-cols-3 gap-6">
-        <div className="bg-white border border-[#efe6df] p-6 rounded-none shadow-xs space-y-4 flex flex-col justify-between">
+        <div className="bg-white border border-[#efe6df] p-6 rounded-2xl shadow-xs space-y-4 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between border-b border-[#efe6df] pb-3 mb-3">
               <h3 className="font-serif text-lg text-[#281713] font-semibold">{config.highlight}</h3>
-              <span className="text-[10px] font-semibold uppercase tracking-wider bg-[#8B4434]/10 text-[#8B4434] px-2 py-0.5">
+              <span className="text-[10px] font-semibold uppercase tracking-wider bg-[#EA580C]/10 text-[#EA580C] px-2.5 py-0.5 rounded-full">
                 Overview
               </span>
             </div>
@@ -240,17 +240,17 @@ export default function ProfessionalTypeDashboard({ params }: { params: Promise<
           </div>
           <Link
             href="/bidding"
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#8B4434] uppercase tracking-wider hover:text-[#6f3829]"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#EA580C] uppercase tracking-wider hover:text-[#C2410C]"
           >
             Browse Open Projects <ArrowUpRight className="w-3.5 h-3.5" />
           </Link>
         </div>
 
-        <div className="bg-white border border-[#efe6df] p-6 rounded-none shadow-xs space-y-4 flex flex-col justify-between">
+        <div className="bg-white border border-[#efe6df] p-6 rounded-2xl shadow-xs space-y-4 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between border-b border-[#efe6df] pb-3 mb-3">
               <h3 className="font-serif text-lg text-[#281713] font-semibold">Pending Requests</h3>
-              <span className="text-[10px] font-semibold uppercase tracking-wider bg-[#8B4434]/10 text-[#8B4434] px-2 py-0.5">
+              <span className="text-[10px] font-semibold uppercase tracking-wider bg-[#EA580C]/10 text-[#EA580C] px-2.5 py-0.5 rounded-full">
                 Inbox
               </span>
             </div>
@@ -260,17 +260,17 @@ export default function ProfessionalTypeDashboard({ params }: { params: Promise<
           </div>
           <Link
             href="/dashboard/requests"
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#8B4434] uppercase tracking-wider hover:text-[#6f3829]"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#EA580C] uppercase tracking-wider hover:text-[#C2410C]"
           >
             Open Requests <ArrowUpRight className="w-3.5 h-3.5" />
           </Link>
         </div>
 
-        <div className="bg-white border border-[#efe6df] p-6 rounded-none shadow-xs space-y-4 flex flex-col justify-between">
+        <div className="bg-white border border-[#efe6df] p-6 rounded-2xl shadow-xs space-y-4 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between border-b border-[#efe6df] pb-3 mb-3">
               <h3 className="font-serif text-lg text-[#281713] font-semibold">Public Showcase</h3>
-              <span className="text-[10px] font-semibold uppercase tracking-wider bg-[#8B4434]/10 text-[#8B4434] px-2 py-0.5">
+              <span className="text-[10px] font-semibold uppercase tracking-wider bg-[#EA580C]/10 text-[#EA580C] px-2.5 py-0.5 rounded-full">
                 Profile
               </span>
             </div>
@@ -280,7 +280,7 @@ export default function ProfessionalTypeDashboard({ params }: { params: Promise<
           </div>
           <Link
             href="/profile"
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#8B4434] uppercase tracking-wider hover:text-[#6f3829]"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#EA580C] uppercase tracking-wider hover:text-[#C2410C]"
           >
             Manage Profile <ArrowUpRight className="w-3.5 h-3.5" />
           </Link>

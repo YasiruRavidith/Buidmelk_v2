@@ -27,7 +27,7 @@ import {
 } from "lucide-react";
 
 function renderCensoredMessage(text: string, isMe: boolean) {
-  const pattern = /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})|((?:\+?94[\s.-]?)?0?7[0-8][\s.-]?\d{3}[\s.-]?\d{4})|((?:\+?94[\s.-]?)?0?(?:11|2[1-7]|3[1-8]|4[1-7]|5[1-7]|6[3-7]|81|91)[\s.-]?\d{3}[\s.-]?\d{4})|(\b(?:\+?\d{1,3}[\s.-]?)?\(?\d{2,4}\)?[\s.-]?\d{3,4}[\s.-]?\d{3,4}\b)|(\b\d{9,12}\b)/gi;
+  const pattern = /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})|((?:\+?94[\s.-]?)?0?7[0-8][\s.-]?\d{3}[\s.-]?\d{4})|((?:\+?94[\s.-]?)?0?(?:11|2[1-7]|3[1-8]|4[1-7]|5[1-7]|6[3-7]|81|91)[\s.-]?\d{3}[\s.-]?\d{4})|(\b(?:\+?\d{1,3}[\s.-]?)?\(?\d{2,4}\)?[\s.-]?\d{3,4}[\s.-]?\d{3,4}\b)|(\b\d{9,12}\b)|(•{4,})/gi;
 
   const parts = [];
   let lastIndex = 0;
@@ -39,17 +39,19 @@ function renderCensoredMessage(text: string, isMe: boolean) {
     if (match.index > lastIndex) {
       parts.push(text.substring(lastIndex, match.index));
     }
+    // Never expose the matched raw contact info in the DOM
+    const maskedText = "••••••••••••";
     parts.push(
       <span
         key={match.index}
-        className={`inline-block filter blur-[5px] select-none pointer-events-none px-1.5 py-0.5 rounded font-mono text-[11px] mx-0.5 border border-dashed ${
+        className={`inline-block select-none px-2 py-0.5 rounded font-mono text-[11px] mx-0.5 border border-dashed font-bold tracking-widest ${
           isMe
-            ? "bg-white/20 text-transparent border-white/40"
-            : "bg-stone-300/80 text-transparent border-stone-400"
+            ? "bg-white/20 text-white/90 border-white/40"
+            : "bg-stone-200 text-stone-700 border-stone-400"
         }`}
-        title="Contact details automatically blurred for privacy & security"
+        title="Contact details hidden for privacy & safety"
       >
-        {match[0]}
+        {maskedText}
       </span>
     );
     lastIndex = match.index + match[0].length;
@@ -456,9 +458,9 @@ export default function ProfessionalDashboard() {
       <header className="flex flex-col sm:flex-row sm:items-end justify-between pb-8 border-b border-stone-200 gap-4">
         <div>
           <div className="flex items-center gap-2 mb-2">
-            <p className="text-[#8B4434] font-semibold tracking-widest uppercase text-xs">Professional Dashboard</p>
+            <p className="text-[#EA580C] font-semibold tracking-widest uppercase text-xs">Professional Dashboard</p>
             {membership?.is_badge_active && (
-              <span className="inline-flex items-center gap-1 bg-[#8B4434] text-white text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 shadow-sm">
+              <span className="inline-flex items-center gap-1 bg-[#EA580C] text-white text-[9px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full shadow-sm">
                 <BadgeCheck className="w-3 h-3" /> Verified Partner
               </span>
             )}
@@ -468,7 +470,7 @@ export default function ProfessionalDashboard() {
         <div className="flex items-center gap-3">
           <button 
             onClick={() => setShowPlansModal(true)}
-            className="btn-primary bg-[#8B4434] hover:bg-[#723628] text-white text-xs uppercase tracking-wider py-3 px-5 flex items-center gap-2 shadow-sm"
+            className="btn-primary bg-[#EA580C] hover:bg-[#C2410C] text-white text-xs uppercase tracking-wider py-3 px-5 flex items-center gap-2 shadow-sm"
           >
             <Crown className="w-4 h-4 text-amber-300" />
             <span>Membership &amp; Plans</span>
@@ -481,7 +483,7 @@ export default function ProfessionalDashboard() {
 
       {/* Registration Fee Pending Alert Banner */}
       {membership && !membership.registration_fee_paid && (
-        <div className="mt-6 p-5 bg-amber-50 border border-amber-200 text-amber-900 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="mt-6 p-5 bg-amber-50 border border-amber-200 rounded-2xl text-amber-900 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <AlertCircle className="w-4 h-4 text-amber-700" />
@@ -494,7 +496,7 @@ export default function ProfessionalDashboard() {
           <button
             onClick={handlePayRegistration}
             disabled={processingPlan === "REGISTRATION"}
-            className="bg-[#8B4434] text-white px-5 py-2.5 text-xs font-bold uppercase tracking-wider hover:bg-[#723628] transition-colors whitespace-nowrap self-start sm:self-auto"
+            className="bg-[#EA580C] text-white px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-[#C2410C] transition-colors whitespace-nowrap self-start sm:self-auto"
           >
             {processingPlan === "REGISTRATION" ? "Activating..." : "Pay LKR 1,000 Now"}
           </button>
@@ -504,11 +506,11 @@ export default function ProfessionalDashboard() {
       {/* Membership & Subscription Overview Cards */}
       <section className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-8">
         {/* Service Fee Status Card */}
-        <div className="bg-white border border-[#efe6df] p-6 shadow-sm flex flex-col justify-between space-y-4">
+        <div className="bg-white border border-[#efe6df] p-6 rounded-2xl shadow-sm flex flex-col justify-between space-y-4">
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-[#8B4434]">Service Fee Status</span>
-              <span className={`px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider ${membership?.is_service_active ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-stone-100 text-stone-600'}`}>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-[#EA580C]">Service Fee Status</span>
+              <span className={`px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-wider rounded-full ${membership?.is_service_active ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-stone-100 text-stone-600'}`}>
                 {membership?.is_service_active ? 'ACTIVE' : 'INACTIVE'}
               </span>
             </div>
@@ -529,25 +531,25 @@ export default function ProfessionalDashboard() {
           </div>
           <button
             onClick={() => setShowPlansModal(true)}
-            className="w-full bg-[#FCFAF7] border border-[#e8ddd6] text-[#1c1108] hover:border-[#8B4434] py-2.5 text-xs font-semibold uppercase tracking-wider transition-colors flex items-center justify-center gap-1.5"
+            className="w-full bg-[#FCFAF7] border border-[#e8ddd6] text-[#1c1108] hover:border-[#EA580C] py-2.5 rounded-xl text-xs font-semibold uppercase tracking-wider transition-colors flex items-center justify-center gap-1.5"
           >
             <span>{membership?.is_service_active ? 'Manage Plan' : 'Subscribe (from LKR 500/mo)'}</span>
-            <ChevronRight className="w-3.5 h-3.5 text-[#8B4434]" />
+            <ChevronRight className="w-3.5 h-3.5 text-[#EA580C]" />
           </button>
         </div>
 
         {/* Verified Badge Card */}
-        <div className="bg-white border border-[#efe6df] p-6 shadow-sm flex flex-col justify-between space-y-4">
+        <div className="bg-white border border-[#efe6df] p-6 rounded-2xl shadow-sm flex flex-col justify-between space-y-4">
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-[#8B4434]">Trust Verification</span>
-              <span className={`px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider ${membership?.is_badge_active ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-stone-100 text-stone-600'}`}>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-[#EA580C]">Trust Verification</span>
+              <span className={`px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-wider rounded-full ${membership?.is_badge_active ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-stone-100 text-stone-600'}`}>
                 {membership?.is_badge_active ? 'VERIFIED' : 'UNVERIFIED'}
               </span>
             </div>
             <h3 className="font-serif text-xl text-stone-900 flex items-center gap-1.5">
               <span>Verified Badge</span>
-              {membership?.is_badge_active && <BadgeCheck className="w-5 h-5 text-[#8B4434]" />}
+              {membership?.is_badge_active && <BadgeCheck className="w-5 h-5 text-[#EA580C]" />}
             </h3>
             <p className="text-xs text-stone-500 leading-relaxed">
               {membership?.is_badge_active && membership.badge_expires_at ? (
@@ -559,16 +561,16 @@ export default function ProfessionalDashboard() {
           </div>
           <button
             onClick={() => setShowPlansModal(true)}
-            className="w-full bg-[#FCFAF7] border border-[#e8ddd6] text-[#1c1108] hover:border-[#8B4434] py-2.5 text-xs font-semibold uppercase tracking-wider transition-colors flex items-center justify-center gap-1.5"
+            className="w-full bg-[#FCFAF7] border border-[#e8ddd6] text-[#1c1108] hover:border-[#EA580C] py-2.5 rounded-xl text-xs font-semibold uppercase tracking-wider transition-colors flex items-center justify-center gap-1.5"
           >
             <span>{membership?.is_badge_active ? 'Badge Details' : 'Get Verified (LKR 1,000/yr)'}</span>
-            <ChevronRight className="w-3.5 h-3.5 text-[#8B4434]" />
+            <ChevronRight className="w-3.5 h-3.5 text-[#EA580C]" />
           </button>
         </div>
 
         {/* Pro Plan Feature Card */}
-        <div className="bg-[#1c1108] text-[#FCFAF7] border border-[#322318] p-6 shadow-sm flex flex-col justify-between space-y-4 relative overflow-hidden">
-          <div className="absolute top-0 right-0 bg-[#8B4434] text-white text-[9px] font-bold uppercase tracking-widest px-3 py-1">
+        <div className="bg-[#1c1108] text-[#FCFAF7] border border-[#322318] p-6 rounded-2xl shadow-sm flex flex-col justify-between space-y-4 relative overflow-hidden">
+          <div className="absolute top-0 right-0 bg-[#EA580C] text-white text-[9px] font-bold uppercase tracking-widest px-3 py-1">
             Best Value
           </div>
           <div className="space-y-2">
@@ -583,7 +585,7 @@ export default function ProfessionalDashboard() {
           </div>
           <button
             onClick={() => setShowPlansModal(true)}
-            className="w-full bg-[#8B4434] text-white hover:bg-[#723628] py-2.5 text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-1.5"
+            className="w-full bg-[#EA580C] text-white hover:bg-[#C2410C] py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-1.5"
           >
             <Sparkles className="w-3.5 h-3.5 text-amber-300" />
             <span>View Pro Deals</span>
@@ -613,7 +615,7 @@ export default function ProfessionalDashboard() {
         </div>
         <Link 
           href="/bidding" 
-          className="card-luxury flex flex-col justify-center items-center text-center py-8 bg-[#8B4434] text-[#FCFAF7] border-transparent hover:bg-[#6c3426] transition-colors cursor-pointer"
+          className="card-luxury flex flex-col justify-center items-center text-center py-8 bg-[#EA580C] text-[#FCFAF7] border-transparent hover:bg-[#C2410C] transition-colors cursor-pointer"
         >
           <span className="text-xl font-serif mb-2 text-[#FCFAF7]">Find Work</span>
           <span className="text-sm text-[#FCFAF7]/70 uppercase tracking-wider">Open public bids →</span>
@@ -621,13 +623,13 @@ export default function ProfessionalDashboard() {
       </div>
 
       {/* Client Messages & Project Chats Section */}
-      <section id="chats" className="bg-white border border-[#efe6df] rounded-none p-6 shadow-sm mt-8 scroll-mt-6 space-y-6">
+      <section id="chats" className="bg-white border border-[#efe6df] rounded-2xl p-6 shadow-sm mt-8 scroll-mt-6 space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#efe6df] pb-4">
           <div>
             <div className="flex items-center gap-2">
-              <p className="text-xs uppercase tracking-widest text-[#8B4434]/60 font-semibold">Direct Communication</p>
+              <p className="text-xs uppercase tracking-widest text-[#EA580C]/60 font-semibold">Direct Communication</p>
               {chats.reduce((acc, c) => acc + (c.unread_count || 0), 0) > 0 && (
-                <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-800 border border-emerald-300 text-[10px] font-bold px-2 py-0.5 animate-pulse">
+                <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-800 border border-emerald-300 text-[10px] font-bold px-2.5 py-0.5 rounded-full animate-pulse">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                   {chats.reduce((acc, c) => acc + (c.unread_count || 0), 0)} New Message{chats.reduce((acc, c) => acc + (c.unread_count || 0), 0) !== 1 ? 's' : ''}
                 </span>
@@ -642,19 +644,19 @@ export default function ProfessionalDashboard() {
 
         {chatsLoading ? (
           <div className="py-8 text-center text-xs text-stone-500">
-            <div className="inline-block animate-spin w-6 h-6 border-2 border-[#8B4434] border-t-transparent mb-2" />
+            <div className="inline-block animate-spin w-6 h-6 border-2 border-[#EA580C] border-t-transparent mb-2" />
             <p>Loading client conversations...</p>
           </div>
         ) : chats.length === 0 ? (
-          <div className="rounded-none border border-dashed border-[#efe6df] p-8 text-center space-y-3 bg-[#FCFAF7]">
-            <MessageSquare className="w-8 h-8 text-[#8B4434]/40 mx-auto" />
+          <div className="rounded-2xl border border-dashed border-[#efe6df] p-8 text-center space-y-3 bg-[#FCFAF7]">
+            <MessageSquare className="w-8 h-8 text-[#EA580C]/40 mx-auto" />
             <p className="text-sm font-serif text-[#281713]">No active client chats yet</p>
             <p className="text-xs text-stone-500 max-w-md mx-auto leading-relaxed">
               When a client accepts your bid on an open tender, your private project chat room will appear here automatically.
             </p>
             <Link
               href="/bidding"
-              className="inline-flex items-center gap-2 bg-[#8B4434] text-white text-xs px-5 py-2.5 mt-2 uppercase tracking-wider font-semibold hover:bg-[#723628] transition-colors"
+              className="inline-flex items-center gap-2 bg-[#EA580C] text-white text-xs px-5 py-2.5 rounded-xl mt-2 uppercase tracking-wider font-semibold hover:bg-[#C2410C] transition-colors"
             >
               Find Projects to Bid On &rarr;
             </Link>
@@ -677,8 +679,8 @@ export default function ProfessionalDashboard() {
               return (
                 <div
                   key={chat.project_id ? `proj-${chat.project_id}` : `unlock-${chat.unlock_id}`}
-                  className={`flex flex-col md:flex-row md:items-center justify-between gap-4 border p-5 transition-all bg-[#FCFAF7] ${
-                    chat.unread_count > 0 ? "border-emerald-500 ring-1 ring-emerald-500 bg-emerald-50/20" : "border-[#efe6df] hover:border-[#8B4434]/40"
+                  className={`flex flex-col md:flex-row md:items-center justify-between gap-4 border p-5 transition-all bg-[#FCFAF7] rounded-2xl ${
+                    chat.unread_count > 0 ? "border-emerald-500 ring-1 ring-emerald-500 bg-emerald-50/20" : "border-[#efe6df] hover:border-[#EA580C]/40"
                   }`}
                 >
                   <div className="flex items-start gap-4 min-w-0">
@@ -688,10 +690,10 @@ export default function ProfessionalDashboard() {
                         <img
                           src={chat.counterpart.profile_image}
                           alt={chat.counterpart.name}
-                          className="w-12 h-12 object-cover border border-[#8B4434]/20"
+                          className="w-12 h-12 object-cover border border-[#EA580C]/20 rounded-xl"
                         />
                       ) : (
-                        <div className="w-12 h-12 bg-[#1c1108] text-[#FCFAF7] font-serif text-sm font-semibold flex items-center justify-center">
+                        <div className="w-12 h-12 bg-[#1c1108] text-[#FCFAF7] font-serif text-sm font-semibold flex items-center justify-center rounded-xl">
                           {counterpartInitials}
                         </div>
                       )}
@@ -708,7 +710,7 @@ export default function ProfessionalDashboard() {
                         <span className="font-semibold text-base text-[#281713]">
                           {chat.counterpart?.name}
                         </span>
-                        <span className="px-2 py-0.5 text-[9px] uppercase tracking-wider font-bold bg-amber-100 text-amber-900 border border-amber-200">
+                        <span className="px-2.5 py-0.5 text-[9px] uppercase tracking-wider font-bold bg-amber-100 text-amber-900 border border-amber-200 rounded-full">
                           {chat.counterpart?.role || "Project Client"}
                         </span>
                         {chat.location && (
@@ -718,7 +720,7 @@ export default function ProfessionalDashboard() {
                         )}
                       </div>
 
-                      <p className="text-xs font-semibold text-[#8B4434] truncate">
+                      <p className="text-xs font-semibold text-[#EA580C] truncate">
                         {chat.project_title}
                         {chat.accepted_bid?.bid_amount && (
                           <span className="text-stone-500 font-normal ml-2">
@@ -751,7 +753,7 @@ export default function ProfessionalDashboard() {
                   {/* Actions Right */}
                   <div className="flex items-center gap-3 shrink-0 self-end md:self-center">
                     {chat.unread_count > 0 && (
-                      <span className="bg-emerald-600 text-white text-xs font-bold px-2.5 py-1 uppercase tracking-wider rounded-none animate-pulse">
+                      <span className="bg-emerald-600 text-white text-xs font-bold px-2.5 py-1 uppercase tracking-wider rounded-full animate-pulse">
                         {chat.unread_count} Unread
                       </span>
                     )}
@@ -759,15 +761,15 @@ export default function ProfessionalDashboard() {
                       <button
                         type="button"
                         onClick={() => setActiveQSChat(chat)}
-                        className="inline-flex items-center gap-2 bg-[#1c1108] hover:bg-[#8B4434] text-white px-5 py-2.5 text-xs font-semibold uppercase tracking-wider transition-colors shadow-sm cursor-pointer"
+                        className="inline-flex items-center gap-2 bg-[#1c1108] hover:bg-[#EA580C] text-white px-5 py-2.5 rounded-xl text-xs font-semibold uppercase tracking-wider transition-colors shadow-sm cursor-pointer"
                       >
-                        <MessageSquare className="w-3.5 h-3.5 text-[#8B4434]" />
+                        <MessageSquare className="w-3.5 h-3.5 text-[#EA580C]" />
                         Open Consultation Chat
                       </button>
                     ) : (
                       <Link
                         href={`/bidding/${chat.project_id}?chat=open`}
-                        className="inline-flex items-center gap-2 bg-[#8B4434] hover:bg-[#6f3829] text-white px-5 py-2.5 text-xs font-semibold uppercase tracking-wider transition-colors shadow-sm"
+                        className="inline-flex items-center gap-2 bg-[#EA580C] hover:bg-[#C2410C] text-white px-5 py-2.5 rounded-xl text-xs font-semibold uppercase tracking-wider transition-colors shadow-sm"
                       >
                         <MessageSquare className="w-3.5 h-3.5" />
                         Open Chat
@@ -782,10 +784,10 @@ export default function ProfessionalDashboard() {
       </section>
 
       {/* Bidding History Section */}
-      <section className="bg-white border border-[#efe6df] rounded-none p-6 shadow-sm mt-8">
+      <section className="bg-white border border-[#efe6df] rounded-2xl p-6 shadow-sm mt-8">
         <div className="flex items-start justify-between gap-4 border-b border-[#efe6df] pb-4 mb-5">
           <div>
-            <p className="text-xs uppercase tracking-widest text-[#8B4434]/60">Bidding History</p>
+            <p className="text-xs uppercase tracking-widest text-[#EA580C]/60">Bidding History</p>
             <h2 className="font-serif text-2xl text-[#281713]">My Applied Proposals</h2>
           </div>
           <p className="text-sm text-stone-500 max-w-sm text-right">
@@ -796,7 +798,7 @@ export default function ProfessionalDashboard() {
         {bidsLoading ? (
           <p className="text-sm text-stone-500">Loading applied bids...</p>
         ) : bids.length === 0 ? (
-          <div className="rounded-none border border-dashed border-[#efe6df] p-8 text-center text-sm text-stone-500">
+          <div className="rounded-2xl border border-dashed border-[#efe6df] p-8 text-center text-sm text-stone-500">
             You haven't submitted any bids yet. Go to the Bidding Feed to find active tenders.
           </div>
         ) : (
@@ -809,7 +811,7 @@ export default function ProfessionalDashboard() {
               };
               
               return (
-                <div key={bid.id} className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border border-[#efe6df] bg-[#FCFAF7] px-5 py-4">
+                <div key={bid.id} className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border border-[#efe6df] bg-[#FCFAF7] px-5 py-4 rounded-2xl">
                   <div className="space-y-1">
                     <p className="font-semibold text-[#281713] text-lg">{bid.project_title || `Project #${bid.project}`}</p>
                     <p className="text-sm text-stone-500">
@@ -821,13 +823,13 @@ export default function ProfessionalDashboard() {
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <span className={`px-2.5 py-0.5 text-xs font-semibold uppercase ${statusColors[bid.status] || 'bg-stone-50 text-stone-500'}`}>
+                    <span className={`px-2.5 py-0.5 text-xs font-semibold uppercase rounded-full ${statusColors[bid.status] || 'bg-stone-50 text-stone-500'}`}>
                       {bid.status}
                     </span>
                     {bid.status === 'ACCEPTED' && (
                       <Link
                         href={`/bidding/${bid.project}?chat=open`}
-                        className="inline-flex items-center gap-1.5 justify-center bg-emerald-700 px-3.5 py-2 text-xs font-semibold uppercase tracking-wider text-white hover:bg-emerald-800 transition-colors shadow-sm"
+                        className="inline-flex items-center gap-1.5 justify-center bg-emerald-700 px-3.5 py-2 rounded-xl text-xs font-semibold uppercase tracking-wider text-white hover:bg-emerald-800 transition-colors shadow-sm"
                       >
                         <MessageSquare className="w-3.5 h-3.5" />
                         Chat with Client
@@ -835,7 +837,7 @@ export default function ProfessionalDashboard() {
                     )}
                     <Link
                       href={`/bidding/${bid.project}`}
-                      className="inline-flex items-center justify-center bg-[#8B4434] px-4 py-2 text-xs font-semibold uppercase tracking-wider text-white hover:bg-[#6f3829] transition-colors"
+                      className="inline-flex items-center justify-center bg-[#EA580C] px-4 py-2 rounded-xl text-xs font-semibold uppercase tracking-wider text-white hover:bg-[#C2410C] transition-colors"
                     >
                       View Details
                     </Link>
@@ -850,10 +852,10 @@ export default function ProfessionalDashboard() {
       {/* Membership & Plans Modal */}
       {showPlansModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 overflow-y-auto">
-          <div className="bg-white max-w-4xl w-full p-6 sm:p-8 space-y-6 shadow-2xl border border-stone-200 my-8">
+          <div className="bg-white max-w-4xl w-full p-6 sm:p-8 space-y-6 shadow-2xl border border-stone-200 rounded-3xl my-8">
             <div className="flex items-center justify-between border-b border-stone-200 pb-4">
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-widest text-[#8B4434]">Professional Plans</span>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-[#EA580C]">Professional Plans</span>
                 <h3 className="font-serif text-2xl sm:text-3xl text-stone-900">Service Fees &amp; Verified Badge</h3>
               </div>
               <button 
@@ -865,7 +867,7 @@ export default function ProfessionalDashboard() {
             </div>
 
             {planSuccessMsg && (
-              <div className="p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-2">
+              <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800 text-xs flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                 <span>{planSuccessMsg}</span>
               </div>
@@ -873,7 +875,7 @@ export default function ProfessionalDashboard() {
 
             {/* Registration Fee status if not paid */}
             {membership && !membership.registration_fee_paid && (
-              <div className="p-4 bg-amber-50 border border-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+              <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
                 <div>
                   <p className="font-bold text-amber-900">Professional Registration Fee Pending</p>
                   <p className="text-amber-800 text-[11px]">One-time fee of LKR 1,000 required before bidding.</p>
@@ -881,7 +883,7 @@ export default function ProfessionalDashboard() {
                 <button
                   onClick={handlePayRegistration}
                   disabled={processingPlan === "REGISTRATION"}
-                  className="bg-[#8B4434] text-white px-4 py-2 text-xs font-bold uppercase tracking-wider hover:bg-[#723628] disabled:opacity-70"
+                  className="bg-[#EA580C] text-white px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-[#C2410C] disabled:opacity-70"
                 >
                   {processingPlan === "REGISTRATION" ? "Paying..." : "Pay LKR 1,000"}
                 </button>
@@ -891,11 +893,11 @@ export default function ProfessionalDashboard() {
             {/* Plans Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {/* Monthly Service Plan */}
-              <div className="border border-stone-200 p-5 flex flex-col justify-between space-y-4 hover:border-[#8B4434] transition-all bg-[#FCFAF7]">
+              <div className="border border-stone-200 p-5 flex flex-col justify-between space-y-4 hover:border-[#EA580C] transition-all bg-[#FCFAF7] rounded-2xl">
                 <div className="space-y-2">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-[#8B4434]">Monthly Plan</span>
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-[#EA580C]">Monthly Plan</span>
                   <h4 className="font-serif text-lg text-stone-900">Service Fee</h4>
-                  <p className="font-serif text-2xl text-[#8B4434]">LKR 500 <span className="text-xs font-sans text-stone-500">/mo</span></p>
+                  <p className="font-serif text-2xl text-[#EA580C]">LKR 500 <span className="text-xs font-sans text-stone-500">/mo</span></p>
                   <p className="text-xs text-stone-500">
                     Bidding access on all client tenders and active professional directory listing.
                   </p>
@@ -903,21 +905,21 @@ export default function ProfessionalDashboard() {
                 <button
                   onClick={() => handleSubscribe("MONTHLY")}
                   disabled={Boolean(processingPlan)}
-                  className="w-full bg-[#8B4434] text-white py-2.5 text-xs font-bold uppercase tracking-widest hover:bg-[#723628] disabled:opacity-70 transition-colors"
+                  className="w-full bg-[#EA580C] text-white py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-[#C2410C] disabled:opacity-70 transition-colors"
                 >
                   {processingPlan === "MONTHLY" ? "Processing..." : "Select Monthly"}
                 </button>
               </div>
 
               {/* Yearly Service Plan (Discounted) */}
-              <div className="border border-stone-200 p-5 flex flex-col justify-between space-y-4 hover:border-[#8B4434] transition-all bg-[#FCFAF7] relative">
+              <div className="border border-stone-200 p-5 flex flex-col justify-between space-y-4 hover:border-[#EA580C] transition-all bg-[#FCFAF7] rounded-2xl relative">
                 <div className="absolute -top-2.5 right-3 bg-emerald-700 text-white text-[9px] font-bold uppercase tracking-widest px-2 py-0.5">
                   2 Months Free
                 </div>
                 <div className="space-y-2">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-[#8B4434]">Yearly Plan</span>
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-[#EA580C]">Yearly Plan</span>
                   <h4 className="font-serif text-lg text-stone-900">Service Fee</h4>
-                  <p className="font-serif text-2xl text-[#8B4434]">LKR 5,000 <span className="text-xs font-sans text-stone-500">/yr</span></p>
+                  <p className="font-serif text-2xl text-[#EA580C]">LKR 5,000 <span className="text-xs font-sans text-stone-500">/yr</span></p>
                   <p className="text-xs text-stone-500">
                     Full annual bidding access. Save LKR 1,000 compared to paying monthly!
                   </p>
@@ -925,18 +927,18 @@ export default function ProfessionalDashboard() {
                 <button
                   onClick={() => handleSubscribe("YEARLY")}
                   disabled={Boolean(processingPlan)}
-                  className="w-full bg-[#8B4434] text-white py-2.5 text-xs font-bold uppercase tracking-widest hover:bg-[#723628] disabled:opacity-70 transition-colors"
+                  className="w-full bg-[#EA580C] text-white py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-[#C2410C] disabled:opacity-70 transition-colors"
                 >
                   {processingPlan === "YEARLY" ? "Processing..." : "Select Yearly"}
                 </button>
               </div>
 
               {/* Verified Badge Standalone */}
-              <div className="border border-stone-200 p-5 flex flex-col justify-between space-y-4 hover:border-[#8B4434] transition-all bg-[#FCFAF7]">
+              <div className="border border-stone-200 p-5 flex flex-col justify-between space-y-4 hover:border-[#EA580C] transition-all bg-[#FCFAF7] rounded-2xl">
                 <div className="space-y-2">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-[#8B4434]">Trust Seal</span>
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-[#EA580C]">Trust Seal</span>
                   <h4 className="font-serif text-lg text-stone-900">Verified Badge</h4>
-                  <p className="font-serif text-2xl text-[#8B4434]">LKR 1,000 <span className="text-xs font-sans text-stone-500">/yr</span></p>
+                  <p className="font-serif text-2xl text-[#EA580C]">LKR 1,000 <span className="text-xs font-sans text-stone-500">/yr</span></p>
                   <p className="text-xs text-stone-500">
                     Official verified partner badge displayed on your profile, proposals, and directory search.
                   </p>
@@ -944,15 +946,15 @@ export default function ProfessionalDashboard() {
                 <button
                   onClick={handleBuyBadge}
                   disabled={Boolean(processingPlan)}
-                  className="w-full bg-[#1c1108] text-white py-2.5 text-xs font-bold uppercase tracking-widest hover:bg-[#322318] disabled:opacity-70 transition-colors"
+                  className="w-full bg-[#1c1108] text-white py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-[#322318] disabled:opacity-70 transition-colors"
                 >
                   {processingPlan === "BADGE" ? "Processing..." : "Get Badge"}
                 </button>
               </div>
 
               {/* Pro Plan Bundle (Best Value) */}
-              <div className="border-2 border-[#8B4434] p-5 flex flex-col justify-between space-y-4 bg-[#8B4434]/5 relative shadow-md">
-                <div className="absolute -top-3 right-3 bg-[#8B4434] text-white text-[9px] font-bold uppercase tracking-widest px-2.5 py-0.5">
+              <div className="border-2 border-[#EA580C] p-5 flex flex-col justify-between space-y-4 bg-[#EA580C]/5 relative rounded-2xl shadow-md">
+                <div className="absolute -top-3 right-3 bg-[#EA580C] text-white text-[9px] font-bold uppercase tracking-widest px-2.5 py-0.5">
                   Save LKR 2,000
                 </div>
                 <div className="space-y-2">
@@ -961,7 +963,7 @@ export default function ProfessionalDashboard() {
                     <span className="text-[10px] font-bold uppercase tracking-widest">Pro Bundle</span>
                   </div>
                   <h4 className="font-serif text-lg text-[#1c1108]">Pro Annual Plan</h4>
-                  <p className="font-serif text-2xl text-[#8B4434]">LKR 5,000 <span className="text-xs font-sans text-stone-500">/yr</span></p>
+                  <p className="font-serif text-2xl text-[#EA580C]">LKR 5,000 <span className="text-xs font-sans text-stone-500">/yr</span></p>
                   <p className="text-xs text-stone-600 leading-relaxed">
                     Includes <strong>Annual Service Fee</strong> + <strong>Verified Badge</strong> completely FREE!
                   </p>
@@ -969,7 +971,7 @@ export default function ProfessionalDashboard() {
                 <button
                   onClick={() => handleSubscribe("PRO_YEARLY")}
                   disabled={Boolean(processingPlan)}
-                  className="w-full bg-[#8B4434] text-white py-2.5 text-xs font-bold uppercase tracking-widest hover:bg-[#723628] disabled:opacity-70 transition-colors shadow-sm"
+                  className="w-full bg-[#EA580C] text-white py-2.5 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-[#C2410C] disabled:opacity-70 transition-colors shadow-sm"
                 >
                   {processingPlan === "PRO_YEARLY" ? "Activating Pro..." : "Get Pro Plan"}
                 </button>
@@ -980,7 +982,7 @@ export default function ProfessionalDashboard() {
               <p>Demo Mode: Payments are instantly verified and recorded to your account.</p>
               <button 
                 onClick={() => setShowPlansModal(false)}
-                className="text-[#8B4434] font-semibold hover:underline"
+                className="text-[#EA580C] font-semibold hover:underline"
               >
                 Close Window
               </button>
@@ -992,7 +994,7 @@ export default function ProfessionalDashboard() {
       {/* QS Consultation Chat Modal */}
       {activeQSChat && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-          <div className="bg-white border border-[#e8ddd6] w-full max-w-2xl h-[620px] flex flex-col shadow-2xl overflow-hidden">
+          <div className="bg-white border border-[#e8ddd6] w-full max-w-2xl h-[620px] flex flex-col shadow-2xl overflow-hidden rounded-3xl">
             {/* Header */}
             <div className="bg-[#1c1108] text-[#FCFAF7] p-4 flex items-center justify-between shrink-0 border-b border-[#322318]">
               <div className="flex items-center gap-3">
@@ -1001,10 +1003,10 @@ export default function ProfessionalDashboard() {
                     <img
                       src={activeQSChat.counterpart.profile_image}
                       alt={activeQSChat.counterpart.name}
-                      className="w-10 h-10 object-cover border border-[#8B4434]/40"
+                      className="w-10 h-10 object-cover border border-[#EA580C]/40 rounded-xl"
                     />
                   ) : (
-                    <div className="w-10 h-10 bg-[#8B4434] text-white font-serif font-bold text-sm flex items-center justify-center">
+                    <div className="w-10 h-10 bg-[#EA580C] text-white font-serif font-bold text-sm flex items-center justify-center rounded-xl">
                       {activeQSChat.counterpart?.name ? activeQSChat.counterpart.name.substring(0, 2).toUpperCase() : "CL"}
                     </div>
                   )}
@@ -1015,7 +1017,7 @@ export default function ProfessionalDashboard() {
                     <h3 className="font-serif text-base text-[#FCFAF7] font-semibold">
                       {activeQSChat.counterpart?.name}
                     </h3>
-                    <span className="text-[9px] uppercase px-1.5 py-0.5 bg-emerald-900/60 text-emerald-300 font-bold tracking-wider border border-emerald-700/60">
+                    <span className="text-[9px] uppercase px-2 py-0.5 bg-emerald-900/60 text-emerald-300 font-bold tracking-wider border border-emerald-700/60 rounded-full">
                       Client Consultation
                     </span>
                   </div>
@@ -1050,12 +1052,12 @@ export default function ProfessionalDashboard() {
             <div className="flex-1 p-4 overflow-y-auto space-y-4 bg-[#FCFAF7]">
               {qsChatLoading && qsChatMessages.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full gap-2 text-stone-400">
-                  <RefreshCw className="w-5 h-5 animate-spin text-[#8B4434]" />
+                  <RefreshCw className="w-5 h-5 animate-spin text-[#EA580C]" />
                   <p className="text-xs">Loading consultation messages...</p>
                 </div>
               ) : qsChatMessages.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full text-center p-6 space-y-2">
-                  <div className="w-12 h-12 bg-[#8B4434]/10 rounded-full flex items-center justify-center text-[#8B4434]">
+                  <div className="w-12 h-12 bg-[#EA580C]/10 rounded-full flex items-center justify-center text-[#EA580C]">
                     <MessageSquare className="w-6 h-6" />
                   </div>
                   <h4 className="font-serif text-lg text-[#1c1108]">QS Consultation Room</h4>
@@ -1076,7 +1078,7 @@ export default function ProfessionalDashboard() {
                           {isMe ? "You" : msg.sender_name}
                         </span>
                         {!isMe && (
-                          <span className="text-[9px] uppercase px-1.5 py-0.2 bg-stone-200 text-stone-700 font-bold">
+                          <span className="text-[9px] uppercase px-2 py-0.5 bg-stone-200 text-stone-700 font-bold rounded-full">
                             {msg.sender_role}
                           </span>
                         )}
@@ -1088,7 +1090,7 @@ export default function ProfessionalDashboard() {
                       <div
                         className={`max-w-[82%] sm:max-w-[75%] px-4 py-3 text-xs sm:text-sm leading-relaxed whitespace-pre-wrap ${
                           isMe
-                            ? "bg-[#8B4434] text-white rounded-2xl rounded-tr-none shadow-sm"
+                            ? "bg-[#EA580C] text-white rounded-2xl rounded-tr-none shadow-sm"
                             : "bg-white border border-[#e8ddd6] text-[#1c1108] rounded-2xl rounded-tl-none shadow-sm"
                         }`}
                       >
@@ -1140,12 +1142,12 @@ export default function ProfessionalDashboard() {
                 onChange={(e) => setQsChatInput(e.target.value)}
                 placeholder="Type your reply to the client..."
                 disabled={qsChatSending}
-                className="flex-1 bg-[#FCFAF7] border border-[#c9b8b0] px-4 py-2.5 text-xs sm:text-sm text-[#1c1108] placeholder-[#908078] focus:outline-none focus:border-[#8B4434] transition-colors"
+                className="flex-1 bg-[#FCFAF7] border border-[#c9b8b0] px-4 py-2.5 text-xs sm:text-sm text-[#1c1108] placeholder-[#908078] focus:outline-none focus:border-[#EA580C] rounded-xl transition-colors"
               />
               <button
                 type="submit"
                 disabled={qsChatSending || !qsChatInput.trim()}
-                className="bg-[#8B4434] hover:bg-[#723628] disabled:opacity-50 text-white px-4 sm:px-5 py-2.5 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 transition-colors shrink-0 shadow-sm cursor-pointer"
+                className="bg-[#EA580C] hover:bg-[#C2410C] disabled:opacity-50 text-white px-4 sm:px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 transition-colors shrink-0 shadow-sm cursor-pointer"
               >
                 {qsChatSending ? (
                   <div className="w-4 h-4 border-2 border-white border-t-transparent animate-spin" />
@@ -1160,7 +1162,7 @@ export default function ProfessionalDashboard() {
 
             <div className="px-4 py-2 bg-stone-50 border-t border-[#e8ddd6] text-center shrink-0">
               <p className="text-[10px] text-[#908078] flex items-center justify-center gap-1.5">
-                <Shield className="w-3 h-3 text-[#8B4434] shrink-0" />
+                <Shield className="w-3 h-3 text-[#EA580C] shrink-0" />
                 <span>Phone numbers and emails in consultation chats are automatically blurred for platform security.</span>
               </p>
             </div>

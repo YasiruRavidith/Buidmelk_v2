@@ -444,23 +444,23 @@ export default function ProfilePage() {
       <div className="py-6 px-2 sm:px-4">
         <div className="w-full max-w-5xl mx-auto space-y-8">
           <header className="flex flex-col gap-2 border-b border-[#efe6df] pb-6">
-            <p className="text-[#8B4434] font-semibold tracking-widest uppercase text-xs">Profile Workspace</p>
+            <p className="text-[#EA580C] font-semibold tracking-widest uppercase text-xs">Profile Workspace</p>
             <h1 className="font-serif text-3xl sm:text-4xl text-[#281713]">Profile Details</h1>
             <p className="text-stone-500 text-sm">Keep your contact details, profile photo, and professional profile up to date.</p>
           </header>
 
           {role === null && (
-            <div className="bg-white border border-stone-200 rounded-none p-6 text-stone-600">
+            <div className="bg-white border border-stone-200 rounded-2xl p-6 text-stone-600">
               Your role is not set yet. Please complete onboarding first.
-              <Link href="/onboarding" className="text-[#8B4434] font-semibold ml-2">
+              <Link href="/onboarding" className="text-[#EA580C] font-semibold ml-2">
                 Complete onboarding
               </Link>
             </div>
           )}
 
-          <form onSubmit={handleSave} className="bg-white border border-[#efe6df] rounded-none p-6 sm:p-10 space-y-10 shadow-sm">
+          <form onSubmit={handleSave} className="bg-white border border-[#efe6df] rounded-2xl p-6 sm:p-10 space-y-10 shadow-sm">
             {/* Profile Picture Upload Section */}
-            <section className="p-6 bg-[#fcfaf9] border border-[#efe6df] rounded-none flex flex-col sm:flex-row items-center gap-6">
+            <section className="p-6 bg-[#fcfaf9] border border-[#efe6df] rounded-2xl flex flex-col sm:flex-row items-center gap-6">
               <input
                 type="file"
                 ref={avatarInputRef}
@@ -470,7 +470,7 @@ export default function ProfilePage() {
               />
               <div
                 onClick={() => avatarInputRef.current?.click()}
-                className="relative group cursor-pointer w-24 h-24 rounded-full overflow-hidden border-2 border-[#8B4434]/40 shrink-0 shadow-sm"
+                className="relative group cursor-pointer w-24 h-24 rounded-full overflow-hidden border-2 border-[#EA580C]/40 shrink-0 shadow-sm"
               >
                 {displayedPhoto || profilePhoto || user?.photoURL ? (
                   <img
@@ -481,7 +481,7 @@ export default function ProfilePage() {
                   />
                 ) : (
                   <div className="w-full h-full bg-[#f3ebe4] flex items-center justify-center">
-                    <User className="w-10 h-10 text-[#8B4434]" />
+                    <User className="w-10 h-10 text-[#EA580C]" />
                   </div>
                 )}
                 <div className="absolute inset-0 bg-black/50 text-white opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-[10px] font-semibold uppercase tracking-wider gap-1">
@@ -509,7 +509,7 @@ export default function ProfilePage() {
                     <Upload className="w-3.5 h-3.5" /> Select Image
                   </button>
                   {photoMsg && (
-                    <span className="text-xs text-[#8B4434] font-medium flex items-center gap-1">
+                    <span className="text-xs text-[#EA580C] font-medium flex items-center gap-1">
                       <CheckCircle2 className="w-3.5 h-3.5" /> {photoMsg}
                     </span>
                   )}
@@ -532,7 +532,7 @@ export default function ProfilePage() {
                   <input
                     value={user.displayName || ""}
                     disabled
-                    className="w-full border border-stone-300 text-stone-500 rounded-lg px-4 py-3 bg-stone-50"
+                    className="w-full border border-stone-300 text-stone-500 rounded-xl px-4 py-3 bg-stone-50"
                   />
                 </div>
                 <div>
@@ -540,7 +540,7 @@ export default function ProfilePage() {
                   <input
                     value={user.email || ""}
                     disabled
-                    className="w-full border border-stone-300 text-stone-500 rounded-lg px-4 py-3 bg-stone-50"
+                    className="w-full border border-stone-300 text-stone-500 rounded-xl px-4 py-3 bg-stone-50"
                   />
                 </div>
                 <div>
@@ -550,7 +550,7 @@ export default function ProfilePage() {
                     value={phoneNumber}
                     onChange={(event) => setPhoneNumber(event.target.value)}
                     placeholder="e.g., +94 77 123 4567"
-                    className="w-full border border-stone-300 text-stone-700 rounded-lg px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
+                    className="w-full border border-stone-300 text-stone-700 rounded-xl px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
                   />
                 </div>
               </div>
@@ -566,7 +566,7 @@ export default function ProfilePage() {
                       required
                       value={professionType}
                       onChange={(event) => setProfessionType(event.target.value)}
-                      className="w-full border border-stone-300 text-stone-700 rounded-lg px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
+                      className="w-full border border-stone-300 text-stone-700 rounded-xl px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
                     >
                       <option value="" disabled>Select your profession</option>
                       {PROFESSIONS.map((prof) => (
@@ -581,7 +581,7 @@ export default function ProfilePage() {
                       value={companyName}
                       onChange={(event) => setCompanyName(event.target.value)}
                       placeholder="Optional"
-                      className="w-full border border-stone-300 text-stone-700 rounded-lg px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
+                      className="w-full border border-stone-300 text-stone-700 rounded-xl px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
                     />
                   </div>
                   <div>
@@ -594,7 +594,7 @@ export default function ProfilePage() {
                         setDistrict("");
                       }}
                       disabled={isLocationsLoading}
-                      className="w-full border border-stone-300 text-stone-700 rounded-lg px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors disabled:opacity-70"
+                      className="w-full border border-stone-300 text-stone-700 rounded-xl px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors disabled:opacity-70"
                     >
                       <option value="" disabled>{isLocationsLoading ? "Loading..." : "Select province"}</option>
                       {locations.map((item) => (
@@ -609,7 +609,7 @@ export default function ProfilePage() {
                       value={district}
                       onChange={(event) => setDistrict(event.target.value)}
                       disabled={!province || isLocationsLoading}
-                      className="w-full border border-stone-300 text-stone-700 rounded-lg px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors disabled:opacity-70"
+                      className="w-full border border-stone-300 text-stone-700 rounded-xl px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors disabled:opacity-70"
                     >
                       <option value="" disabled>{!province ? "Select province first" : "Select district"}</option>
                       {districtOptions.map((item) => (
@@ -625,7 +625,7 @@ export default function ProfilePage() {
                       value={yearsOfExperience}
                       onChange={(event) => setYearsOfExperience(event.target.value)}
                       placeholder="Optional"
-                      className="w-full border border-stone-300 text-stone-700 rounded-lg px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
+                      className="w-full border border-stone-300 text-stone-700 rounded-xl px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
                     />
                   </div>
                   <div>
@@ -635,7 +635,7 @@ export default function ProfilePage() {
                       value={skillsSpecialization}
                       onChange={(event) => setSkillsSpecialization(event.target.value)}
                       placeholder="Optional"
-                      className="w-full border border-stone-300 text-stone-700 rounded-lg px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
+                      className="w-full border border-stone-300 text-stone-700 rounded-xl px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
                     />
                   </div>
                   <div>
@@ -645,7 +645,7 @@ export default function ProfilePage() {
                       value={serviceAreas}
                       onChange={(event) => setServiceAreas(event.target.value)}
                       placeholder="e.g., Colombo, Gampaha"
-                      className="w-full border border-stone-300 text-stone-700 rounded-lg px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
+                      className="w-full border border-stone-300 text-stone-700 rounded-xl px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
                     />
                   </div>
                   <div>
@@ -655,7 +655,7 @@ export default function ProfilePage() {
                       value={pricingRange}
                       onChange={(event) => setPricingRange(event.target.value)}
                       placeholder="Optional"
-                      className="w-full border border-stone-300 text-stone-700 rounded-lg px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
+                      className="w-full border border-stone-300 text-stone-700 rounded-xl px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
                     />
                   </div>
                   <div>
@@ -665,7 +665,7 @@ export default function ProfilePage() {
                       value={availability}
                       onChange={(event) => setAvailability(event.target.value)}
                       placeholder="Optional"
-                      className="w-full border border-stone-300 text-stone-700 rounded-lg px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
+                      className="w-full border border-stone-300 text-stone-700 rounded-xl px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
                     />
                   </div>
                   <div>
@@ -676,7 +676,7 @@ export default function ProfilePage() {
                       value={yearsInBusiness}
                       onChange={(event) => setYearsInBusiness(event.target.value)}
                       placeholder="Optional"
-                      className="w-full border border-stone-300 text-stone-700 rounded-lg px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
+                      className="w-full border border-stone-300 text-stone-700 rounded-xl px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
                     />
                   </div>
                   <div>
@@ -687,7 +687,7 @@ export default function ProfilePage() {
                       value={teamSize}
                       onChange={(event) => setTeamSize(event.target.value)}
                       placeholder="Optional"
-                      className="w-full border border-stone-300 text-stone-700 rounded-lg px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
+                      className="w-full border border-stone-300 text-stone-700 rounded-xl px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
                     />
                   </div>
                 </div>
@@ -698,7 +698,7 @@ export default function ProfilePage() {
                     onChange={(event) => setAbout(event.target.value)}
                     placeholder="Share a short bio or project highlights"
                     rows={5}
-                    className="w-full border border-stone-300 text-stone-700 rounded-lg px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
+                    className="w-full border border-stone-300 text-stone-700 rounded-xl px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
                   />
                 </div>
                 <div className="grid md:grid-cols-2 gap-6">
@@ -709,7 +709,7 @@ export default function ProfilePage() {
                       onChange={(event) => setCertifications(event.target.value)}
                       placeholder="Optional"
                       rows={4}
-                      className="w-full border border-stone-300 text-stone-700 rounded-lg px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
+                      className="w-full border border-stone-300 text-stone-700 rounded-xl px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
                     />
                   </div>
                   <div>
@@ -719,7 +719,7 @@ export default function ProfilePage() {
                       onChange={(event) => setEducation(event.target.value)}
                       placeholder="Optional"
                       rows={4}
-                      className="w-full border border-stone-300 text-stone-700 rounded-lg px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
+                      className="w-full border border-stone-300 text-stone-700 rounded-xl px-4 py-3 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-colors"
                     />
                   </div>
                 </div>
@@ -739,7 +739,7 @@ export default function ProfilePage() {
                       {portfolioImages.length > 0 && (
                         <div className="grid grid-cols-3 gap-3">
                           {portfolioImages.map((image) => (
-                            <div key={image.id} className="group relative h-20 rounded-lg border border-stone-200 overflow-hidden bg-stone-50">
+                            <div key={image.id} className="group relative h-20 rounded-xl border border-stone-200 overflow-hidden bg-stone-50">
                               {image.image_url || image.image ? (
                                 <img
                                   src={normalizeMediaUrl(backendBaseUrl, image.image_url || image.image)}
@@ -779,7 +779,7 @@ export default function ProfilePage() {
                       {certificationImages.length > 0 && (
                         <div className="grid grid-cols-3 gap-3">
                           {certificationImages.map((image) => (
-                            <div key={image.id} className="group relative h-20 rounded-lg border border-stone-200 overflow-hidden bg-stone-50">
+                            <div key={image.id} className="group relative h-20 rounded-xl border border-stone-200 overflow-hidden bg-stone-50">
                               {image.image_url || image.image ? (
                                 <img
                                   src={normalizeMediaUrl(backendBaseUrl, image.image_url || image.image)}

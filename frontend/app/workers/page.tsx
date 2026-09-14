@@ -106,11 +106,11 @@ export default function WorkersPage() {
     <div className="min-h-screen bg-[#FCFAF7] text-[#1c1108]">
       {/* Hero */}
       <div className="bg-[#1c1108] text-[#FCFAF7] relative overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.06] bg-[radial-gradient(#8B4434_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none" />
+        <div className="absolute inset-0 opacity-[0.06] bg-[radial-gradient(#EA580C_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20 relative z-10">
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6">
             <div className="space-y-3">
-              <p className="text-[10px] uppercase tracking-[0.25em] text-[#8B4434] font-semibold">
+              <p className="text-[10px] uppercase tracking-[0.25em] text-[#EA580C] font-semibold">
                 BuildMe.lk — Daily Labour
               </p>
               <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl leading-tight max-w-2xl">
@@ -124,7 +124,7 @@ export default function WorkersPage() {
               {user && (
                 <Link
                   href="/workers/post"
-                  className="inline-flex items-center gap-2 bg-[#8B4434] text-[#FCFAF7] px-5 py-3 text-xs font-bold uppercase tracking-widest hover:bg-[#6f3829] transition-colors"
+                  className="inline-flex items-center gap-2 bg-[#EA580C] text-[#FCFAF7] px-5 py-3 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-[#C2410C] transition-colors"
                 >
                   <Plus className="w-4 h-4" />
                   Post a Job
@@ -132,7 +132,7 @@ export default function WorkersPage() {
               )}
               <Link
                 href="/workers/my-jobs"
-                className="inline-flex items-center gap-2 border border-[#FCFAF7]/20 text-[#FCFAF7] px-5 py-3 text-xs font-bold uppercase tracking-widest hover:bg-[#FCFAF7]/10 transition-colors"
+                className="inline-flex items-center gap-2 border border-[#FCFAF7]/20 text-[#FCFAF7] px-5 py-3 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-[#FCFAF7]/10 transition-colors"
               >
                 <Briefcase className="w-4 h-4" />
                 My Activity
@@ -167,10 +167,10 @@ export default function WorkersPage() {
               <button
                 key={t.value}
                 onClick={() => setWorkerType(t.value)}
-                className={`px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider border transition-all ${
+                className={`px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-wider border rounded-full transition-all ${
                   workerType === t.value
                     ? "bg-[#1c1108] text-[#FCFAF7] border-[#1c1108]"
-                    : "bg-white text-[#606060] border-[#e8ddd6] hover:border-[#8B4434] hover:text-[#8B4434]"
+                    : "bg-white text-[#606060] border-[#e8ddd6] hover:border-[#EA580C] hover:text-[#EA580C]"
                 }`}
               >
                 {t.label}
@@ -179,7 +179,7 @@ export default function WorkersPage() {
           </div>
 
           {/* Location search */}
-          <div className="ml-auto flex items-center gap-2 bg-[#FCFAF7] border border-[#e8ddd6] px-3 py-2">
+          <div className="ml-auto flex items-center gap-2 bg-[#FCFAF7] border border-[#e8ddd6] px-3 py-2 rounded-xl">
             <Search className="w-3.5 h-3.5 text-[#908078]" />
             <input
               type="text"
@@ -201,13 +201,13 @@ export default function WorkersPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         {loading ? (
           <div className="flex flex-col items-center justify-center py-24 text-[#606060]">
-            <div className="inline-block animate-spin w-8 h-8 border-2 border-[#8B4434] border-t-transparent mb-3" />
+            <div className="inline-block animate-spin w-8 h-8 border-2 border-[#EA580C] border-t-transparent mb-3" />
             <p className="text-sm">Loading available jobs...</p>
           </div>
         ) : jobs.length === 0 ? (
           <div className="text-center py-24 space-y-4">
-            <div className="w-16 h-16 bg-[#e8ddd6] flex items-center justify-center mx-auto">
-              <Briefcase className="w-7 h-7 text-[#8B4434]" />
+            <div className="w-16 h-16 bg-[#e8ddd6] flex items-center justify-center mx-auto rounded-2xl">
+              <Briefcase className="w-7 h-7 text-[#EA580C]" />
             </div>
             <h2 className="font-serif text-2xl text-[#1c1108]">No Jobs Posted Yet</h2>
             <p className="text-[#606060] text-sm max-w-sm mx-auto">
@@ -216,7 +216,7 @@ export default function WorkersPage() {
             {user && (
               <Link
                 href="/workers/post"
-                className="inline-block bg-[#8B4434] text-[#FCFAF7] px-6 py-3 text-xs font-bold uppercase tracking-widest hover:bg-[#6f3829] transition-colors mt-2"
+                className="inline-block bg-[#EA580C] text-[#FCFAF7] px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-[#C2410C] transition-colors mt-2"
               >
                 Post a Job Now
               </Link>
@@ -233,23 +233,23 @@ export default function WorkersPage() {
                 <Link
                   key={job.id}
                   href={`/workers/${job.id}`}
-                  className="group bg-white border border-[#e8ddd6] p-6 flex flex-col gap-4 hover:border-[#8B4434] hover:shadow-md transition-all duration-200"
+                  className="group bg-white border border-[#e8ddd6] p-6 rounded-2xl flex flex-col gap-4 hover:border-[#EA580C] hover:shadow-md transition-all duration-200"
                 >
                   {/* Header */}
                   <div className="flex items-start justify-between gap-2">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
-                        <span className={`px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider border ${colorClass}`}>
+                        <span className={`px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider border rounded-full ${colorClass}`}>
                           {job.worker_type.replace("_", " ")}
                         </span>
                         {isToday && (
-                          <span className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center gap-1">
+                          <span className="px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-full flex items-center gap-1">
                             <Zap className="w-2.5 h-2.5" />
                             Today
                           </span>
                         )}
                       </div>
-                      <h3 className="font-serif text-lg text-[#1c1108] leading-snug group-hover:text-[#8B4434] transition-colors">
+                      <h3 className="font-serif text-lg text-[#1c1108] leading-snug group-hover:text-[#EA580C] transition-colors">
                         {job.title}
                       </h3>
                     </div>
@@ -258,11 +258,11 @@ export default function WorkersPage() {
                   {/* Meta */}
                   <div className="space-y-2 text-xs text-[#606060]">
                     <div className="flex items-center gap-2">
-                      <MapPin className="w-3.5 h-3.5 text-[#8B4434] shrink-0" />
+                      <MapPin className="w-3.5 h-3.5 text-[#EA580C] shrink-0" />
                       <span>{job.location}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Calendar className="w-3.5 h-3.5 text-[#8B4434] shrink-0" />
+                      <Calendar className="w-3.5 h-3.5 text-[#EA580C] shrink-0" />
                       <span>
                         {new Date(job.job_date).toLocaleDateString("en-LK", {
                           weekday: "short", month: "short", day: "numeric",
@@ -270,7 +270,7 @@ export default function WorkersPage() {
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Users className="w-3.5 h-3.5 text-[#8B4434] shrink-0" />
+                      <Users className="w-3.5 h-3.5 text-[#EA580C] shrink-0" />
                       <span>
                         <strong className="text-[#1c1108]">{spotsLeft}</strong> of {job.workers_needed} spot{job.workers_needed > 1 ? "s" : ""} open
                       </span>
@@ -288,7 +288,7 @@ export default function WorkersPage() {
                   <div className="mt-auto pt-4 border-t border-[#e8ddd6] flex items-center justify-between">
                     <div>
                       {job.daily_rate ? (
-                        <span className="text-sm font-serif font-bold text-[#8B4434]">
+                        <span className="text-sm font-serif font-bold text-[#EA580C]">
                           {fmt(job.daily_rate)}
                           <span className="text-xs font-sans font-normal text-[#908078]">/day</span>
                         </span>
@@ -301,7 +301,7 @@ export default function WorkersPage() {
                         <Clock className="w-3 h-3" />
                         {timeAgo(job.created_at)}
                       </span>
-                      <ArrowRight className="w-4 h-4 text-[#8B4434] group-hover:translate-x-1 transition-transform" />
+                      <ArrowRight className="w-4 h-4 text-[#EA580C] group-hover:translate-x-1 transition-transform" />
                     </div>
                   </div>
                 </Link>

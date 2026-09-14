@@ -143,7 +143,7 @@ export default function Onboarding() {
     return (
       <div className="min-h-screen bg-[#FCFAF7] text-[#281713] flex items-center justify-center p-6 py-24">
         <div className="text-[#606060] text-xs font-semibold uppercase tracking-widest flex items-center gap-2">
-          <div className="w-4 h-4 border-2 border-[#8B4434] border-t-transparent rounded-full animate-spin" />
+          <div className="w-4 h-4 border-2 border-[#EA580C] border-t-transparent rounded-full animate-spin" />
           <span>Setting up your workspace...</span>
         </div>
       </div>
@@ -155,7 +155,7 @@ export default function Onboarding() {
       <div className="max-w-3xl w-full space-y-10">
         {/* Header */}
         <div className="text-center space-y-3">
-          <p className="text-[#8B4434] font-semibold tracking-widest uppercase text-xs">
+          <p className="text-[#EA580C] font-semibold tracking-widest uppercase text-xs">
             Welcome to BuildMe.lk
           </p>
           <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-[#281713] leading-tight">
@@ -171,23 +171,23 @@ export default function Onboarding() {
           <div className="grid md:grid-cols-2 gap-6">
             <div
               onClick={() => setRole("CLIENT")}
-              className={`p-8 cursor-pointer transition-all border relative ${
+              className={`p-8 cursor-pointer transition-all border relative rounded-3xl ${
                 role === "CLIENT"
-                  ? "border-[#8B4434] bg-[#fff7ed] shadow-md"
-                  : "border-[#efe6df] bg-white hover:border-[#8B4434]/50 hover:bg-[#fcfaf9]"
+                  ? "border-[#EA580C] bg-[#fff7ed] shadow-md"
+                  : "border-[#efe6df] bg-white hover:border-[#EA580C]/50 hover:bg-[#fcfaf9]"
               }`}
             >
               <div className="flex items-center justify-between mb-4">
                 <div
-                  className={`h-12 w-12 flex items-center justify-center border ${
+                  className={`h-12 w-12 flex items-center justify-center border rounded-2xl ${
                     role === "CLIENT"
-                      ? "bg-[#8B4434] text-white border-[#8B4434]"
-                      : "bg-[#f3ebe4] text-[#8B4434] border-[#efe6df]"
+                      ? "bg-[#EA580C] text-white border-[#EA580C]"
+                      : "bg-[#f3ebe4] text-[#EA580C] border-[#efe6df]"
                   }`}
                 >
                   <User className="w-6 h-6" />
                 </div>
-                <span className="bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1">
+                <span className="bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">
                   100% Free
                 </span>
               </div>
@@ -196,7 +196,7 @@ export default function Onboarding() {
                 Free registration. Calculate civil engineering BOQ estimates, browse material prices, and contact verified contractors freely.
               </p>
               {role === "CLIENT" && (
-                <div className="absolute top-4 right-4 text-[#8B4434]">
+                <div className="absolute top-4 right-4 text-[#EA580C]">
                   <Check className="w-5 h-5" />
                 </div>
               )}
@@ -204,23 +204,23 @@ export default function Onboarding() {
 
             <div
               onClick={() => setRole("PROFESSIONAL")}
-              className={`p-8 cursor-pointer transition-all border relative ${
+              className={`p-8 cursor-pointer transition-all border relative rounded-3xl ${
                 role === "PROFESSIONAL"
-                  ? "border-[#8B4434] bg-[#fff7ed] shadow-md"
-                  : "border-[#efe6df] bg-white hover:border-[#8B4434]/50 hover:bg-[#fcfaf9]"
+                  ? "border-[#EA580C] bg-[#fff7ed] shadow-md"
+                  : "border-[#efe6df] bg-white hover:border-[#EA580C]/50 hover:bg-[#fcfaf9]"
               }`}
             >
               <div className="flex items-center justify-between mb-4">
                 <div
-                  className={`h-12 w-12 flex items-center justify-center border ${
+                  className={`h-12 w-12 flex items-center justify-center border rounded-2xl ${
                     role === "PROFESSIONAL"
-                      ? "bg-[#8B4434] text-white border-[#8B4434]"
-                      : "bg-[#f3ebe4] text-[#8B4434] border-[#efe6df]"
+                      ? "bg-[#EA580C] text-white border-[#EA580C]"
+                      : "bg-[#f3ebe4] text-[#EA580C] border-[#efe6df]"
                   }`}
                 >
                   <HardHat className="w-6 h-6" />
                 </div>
-                <span className="bg-[#8B4434]/10 text-[#8B4434] border border-[#8B4434]/30 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1">
+                <span className="bg-[#EA580C]/10 text-[#EA580C] border border-[#EA580C]/30 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">
                   LKR 1,000 One-Time
                 </span>
               </div>
@@ -229,7 +229,7 @@ export default function Onboarding() {
                 Offer construction services, submit proposals on client project tenders, showcase your portfolio, and list hardware items.
               </p>
               {role === "PROFESSIONAL" && (
-                <div className="absolute top-4 right-4 text-[#8B4434]">
+                <div className="absolute top-4 right-4 text-[#EA580C]">
                   <Check className="w-5 h-5" />
                 </div>
               )}
@@ -238,7 +238,7 @@ export default function Onboarding() {
 
           {/* Professional Details Section */}
           {role === "PROFESSIONAL" && (
-            <div className="bg-white p-6 sm:p-8 border border-[#efe6df] space-y-6 shadow-xs">
+            <div className="bg-white p-6 sm:p-8 border border-[#efe6df] space-y-6 shadow-xs rounded-3xl">
               <div className="border-b border-[#efe6df] pb-4">
                 <h2 className="font-serif text-xl sm:text-2xl text-[#281713]">
                   Professional Specialty &amp; Activation
@@ -250,14 +250,14 @@ export default function Onboarding() {
 
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-1.5">
-                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#8B4434]">
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#EA580C]">
                     Profession Category
                   </label>
                   <select
                     required
                     value={professionType}
                     onChange={(e) => setProfessionType(e.target.value)}
-                    className="w-full border border-[#efe6df] bg-[#FCFAF7] text-[#281713] px-4 py-3 text-sm focus:outline-none focus:border-[#8B4434] transition-colors"
+                    className="w-full border border-[#efe6df] bg-[#FCFAF7] text-[#281713] px-4 py-3 text-sm focus:outline-none focus:border-[#EA580C] transition-colors rounded-xl"
                   >
                     <option value="" disabled>
                       Select your primary field...
@@ -271,7 +271,7 @@ export default function Onboarding() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#8B4434]">
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-[#EA580C]">
                     Primary Location / Province
                   </label>
                   <input
@@ -280,21 +280,21 @@ export default function Onboarding() {
                     placeholder="e.g. Colombo, Western Province"
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
-                    className="w-full border border-[#efe6df] bg-[#FCFAF7] text-[#281713] px-4 py-3 text-sm focus:outline-none focus:border-[#8B4434] transition-colors"
+                    className="w-full border border-[#efe6df] bg-[#FCFAF7] text-[#281713] px-4 py-3 text-sm focus:outline-none focus:border-[#EA580C] transition-colors rounded-xl"
                   />
                 </div>
               </div>
 
               {/* One-Time Registration Fee Card */}
-              <div className="p-5 bg-[#8B4434]/5 border border-[#8B4434]/20 space-y-2">
+              <div className="p-5 bg-[#EA580C]/5 border border-[#EA580C]/20 space-y-2 rounded-2xl">
                 <div className="flex justify-between items-center">
                   <div>
                     <h4 className="font-serif text-base text-[#1c1108]">One-Time Registration Fee</h4>
                     <p className="text-xs text-[#606060]">Activates your professional profile &amp; verified listing</p>
                   </div>
-                  <span className="font-serif text-2xl text-[#8B4434]">LKR 1,000</span>
+                  <span className="font-serif text-2xl text-[#EA580C]">LKR 1,000</span>
                 </div>
-                <div className="flex items-center gap-1.5 text-[10px] text-emerald-700 font-semibold pt-1 border-t border-[#8B4434]/15">
+                <div className="flex items-center gap-1.5 text-[10px] text-emerald-700 font-semibold pt-1 border-t border-[#EA580C]/15">
                   <ShieldCheck className="w-3.5 h-3.5" />
                   <span>Instant activation enabled for verification &amp; onboarding demo</span>
                 </div>

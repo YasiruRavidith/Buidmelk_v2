@@ -176,8 +176,8 @@ export default function LoginPage() {
         />
         {/* Dark Vignette Overlay for Text Contrast */}
         <div className="absolute inset-0 bg-gradient-to-t from-[#1c1108] via-[#1c1108]/75 to-[#1c1108]/40 pointer-events-none" />
-        <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-[#8B4434]/30 blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-24 -right-24 w-96 h-96 rounded-full bg-[#8B4434]/20 blur-3xl pointer-events-none" />
+        <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-[#EA580C]/30 blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-24 -right-24 w-96 h-96 rounded-full bg-[#EA580C]/20 blur-3xl pointer-events-none" />
 
         {/* Top Header Logo */}
         <div className="relative z-10">
@@ -196,7 +196,7 @@ export default function LoginPage() {
         {/* Hero Value Propositions */}
         <div className="relative z-10 max-w-lg space-y-8 my-auto py-12">
           <div className="space-y-4">
-            <span className="text-[10px] uppercase tracking-[0.3em] font-semibold text-[#8B4434] bg-[#8B4434]/15 px-3.5 py-1.5 border border-[#8B4434]/30">
+            <span className="text-[10px] uppercase tracking-[0.3em] font-semibold text-[#EA580C] bg-[#EA580C]/15 px-3.5 py-1.5 border border-[#EA580C]/30 rounded-full">
               Sri Lanka Construction Platform
             </span>
             <h1 className="font-serif text-4xl xl:text-5xl font-light text-[#FCFAF7] leading-tight">
@@ -209,8 +209,8 @@ export default function LoginPage() {
 
           {/* Feature Highlights */}
           <div className="space-y-4 pt-2">
-            <div className="flex items-start gap-4 p-4 border border-[#FCFAF7]/10 bg-[#FCFAF7]/5">
-              <div className="p-2.5 bg-[#8B4434]/20 text-[#8B4434] shrink-0">
+            <div className="flex items-start gap-4 p-4 border border-[#FCFAF7]/10 bg-[#FCFAF7]/5 rounded-2xl">
+              <div className="p-2.5 bg-[#EA580C]/20 text-[#EA580C] shrink-0 rounded-xl">
                 <Calculator className="w-5 h-5" />
               </div>
               <div>
@@ -221,8 +221,8 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <div className="flex items-start gap-4 p-4 border border-[#FCFAF7]/10 bg-[#FCFAF7]/5">
-              <div className="p-2.5 bg-[#8B4434]/20 text-[#8B4434] shrink-0">
+            <div className="flex items-start gap-4 p-4 border border-[#FCFAF7]/10 bg-[#FCFAF7]/5 rounded-2xl">
+              <div className="p-2.5 bg-[#EA580C]/20 text-[#EA580C] shrink-0 rounded-xl">
                 <HardHat className="w-5 h-5" />
               </div>
               <div>
@@ -239,19 +239,19 @@ export default function LoginPage() {
 
         {/* Footer Badge */}
         <div className="relative z-10 flex items-center gap-3 pt-6 border-t border-[#FCFAF7]/10 text-xs text-[#FCFAF7]/60">
-          <ShieldCheck className="w-4 h-4 text-[#8B4434]" />
+          <ShieldCheck className="w-4 h-4 text-[#EA580C]" />
           <span>SSL Secured Authentication & Verified Network</span>
         </div>
       </div>
 
       {/* Right Column - Quiet Luxury Authentication Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 lg:p-16 min-h-screen">
-        <div className="w-full max-w-md space-y-8">
+        <div className="w-full max-w-md space-y-8 bg-white/90 backdrop-blur-xs border border-[#efe6df] p-7 sm:p-10 rounded-3xl shadow-xl shadow-stone-200/50">
           {/* Header Navigation & Title */}
           <div className="space-y-4">
             <Link
               href="/"
-              className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-[#8B4434] hover:text-[#6f3829] transition-colors"
+              className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-[#EA580C] hover:text-[#C2410C] transition-colors"
             >
               <ArrowLeft className="w-4 h-4" /> Back to Home
             </Link>
@@ -280,8 +280,8 @@ export default function LoginPage() {
 
           {/* Email Verification Alert Banner */}
           {requiresVerification && (
-            <div className="p-5 border border-[#efe6df] bg-[#fff7ed] text-[#281713] space-y-3">
-              <div className="flex items-center gap-2 text-[#8B4434]">
+            <div className="p-5 border border-[#efe6df] bg-[#fff7ed] text-[#281713] space-y-3 rounded-2xl">
+              <div className="flex items-center gap-2 text-[#EA580C]">
                 <AlertCircle className="w-4 h-4 shrink-0" />
                 <h4 className="text-xs font-bold uppercase tracking-wider">Email Verification Required</h4>
               </div>
@@ -310,13 +310,13 @@ export default function LoginPage() {
           )}
 
           {/* Mode Switcher Tabs */}
-          <div className="flex border border-[#efe6df] bg-[#fcfaf9] p-1">
+          <div className="flex border border-[#efe6df] bg-[#fcfaf9] p-1 rounded-xl">
             <button
               type="button"
               onClick={() => setMode("login")}
-              className={`flex-1 py-2.5 text-xs font-semibold uppercase tracking-wider transition-all ${
+              className={`flex-1 py-2.5 text-xs font-semibold uppercase tracking-wider transition-all rounded-lg ${
                 mode === "login"
-                  ? "bg-[#8B4434] text-white shadow-xs"
+                  ? "bg-[#EA580C] text-white shadow-xs"
                   : "text-[#606060] hover:text-[#281713]"
               }`}
             >
@@ -325,9 +325,9 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={() => setMode("signup")}
-              className={`flex-1 py-2.5 text-xs font-semibold uppercase tracking-wider transition-all ${
+              className={`flex-1 py-2.5 text-xs font-semibold uppercase tracking-wider transition-all rounded-lg ${
                 mode === "signup"
-                  ? "bg-[#8B4434] text-white shadow-xs"
+                  ? "bg-[#EA580C] text-white shadow-xs"
                   : "text-[#606060] hover:text-[#281713]"
               }`}
             >
@@ -339,7 +339,7 @@ export default function LoginPage() {
           <form onSubmit={handleEmailAuth} className="space-y-5">
             {mode === "signup" && (
               <div className="space-y-1.5">
-                <label className="block text-[11px] font-bold uppercase tracking-wider text-[#8B4434]/80">
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-[#EA580C]/80">
                   Full Name
                 </label>
                 <input
@@ -348,13 +348,13 @@ export default function LoginPage() {
                   value={fullName}
                   onChange={(event) => setFullName(event.target.value)}
                   placeholder="e.g. Kasun Perera"
-                  className="w-full border border-[#efe6df] bg-white text-[#281713] px-4 py-3 text-sm focus:outline-none focus:border-[#8B4434] transition-colors"
+                  className="w-full border border-[#efe6df] bg-white text-[#281713] px-4 py-3 text-sm focus:outline-none focus:border-[#EA580C] transition-colors"
                 />
               </div>
             )}
 
             <div className="space-y-1.5">
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-[#8B4434]/80">
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-[#EA580C]/80">
                 Email Address
               </label>
               <input
@@ -364,13 +364,13 @@ export default function LoginPage() {
                 onChange={(event) => setEmail(event.target.value)}
                 placeholder="name@company.com"
                 autoComplete="email"
-                className="w-full border border-[#efe6df] bg-white text-[#281713] px-4 py-3 text-sm focus:outline-none focus:border-[#8B4434] transition-colors"
+                className="w-full border border-[#efe6df] bg-white text-[#281713] px-4 py-3 text-sm focus:outline-none focus:border-[#EA580C] transition-colors"
               />
             </div>
 
             <div className="space-y-1.5">
               <div className="flex justify-between items-center">
-                <label className="block text-[11px] font-bold uppercase tracking-wider text-[#8B4434]/80">
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-[#EA580C]/80">
                   Password
                 </label>
               </div>
@@ -382,7 +382,7 @@ export default function LoginPage() {
                   onChange={(event) => setPassword(event.target.value)}
                   placeholder="Minimum 6 characters"
                   autoComplete={mode === "signup" ? "new-password" : "current-password"}
-                  className="w-full border border-[#efe6df] bg-white text-[#281713] px-4 py-3 text-sm focus:outline-none focus:border-[#8B4434] transition-colors pr-10"
+                  className="w-full border border-[#efe6df] bg-white text-[#281713] px-4 py-3 text-sm focus:outline-none focus:border-[#EA580C] transition-colors pr-10"
                 />
                 <button
                   type="button"
@@ -396,7 +396,7 @@ export default function LoginPage() {
 
             {mode === "signup" && (
               <div className="space-y-1.5">
-                <label className="block text-[11px] font-bold uppercase tracking-wider text-[#8B4434]/80">
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-[#EA580C]/80">
                   Confirm Password
                 </label>
                 <div className="relative">
@@ -407,7 +407,7 @@ export default function LoginPage() {
                     onChange={(event) => setConfirmPassword(event.target.value)}
                     placeholder="Re-enter your password"
                     autoComplete="new-password"
-                    className="w-full border border-[#efe6df] bg-white text-[#281713] px-4 py-3 text-sm focus:outline-none focus:border-[#8B4434] transition-colors pr-10"
+                    className="w-full border border-[#efe6df] bg-white text-[#281713] px-4 py-3 text-sm focus:outline-none focus:border-[#EA580C] transition-colors pr-10"
                   />
                   <button
                     type="button"
@@ -422,7 +422,7 @@ export default function LoginPage() {
 
             {/* Error Message */}
             {formError && (
-              <div className="flex items-center gap-2 p-3.5 bg-red-50 border border-red-200 text-red-700 text-xs font-medium">
+              <div className="flex items-center gap-2 p-3.5 bg-red-50 border border-red-200 text-red-700 text-xs font-medium rounded-xl">
                 <AlertCircle className="w-4 h-4 shrink-0" />
                 <span>{formError}</span>
               </div>
@@ -430,7 +430,7 @@ export default function LoginPage() {
 
             {/* Info Message */}
             {formInfo && (
-              <div className="flex items-center gap-2 p-3.5 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-medium">
+              <div className="flex items-center gap-2 p-3.5 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-medium rounded-xl">
                 <CheckCircle2 className="w-4 h-4 shrink-0" />
                 <span>{formInfo}</span>
               </div>
@@ -463,7 +463,7 @@ export default function LoginPage() {
             type="button"
             onClick={handleGoogleSignIn}
             disabled={loading || isSubmitting}
-            className="w-full border border-[#efe6df] bg-white text-[#281713] px-6 py-3.5 text-xs font-semibold uppercase tracking-wider hover:border-[#8B4434] hover:bg-[#fcfaf9] transition-all flex items-center justify-center gap-3 disabled:opacity-50"
+            className="w-full border border-[#efe6df] bg-white text-[#281713] px-6 py-3.5 text-xs font-semibold uppercase tracking-wider hover:border-[#EA580C] hover:bg-[#fcfaf9] transition-all flex items-center justify-center gap-3 disabled:opacity-50 rounded-xl"
           >
             <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
               <path

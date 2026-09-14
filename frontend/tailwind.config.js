@@ -7,13 +7,13 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        surface: '#fff8f6',
+        surface: '#fcfaf7',
         'surface-container-lowest': '#ffffff',
         'on-surface': '#281713',
-        outline: '#916f66',
-        primary: '#ae2a00',
+        outline: '#fed7aa',
+        primary: '#ea580c',
         'on-primary': '#ffffff',
-        secondary: '#a63a1c',
+        secondary: '#c2410c',
         'on-secondary': '#ffffff',
         tertiary: '#005cad', // Electric Blue focus state
         error: '#ba1a1a',

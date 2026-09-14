@@ -9,7 +9,7 @@ from .models import (
 )
 from .serializers import (
     ProjectPostSerializer, ProjectPostDetailSerializer, BidSerializer,
-    ProjectChatMessageSerializer, QSChatMessageSerializer
+    ProjectChatMessageSerializer, QSChatMessageSerializer, censor_contact_info
 )
 from users.views import _resolve_user
 
@@ -128,7 +128,7 @@ class ProjectPostViewSet(viewsets.ModelViewSet):
             chat_msg = ProjectChatMessage.objects.create(
                 project=project,
                 sender=user,
-                message=str(raw_message).strip()
+                message=censor_contact_info(str(raw_message).strip())
             )
 
             serializer = ProjectChatMessageSerializer(
@@ -270,7 +270,7 @@ def qs_chat_view(request, qs_id):
         chat_msg = QSChatMessage.objects.create(
             unlock=unlock,
             sender=user,
-            message=str(raw_message).strip()
+            message=censor_contact_info(str(raw_message).strip())
         )
 
         serializer = QSChatMessageSerializer(

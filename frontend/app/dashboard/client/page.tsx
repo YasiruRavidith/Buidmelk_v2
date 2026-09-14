@@ -206,7 +206,7 @@ export default function ClientDashboard() {
       {/* Top Banner Header */}
       <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-6 border-b border-[#efe6df]">
         <div>
-          <p className="text-[#8B4434] font-semibold tracking-widest uppercase text-xs mb-1">
+          <p className="text-[#EA580C] font-semibold tracking-widest uppercase text-xs mb-1">
             Homeowner Workspace
           </p>
           <h1 className="font-serif text-3xl sm:text-4xl text-[#281713]">
@@ -226,10 +226,10 @@ export default function ClientDashboard() {
 
       {/* KPI Stats Grid */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        <div className="bg-white border border-[#efe6df] p-5 rounded-none shadow-xs space-y-3">
+        <div className="bg-white border border-[#efe6df] p-5 rounded-2xl shadow-xs space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-[#8B4434]/70">Estimations</span>
-            <Calculator className="w-4 h-4 text-[#8B4434]" />
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-[#EA580C]/70">Estimations</span>
+            <Calculator className="w-4 h-4 text-[#EA580C]" />
           </div>
           <div className="text-3xl font-serif font-bold text-[#281713]">
             {historyLoading ? "..." : history.length}
@@ -237,10 +237,10 @@ export default function ClientDashboard() {
           <p className="text-[11px] text-[#606060]">Calculated project reports</p>
         </div>
 
-        <div className="bg-white border border-[#efe6df] p-5 rounded-none shadow-xs space-y-3">
+        <div className="bg-white border border-[#efe6df] p-5 rounded-2xl shadow-xs space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-[#8B4434]/70">Project Chats</span>
-            <MessageSquare className="w-4 h-4 text-[#8B4434]" />
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-[#EA580C]/70">Project Chats</span>
+            <MessageSquare className="w-4 h-4 text-[#EA580C]" />
           </div>
           <div className="flex items-baseline gap-2">
             <span className="text-3xl font-serif font-bold text-[#281713]">
@@ -255,19 +255,19 @@ export default function ClientDashboard() {
           <p className="text-[11px] text-[#606060]">Active contractor 1-on-1 rooms</p>
         </div>
 
-        <div className="bg-white border border-[#efe6df] p-5 rounded-none shadow-xs space-y-3">
+        <div className="bg-white border border-[#efe6df] p-5 rounded-2xl shadow-xs space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-[#8B4434]/70">Saved Contacts</span>
-            <Users className="w-4 h-4 text-[#8B4434]" />
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-[#EA580C]/70">Saved Contacts</span>
+            <Users className="w-4 h-4 text-[#EA580C]" />
           </div>
           <div className="text-3xl font-serif font-bold text-[#281713]">0</div>
           <p className="text-[11px] text-[#606060]">Contractors & engineers</p>
         </div>
 
-        <div className="bg-white border border-[#efe6df] p-5 rounded-none shadow-xs space-y-3">
+        <div className="bg-white border border-[#efe6df] p-5 rounded-2xl shadow-xs space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-[#8B4434]/70">Pending Tasks</span>
-            <FileText className="w-4 h-4 text-[#8B4434]" />
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-[#EA580C]/70">Pending Tasks</span>
+            <FileText className="w-4 h-4 text-[#EA580C]" />
           </div>
           <div className="text-3xl font-serif font-bold text-[#281713]">0</div>
           <p className="text-[11px] text-[#606060]">Inquiries awaiting review</p>
@@ -275,52 +275,52 @@ export default function ClientDashboard() {
       </div>
 
       {/* Quick Actions Bar */}
-      <section className="bg-[#fcfaf9] border border-[#efe6df] p-6 rounded-none space-y-4">
+      <section className="bg-[#fcfaf9] border border-[#efe6df] p-6 rounded-2xl space-y-4">
         <h3 className="font-serif text-lg font-semibold text-[#281713]">Quick Actions</h3>
         <div className="grid sm:grid-cols-3 gap-4">
           <Link
             href="/estimation"
-            className="p-4 bg-white border border-[#efe6df] hover:border-[#8B4434] transition-colors flex items-center justify-between group"
+            className="p-4 bg-white border border-[#efe6df] hover:border-[#EA580C] transition-colors flex items-center justify-between group rounded-2xl"
           >
             <div>
               <div className="text-xs font-semibold text-[#281713]">Create Estimation</div>
               <div className="text-[11px] text-[#606060] mt-0.5">Calculate costs by sqft</div>
             </div>
-            <ArrowRight className="w-4 h-4 text-[#8B4434] group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="w-4 h-4 text-[#EA580C] group-hover:translate-x-1 transition-transform" />
           </Link>
 
           <Link
             href="/professionals"
-            className="p-4 bg-white border border-[#efe6df] hover:border-[#8B4434] transition-colors flex items-center justify-between group"
+            className="p-4 bg-white border border-[#efe6df] hover:border-[#EA580C] transition-colors flex items-center justify-between group rounded-2xl"
           >
             <div>
               <div className="text-xs font-semibold text-[#281713]">Find Professionals</div>
               <div className="text-[11px] text-[#606060] mt-0.5">Contractors & QS Experts</div>
             </div>
-            <ArrowRight className="w-4 h-4 text-[#8B4434] group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="w-4 h-4 text-[#EA580C] group-hover:translate-x-1 transition-transform" />
           </Link>
 
           <Link
             href="/bidding"
-            className="p-4 bg-white border border-[#efe6df] hover:border-[#8B4434] transition-colors flex items-center justify-between group"
+            className="p-4 bg-white border border-[#efe6df] hover:border-[#EA580C] transition-colors flex items-center justify-between group rounded-2xl"
           >
             <div>
               <div className="text-xs font-semibold text-[#281713]">Post Project for Bids</div>
               <div className="text-[11px] text-[#606060] mt-0.5">Receive competitive quotes</div>
             </div>
-            <ArrowRight className="w-4 h-4 text-[#8B4434] group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="w-4 h-4 text-[#EA580C] group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
       </section>
 
       {/* Active Project Chats Section */}
-      <section id="chats" className="bg-white border border-[#efe6df] rounded-none p-6 shadow-xs scroll-mt-6 space-y-6">
+      <section id="chats" className="bg-white border border-[#efe6df] rounded-2xl p-6 shadow-xs scroll-mt-6 space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#efe6df] pb-4">
           <div>
             <div className="flex items-center gap-2">
-              <p className="text-xs uppercase tracking-widest text-[#8B4434]/70 font-semibold">Direct Communication</p>
+              <p className="text-xs uppercase tracking-widest text-[#EA580C]/70 font-semibold">Direct Communication</p>
               {chats.reduce((acc, c) => acc + (c.unread_count || 0), 0) > 0 && (
-                <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-800 border border-emerald-300 text-[10px] font-bold px-2 py-0.5 animate-pulse">
+                <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-800 border border-emerald-300 text-[10px] font-bold px-2.5 py-0.5 rounded-full animate-pulse">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                   {chats.reduce((acc, c) => acc + (c.unread_count || 0), 0)} Unread Message{chats.reduce((acc, c) => acc + (c.unread_count || 0), 0) !== 1 ? 's' : ''}
                 </span>
@@ -335,12 +335,12 @@ export default function ClientDashboard() {
 
         {chatsLoading ? (
           <div className="py-8 text-center text-xs text-[#606060]">
-            <div className="inline-block animate-spin w-6 h-6 border-2 border-[#8B4434] border-t-transparent mb-2" />
+            <div className="inline-block animate-spin w-6 h-6 border-2 border-[#EA580C] border-t-transparent mb-2" />
             <p>Loading project conversations...</p>
           </div>
         ) : chats.length === 0 ? (
-          <div className="rounded-none border border-dashed border-[#efe6df] p-8 text-center space-y-3 bg-[#FCFAF7]">
-            <MessageSquare className="w-8 h-8 text-[#8B4434]/40 mx-auto" />
+          <div className="rounded-2xl border border-dashed border-[#efe6df] p-8 text-center space-y-3 bg-[#FCFAF7]">
+            <MessageSquare className="w-8 h-8 text-[#EA580C]/40 mx-auto" />
             <p className="text-sm font-serif text-[#281713]">No active project chats yet</p>
             <p className="text-xs text-[#606060] max-w-md mx-auto leading-relaxed">
               When you post a project tender and accept a contractor's proposal, your dedicated private chat room will appear here automatically.
@@ -370,8 +370,8 @@ export default function ClientDashboard() {
               return (
                 <div
                   key={chat.project_id ? `proj-${chat.project_id}` : `unlock-${chat.unlock_id}`}
-                  className={`flex flex-col md:flex-row md:items-center justify-between gap-4 border p-5 transition-all bg-[#FCFAF7] ${
-                    chat.unread_count > 0 ? "border-emerald-500 ring-1 ring-emerald-500 bg-emerald-50/20" : "border-[#efe6df] hover:border-[#8B4434]/40"
+                  className={`flex flex-col md:flex-row md:items-center justify-between gap-4 border p-5 transition-all bg-[#FCFAF7] rounded-2xl ${
+                    chat.unread_count > 0 ? "border-emerald-500 ring-1 ring-emerald-500 bg-emerald-50/20" : "border-[#efe6df] hover:border-[#EA580C]/40"
                   }`}
                 >
                   <div className="flex items-start gap-4 min-w-0">
@@ -381,10 +381,10 @@ export default function ClientDashboard() {
                         <img
                           src={chat.counterpart.profile_image}
                           alt={chat.counterpart.name}
-                          className="w-12 h-12 object-cover border border-[#8B4434]/20"
+                          className="w-12 h-12 object-cover border border-[#EA580C]/20 rounded-xl"
                         />
                       ) : (
-                        <div className="w-12 h-12 bg-[#1c1108] text-[#FCFAF7] font-serif text-sm font-semibold flex items-center justify-center">
+                        <div className="w-12 h-12 bg-[#1c1108] text-[#FCFAF7] font-serif text-sm font-semibold flex items-center justify-center rounded-xl">
                           {counterpartInitials}
                         </div>
                       )}
@@ -406,12 +406,12 @@ export default function ClientDashboard() {
                             &bull; {chat.counterpart.company_name}
                           </span>
                         )}
-                        <span className="px-2 py-0.5 text-[9px] uppercase tracking-wider font-bold bg-stone-200 text-stone-700">
+                        <span className="px-2.5 py-0.5 text-[9px] uppercase tracking-wider font-bold bg-stone-200 text-stone-700 rounded-full">
                           {chat.counterpart?.role || "CONTRACTOR"}
                         </span>
                       </div>
 
-                      <p className="text-xs font-medium text-[#8B4434] truncate">
+                      <p className="text-xs font-medium text-[#EA580C] truncate">
                         {chat.project_title}
                         {chat.accepted_bid?.bid_amount && (
                           <span className="text-[#606060] font-normal ml-2">
@@ -444,7 +444,7 @@ export default function ClientDashboard() {
                   {/* Actions Right */}
                   <div className="flex items-center gap-3 shrink-0 self-end md:self-center">
                     {chat.unread_count > 0 && (
-                      <span className="bg-emerald-600 text-white text-xs font-bold px-2.5 py-1 uppercase tracking-wider rounded-none">
+                      <span className="bg-emerald-600 text-white text-xs font-bold px-2.5 py-1 uppercase tracking-wider rounded-full">
                         {chat.unread_count} Unread
                       </span>
                     )}
@@ -464,10 +464,10 @@ export default function ClientDashboard() {
       </section>
 
       {/* Estimation History Table / List */}
-      <section id="estimation-history" className="bg-white border border-[#efe6df] rounded-none p-6 shadow-xs scroll-mt-6 space-y-6">
+      <section id="estimation-history" className="bg-white border border-[#efe6df] rounded-2xl p-6 shadow-xs scroll-mt-6 space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#efe6df] pb-4">
           <div>
-            <p className="text-xs uppercase tracking-widest text-[#8B4434]/70 font-semibold">Saved Reports</p>
+            <p className="text-xs uppercase tracking-widest text-[#EA580C]/70 font-semibold">Saved Reports</p>
             <h2 className="font-serif text-2xl text-[#281713]">Estimation History</h2>
           </div>
           <p className="text-xs text-[#606060] max-w-sm">
@@ -480,8 +480,8 @@ export default function ClientDashboard() {
         ) : historyError ? (
           <div className="py-4 text-center text-xs text-red-600 font-medium">{historyError}</div>
         ) : history.length === 0 ? (
-          <div className="rounded-none border border-dashed border-[#efe6df] p-10 text-center space-y-3">
-            <Calculator className="w-8 h-8 text-[#8B4434]/40 mx-auto" />
+          <div className="rounded-2xl border border-dashed border-[#efe6df] p-10 text-center space-y-3">
+            <Calculator className="w-8 h-8 text-[#EA580C]/40 mx-auto" />
             <p className="text-sm font-serif text-[#281713]">No estimations saved yet</p>
             <p className="text-xs text-[#606060] max-w-sm mx-auto">
               Use our smart cost estimation tool to estimate building costs for your land, floors, and rooms.
@@ -498,21 +498,21 @@ export default function ClientDashboard() {
             {history.map((item) => (
               <div
                 key={item.id}
-                className="flex flex-col md:flex-row md:items-center justify-between gap-4 border border-[#efe6df] bg-[#fcfaf9] p-5 transition-colors hover:border-[#8B4434]/50"
+                className="flex flex-col md:flex-row md:items-center justify-between gap-4 border border-[#efe6df] bg-[#fcfaf9] p-5 rounded-2xl transition-colors hover:border-[#EA580C]/50"
               >
                 <div className="space-y-1">
                   <div className="flex items-center gap-3">
                     <span className="font-serif text-base font-semibold text-[#281713]">
                       {item.project_title}
                     </span>
-                    <span className="px-2.5 py-0.5 text-[10px] uppercase tracking-wider font-semibold bg-[#8B4434]/10 text-[#8B4434]">
+                    <span className="px-3 py-0.5 text-[10px] uppercase tracking-wider font-semibold bg-[#EA580C]/10 text-[#EA580C] rounded-full">
                       {item.quality_level}
                     </span>
                   </div>
                   <p className="text-xs text-[#606060]">
                     {item.total_area_sqft} sqft · {item.number_of_floors} floors · {item.number_of_rooms} rooms
                   </p>
-                  <p className="text-xs font-semibold text-[#8B4434]">
+                  <p className="text-xs font-semibold text-[#EA580C]">
                     LKR {Number(item.total_estimated_cost).toLocaleString()}
                   </p>
                 </div>
@@ -530,7 +530,7 @@ export default function ClientDashboard() {
                     type="button"
                     onClick={() => handleDeleteEstimation(item.id)}
                     disabled={deletingId === item.id}
-                    className="p-2.5 text-[#8B4434] hover:bg-rose-50 border border-[#efe6df] hover:border-rose-200 transition-colors disabled:opacity-50"
+                    className="p-2.5 text-[#EA580C] hover:bg-rose-50 border border-[#efe6df] hover:border-rose-200 rounded-lg transition-colors disabled:opacity-50"
                     title="Delete estimation"
                   >
                     <Trash2 className="w-4 h-4 text-rose-600" />

@@ -11,8 +11,8 @@ import {
 } from "lucide-react";
 
 function renderCensoredMessage(text: string, isMe: boolean) {
-  // Regex to match emails, mobile/landline numbers, spaced/hyphenated numbers, or 9-12 digit sequences
-  const pattern = /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})|((?:\+?94[\s.-]?)?0?7[0-8][\s.-]?\d{3}[\s.-]?\d{4})|((?:\+?94[\s.-]?)?0?(?:11|2[1-7]|3[1-8]|4[1-7]|5[1-7]|6[3-7]|81|91)[\s.-]?\d{3}[\s.-]?\d{4})|(\b(?:\+?\d{1,3}[\s.-]?)?\(?\d{2,4}\)?[\s.-]?\d{3,4}[\s.-]?\d{3,4}\b)|(\b\d{9,12}\b)/gi;
+  // Regex to match emails, mobile/landline numbers, spaced/hyphenated numbers, 9-12 digit sequences, or masked bullets
+  const pattern = /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})|((?:\+?94[\s.-]?)?0?7[0-8][\s.-]?\d{3}[\s.-]?\d{4})|((?:\+?94[\s.-]?)?0?(?:11|2[1-7]|3[1-8]|4[1-7]|5[1-7]|6[3-7]|81|91)[\s.-]?\d{3}[\s.-]?\d{4})|(\b(?:\+?\d{1,3}[\s.-]?)?\(?\d{2,4}\)?[\s.-]?\d{3,4}[\s.-]?\d{3,4}\b)|(\b\d{9,12}\b)|(•{4,})/gi;
 
   const parts = [];
   let lastIndex = 0;
@@ -24,17 +24,19 @@ function renderCensoredMessage(text: string, isMe: boolean) {
     if (match.index > lastIndex) {
       parts.push(text.substring(lastIndex, match.index));
     }
+    // Never expose the matched raw contact info in the DOM to prevent inspection leak
+    const maskedText = "••••••••••••";
     parts.push(
       <span
         key={match.index}
-        className={`inline-block filter blur-[5px] select-none pointer-events-none px-1.5 py-0.5 rounded font-mono text-[11px] mx-0.5 border border-dashed ${
+        className={`inline-block select-none px-2 py-0.5 rounded font-mono text-[11px] mx-0.5 border border-dashed font-bold tracking-widest ${
           isMe
-            ? "bg-white/20 text-transparent border-white/40"
-            : "bg-stone-300/80 text-transparent border-stone-400"
+            ? "bg-white/20 text-white/90 border-white/40"
+            : "bg-stone-200 text-stone-700 border-stone-400"
         }`}
-        title="Contact details automatically blurred for privacy & security"
+        title="Contact details hidden for privacy & safety"
       >
-        {match[0]}
+        {maskedText}
       </span>
     );
     lastIndex = match.index + match[0].length;
@@ -360,7 +362,7 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
   if (loading) {
     return (
       <div className="min-h-screen bg-[#FCFAF7] flex flex-col items-center justify-center py-24 text-[#606060]">
-        <div className="inline-block animate-spin w-8 h-8 border-2 border-[#8B4434] border-t-transparent mb-3" />
+        <div className="inline-block animate-spin w-8 h-8 border-2 border-[#EA580C] border-t-transparent mb-3" />
         <p className="text-sm">Loading project details...</p>
       </div>
     );
@@ -413,17 +415,17 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
       
       {/* Dark Header Banner */}
       <div className="bg-[#1c1108] text-[#FCFAF7] relative overflow-hidden py-10 sm:py-14 px-4 sm:px-6 lg:px-8 border-b border-[#322318]">
-        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#8B4434_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none" />
+        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#EA580C_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none" />
         <div className="max-w-7xl mx-auto relative z-10 space-y-4">
           <Link
             href="/bidding"
-            className="inline-flex items-center gap-1 text-xs uppercase tracking-widest text-[#8B4434] hover:text-white font-semibold transition-colors"
+            className="inline-flex items-center gap-1 text-xs uppercase tracking-widest text-[#EA580C] hover:text-white font-semibold transition-colors"
           >
             Back to Feed
           </Link>
 
           <div className="flex flex-wrap items-center gap-3">
-            <span className={`px-3 py-1 text-xs font-bold uppercase tracking-wider border ${statusStyles[project.status?.toUpperCase()] || 'bg-stone-50 text-stone-700 border-stone-200'}`}>
+            <span className={`px-3.5 py-1 text-xs font-bold uppercase tracking-wider border rounded-full ${statusStyles[project.status?.toUpperCase()] || 'bg-stone-50 text-stone-700 border-stone-200'}`}>
               {project.status}
             </span>
             {project.created_at && (
@@ -448,7 +450,7 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
             </div>
             <div>
               <span className="text-[#908078] uppercase tracking-wider block text-[10px]">Client Budget</span>
-              <span className="font-semibold text-[#8B4434] text-sm">{project.budget_range}</span>
+              <span className="font-semibold text-[#EA580C] text-sm">{project.budget_range}</span>
             </div>
             <div>
               <span className="text-[#908078] uppercase tracking-wider block text-[10px]">Proposals</span>
@@ -471,7 +473,7 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
               <button
                 type="button"
                 onClick={() => setChatOpen(true)}
-                className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold uppercase tracking-wider px-4 py-2 transition-all shadow-sm cursor-pointer"
+                className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold uppercase tracking-wider px-4 py-2 rounded-xl transition-all shadow-sm cursor-pointer"
               >
                 <MessageSquare className="w-4 h-4" />
                 Open Private Chat
@@ -489,7 +491,7 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
           <div className="space-y-8">
             
             {/* Project Description */}
-            <div className="bg-white border border-[#e8ddd6] p-6 sm:p-8 shadow-sm space-y-4">
+            <div className="bg-white border border-[#e8ddd6] p-6 sm:p-8 rounded-2xl shadow-sm space-y-4">
               <h2 className="font-serif text-2xl text-[#1c1108] border-b border-[#e8ddd6] pb-4">
                 Project Overview &amp; Requirements
               </h2>
@@ -502,15 +504,15 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
             {project.estimation_details && (
               <div className="space-y-6">
                 <div className="border-t border-[#e8ddd6] pt-6">
-                  <p className="text-[#8B4434] text-xs font-semibold tracking-widest uppercase">Smart Construction Data</p>
+                  <p className="text-[#EA580C] text-xs font-semibold tracking-widest uppercase">Smart Construction Data</p>
                   <h2 className="font-serif text-2xl sm:text-3xl text-[#1c1108]">Linked AI Cost Estimation</h2>
                   <p className="text-xs text-[#606060] mt-1">This project tender includes automated AI system structural calculations.</p>
                 </div>
 
                 {/* AI Cost Summary Banner (Always visible summary) */}
-                <div className="bg-[#1c1108] text-[#FCFAF7] border border-[#322318] p-6 sm:p-8 text-center space-y-2">
-                  <p className="text-xs uppercase tracking-widest text-[#8B4434] font-semibold">AI Calculated Benchmark Cost</p>
-                  <h3 className="font-serif text-3xl sm:text-4xl text-[#8B4434]">
+                <div className="bg-[#1c1108] text-[#FCFAF7] border border-[#322318] p-6 sm:p-8 rounded-2xl text-center space-y-2">
+                  <p className="text-xs uppercase tracking-widest text-[#EA580C] font-semibold">AI Calculated Benchmark Cost</p>
+                  <h3 className="font-serif text-3xl sm:text-4xl text-[#EA580C]">
                     {fmt(project.estimation_details.total_estimated_cost)}
                   </h3>
                   <p className="text-[#c9b8b0] text-xs">
@@ -520,7 +522,7 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
 
                 {/* Accordion 1: AI Design & Material Strategy */}
                 {project.estimation_details.design_recommendation_json && (
-                  <div className="bg-white border border-[#e8ddd6] shadow-sm">
+                  <div className="bg-white border border-[#e8ddd6] rounded-2xl shadow-sm overflow-hidden">
                     <button
                       onClick={() => setShowAiStrategy(!showAiStrategy)}
                       className="w-full p-6 sm:px-8 text-left flex items-center justify-between hover:bg-[#FCFAF7] transition-colors"
@@ -528,7 +530,7 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
                       <h3 className="font-serif text-xl text-[#1c1108]">
                         AI Design &amp; Material Strategy
                       </h3>
-                      <span className="text-xs font-semibold uppercase tracking-wider text-[#8B4434] bg-[#8B4434]/10 px-3 py-1">
+                      <span className="text-xs font-semibold uppercase tracking-wider text-[#EA580C] bg-[#EA580C]/10 px-3 py-1 rounded-full">
                         {showAiStrategy ? "- Collapse" : "+ Expand"}
                       </span>
                     </button>
@@ -537,7 +539,7 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
                       <div className="p-6 sm:p-8 border-t border-[#e8ddd6] space-y-6">
                         <div className="space-y-4 text-sm text-[#606060]">
                           <div>
-                            <p className="text-xs uppercase tracking-[0.2em] text-[#8B4434] font-semibold">
+                            <p className="text-xs uppercase tracking-[0.2em] text-[#EA580C] font-semibold">
                               {project.estimation_details.design_recommendation_json.design_title}
                             </p>
                             <p className="mt-1.5 leading-relaxed text-sm">{project.estimation_details.design_recommendation_json.style_summary}</p>
@@ -547,7 +549,7 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
                               <h4 className="font-semibold text-[#1c1108] mb-2 text-xs uppercase tracking-wider">Recommended Layout Strategy</h4>
                               <ul className="grid sm:grid-cols-2 gap-2">
                                 {project.estimation_details.design_recommendation_json.recommended_layout.map((item: string, index: number) => (
-                                  <li key={index} className="text-xs bg-[#FCFAF7] p-2.5 border border-[#e8ddd6] text-[#1c1108]">
+                                  <li key={index} className="text-xs bg-[#FCFAF7] p-2.5 border border-[#e8ddd6] rounded-xl text-[#1c1108]">
                                     {item}
                                   </li>
                                 ))}
@@ -559,7 +561,7 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
                               <h4 className="font-semibold text-[#1c1108] mb-2 text-xs uppercase tracking-wider">Material Procurement Strategy</h4>
                               <ul className="grid sm:grid-cols-2 gap-2">
                                 {project.estimation_details.design_recommendation_json.material_strategy.map((item: string, index: number) => (
-                                  <li key={index} className="text-xs bg-[#FCFAF7] p-2.5 border border-[#e8ddd6] text-[#1c1108]">
+                                  <li key={index} className="text-xs bg-[#FCFAF7] p-2.5 border border-[#e8ddd6] rounded-xl text-[#1c1108]">
                                     {item}
                                   </li>
                                 ))}
@@ -574,7 +576,7 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
 
                 {/* Accordion 2: Technical Specifications */}
                 {project.estimation_details.project_details_json && (
-                  <div className="bg-white border border-[#e8ddd6] shadow-sm">
+                  <div className="bg-white border border-[#e8ddd6] rounded-2xl shadow-sm overflow-hidden">
                     <button
                       onClick={() => setShowTechSpecs(!showTechSpecs)}
                       className="w-full p-6 sm:px-8 text-left flex items-center justify-between hover:bg-[#FCFAF7] transition-colors"
@@ -582,7 +584,7 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
                       <h3 className="font-serif text-xl text-[#1c1108]">
                         Detailed Technical Specifications
                       </h3>
-                      <span className="text-xs font-semibold uppercase tracking-wider text-[#8B4434] bg-[#8B4434]/10 px-3 py-1">
+                      <span className="text-xs font-semibold uppercase tracking-wider text-[#EA580C] bg-[#EA580C]/10 px-3 py-1 rounded-full">
                         {showTechSpecs ? "- Collapse" : "+ Expand"}
                       </span>
                     </button>
@@ -591,8 +593,8 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
                       <div className="p-6 sm:p-8 border-t border-[#e8ddd6]">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs text-[#1c1108]">
                           {Object.entries(project.estimation_details.project_details_json).map(([key, val]) => (
-                            <div key={key} className="border border-[#e8ddd6] p-3.5 bg-[#FCFAF7]">
-                              <p className="text-[10px] uppercase tracking-[0.15em] text-[#8B4434] font-semibold">{key.replaceAll('_', ' ')}</p>
+                            <div key={key} className="border border-[#e8ddd6] p-3.5 bg-[#FCFAF7] rounded-xl">
+                              <p className="text-[10px] uppercase tracking-[0.15em] text-[#EA580C] font-semibold">{key.replaceAll('_', ' ')}</p>
                               <p className="mt-1 font-medium text-sm text-[#1c1108]">{String(val)}</p>
                             </div>
                           ))}
@@ -604,7 +606,7 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
 
                 {/* Accordion 3: Cost Breakdown */}
                 {project.estimation_details.breakdown_json && (
-                  <div className="bg-white border border-[#e8ddd6] shadow-sm">
+                  <div className="bg-white border border-[#e8ddd6] rounded-2xl shadow-sm overflow-hidden">
                     <button
                       onClick={() => setShowCostBreakdown(!showCostBreakdown)}
                       className="w-full p-6 sm:px-8 text-left flex items-center justify-between hover:bg-[#FCFAF7] transition-colors"
@@ -612,7 +614,7 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
                       <h3 className="font-serif text-xl text-[#1c1108]">
                         AI Cost Breakdown
                       </h3>
-                      <span className="text-xs font-semibold uppercase tracking-wider text-[#8B4434] bg-[#8B4434]/10 px-3 py-1">
+                      <span className="text-xs font-semibold uppercase tracking-wider text-[#EA580C] bg-[#EA580C]/10 px-3 py-1 rounded-full">
                         {showCostBreakdown ? "- Collapse" : "+ Expand"}
                       </span>
                     </button>
@@ -635,7 +637,7 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
             )}
 
             {/* Submitted Proposals Section — Ticket Gated */}
-            <div className="bg-white p-6 sm:p-8 border border-[#e8ddd6] shadow-sm space-y-6">
+            <div className="bg-white p-6 sm:p-8 border border-[#e8ddd6] rounded-2xl shadow-sm space-y-6">
               <div className="flex items-center justify-between border-b border-[#e8ddd6] pb-4">
                 <h3 className="font-serif text-xl sm:text-2xl text-[#1c1108]">
                   Submitted Proposals ({project.bids?.length || project.bids_count || 0})
@@ -650,9 +652,9 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
               {/* Not logged in */}
               {!user && (
                 <div className="text-center py-8 space-y-3">
-                  <Lock className="w-8 h-8 text-[#8B4434] mx-auto" />
+                  <Lock className="w-8 h-8 text-[#EA580C] mx-auto" />
                   <p className="text-[#606060] text-sm">Login to view submitted contractor proposals.</p>
-                  <Link href={`/login?redirect=/bidding/${projectId}`} className="inline-block bg-[#8B4434] text-[#FCFAF7] px-6 py-3 text-xs font-bold uppercase tracking-widest hover:bg-[#6f3829] transition-colors">
+                  <Link href={`/login?redirect=/bidding/${projectId}`} className="inline-block bg-[#EA580C] text-[#FCFAF7] px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-[#C2410C] transition-colors">
                     Login to View Bids
                   </Link>
                 </div>
@@ -689,7 +691,7 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
                     const profProjects = bid.professional_projects_completed;
 
                     return (
-                      <div key={bid.id} className={`border ${bid.status === 'ACCEPTED' ? 'border-emerald-500 ring-1 ring-emerald-500' : 'border-[#e8ddd6]'} bg-[#FCFAF7] overflow-hidden`}>
+                      <div key={bid.id} className={`border ${bid.status === 'ACCEPTED' ? 'border-emerald-500 ring-1 ring-emerald-500' : 'border-[#e8ddd6]'} bg-[#FCFAF7] rounded-2xl overflow-hidden`}>
                         {bid.status === 'ACCEPTED' && (
                           <div className="bg-emerald-700 text-white px-5 py-2 text-xs font-bold uppercase tracking-widest flex items-center justify-between">
                             <span className="flex items-center gap-1.5">
@@ -707,7 +709,7 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
                         <div className="p-5 sm:p-6 flex flex-wrap items-center justify-between gap-3">
                           <div className="flex items-center gap-3">
                             {/* Avatar — anonymous if locked */}
-                            <div className={`w-10 h-10 flex items-center justify-center font-serif text-sm font-semibold shrink-0 ${identityRevealed ? 'bg-[#1c1108] text-[#FCFAF7]' : 'bg-[#e8ddd6] text-[#908078]'}`}>
+                            <div className={`w-10 h-10 flex items-center justify-center font-serif text-sm font-semibold shrink-0 rounded-xl ${identityRevealed ? 'bg-[#1c1108] text-[#FCFAF7]' : 'bg-[#e8ddd6] text-[#908078]'}`}>
                               {identityRevealed
                                 ? displayName.split(" ").map((n: string) => n[0]).join("").toUpperCase().slice(0, 2) || "PR"
                                 : "?"}
@@ -723,7 +725,7 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
                               ) : (
                                 <>
                                   <h4 className="text-sm font-medium text-[#908078] flex items-center gap-1.5">
-                                    <Lock className="w-3 h-3 text-[#8B4434]" /> Anonymous Professional
+                                    <Lock className="w-3 h-3 text-[#EA580C]" /> Anonymous Professional
                                   </h4>
                                   <p className="text-[10px] text-[#908078]">Identity &amp; contact details revealed after unlock</p>
                                 </>
@@ -740,7 +742,7 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
                               <button
                                 type="button"
                                 onClick={() => setChatOpen(true)}
-                                className="inline-flex items-center gap-1.5 text-xs text-white bg-emerald-700 hover:bg-emerald-800 font-semibold transition-colors px-3 py-1.5 shadow-sm cursor-pointer"
+                                className="inline-flex items-center gap-1.5 text-xs text-white bg-emerald-700 hover:bg-emerald-800 font-semibold transition-colors px-3 py-1.5 rounded-xl shadow-sm cursor-pointer"
                               >
                                 <MessageSquare className="w-3.5 h-3.5" />
                                 Chat
@@ -751,17 +753,17 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
                             {identityRevealed && bid.professional_details?.id ? (
                               <Link
                                 href={`/professionals/${bid.professional_details.id}`}
-                                className="inline-flex items-center gap-1.5 text-xs text-[#8B4434] font-semibold hover:bg-[#8B4434] hover:text-[#FCFAF7] transition-colors border border-[#8B4434]/30 px-3 py-1.5 bg-white"
+                                className="inline-flex items-center gap-1.5 text-xs text-[#EA580C] font-semibold hover:bg-[#EA580C] hover:text-[#FCFAF7] transition-colors border border-[#EA580C]/30 px-3 py-1.5 rounded-xl bg-white"
                               >
                                 View Professional Profile <ArrowRight className="w-3 h-3" />
                               </Link>
                             ) : (
-                              <span className="inline-flex items-center gap-1 text-[10px] text-[#908078] bg-[#e8ddd6]/50 px-2.5 py-1">
+                              <span className="inline-flex items-center gap-1 text-[10px] text-[#908078] bg-[#e8ddd6]/50 px-2.5 py-1 rounded-full">
                                 <Lock className="w-3 h-3" /> Profile Locked
                               </span>
                             )}
 
-                            <span className={`px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider border ${bidStatusColors[bid.status] || 'bg-stone-50 text-stone-700'}`}>
+                            <span className={`px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider border rounded-full ${bidStatusColors[bid.status] || 'bg-stone-50 text-stone-700'}`}>
                               {bid.status}
                             </span>
                           </div>
@@ -771,7 +773,7 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-[#e8ddd6] border-t border-[#e8ddd6] text-xs">
                           <div className="bg-white px-4 py-3">
                             <p className="text-[#908078] uppercase tracking-wider text-[9px]">Proposal Amount</p>
-                            <p className="font-serif text-base font-bold text-[#8B4434] mt-0.5">{fmt(bid.bid_amount)}</p>
+                            <p className="font-serif text-base font-bold text-[#EA580C] mt-0.5">{fmt(bid.bid_amount)}</p>
                           </div>
                           <div className="bg-white px-4 py-3">
                             <p className="text-[#908078] uppercase tracking-wider text-[9px]">Timeline</p>
@@ -801,14 +803,14 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
                         {isProjectOwner && !identityRevealed && (
                           <div className="px-5 sm:px-6 py-3.5 border-t border-[#e8ddd6] bg-amber-50 flex flex-wrap items-center justify-between gap-3 text-xs text-amber-900">
                             <div className="flex items-center gap-2">
-                              <Lock className="w-4 h-4 text-[#8B4434] shrink-0" />
+                              <Lock className="w-4 h-4 text-[#EA580C] shrink-0" />
                               <span>Unlock this project (1 credit for all proposals) to reveal professional identity and accept this bid.</span>
                             </div>
                             {ticketStatus?.credits_remaining && ticketStatus.credits_remaining > 0 ? (
                               <button
                                 onClick={handleUnlock}
                                 disabled={unlocking}
-                                className="bg-[#8B4434] text-white px-4 py-1.5 text-[10px] font-bold uppercase tracking-wider hover:bg-[#6f3829] disabled:opacity-50 transition-colors shrink-0"
+                                className="bg-[#EA580C] text-white px-4 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-wider hover:bg-[#C2410C] disabled:opacity-50 transition-colors shrink-0"
                               >
                                 {unlocking ? "Unlocking..." : "Use 1 Credit Now"}
                               </button>
@@ -816,7 +818,7 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
                               <button
                                 onClick={handlePurchaseAndUnlock}
                                 disabled={purchasing}
-                                className="bg-[#8B4434] text-white px-4 py-1.5 text-[10px] font-bold uppercase tracking-wider hover:bg-[#6f3829] disabled:opacity-50 transition-colors shrink-0"
+                                className="bg-[#EA580C] text-white px-4 py-1.5 rounded-xl text-[10px] font-bold uppercase tracking-wider hover:bg-[#C2410C] disabled:opacity-50 transition-colors shrink-0"
                               >
                                 {purchasing ? "Processing..." : "Buy Bundle & Unlock"}
                               </button>
@@ -854,13 +856,13 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
                               <button
                                 type="button"
                                 onClick={() => setChatOpen(true)}
-                                className="inline-flex items-center gap-2 bg-emerald-700 hover:bg-emerald-800 text-white px-5 py-2.5 text-xs font-bold uppercase tracking-wider transition-colors shadow-sm cursor-pointer"
+                                className="inline-flex items-center gap-2 bg-emerald-700 hover:bg-emerald-800 text-white px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors shadow-sm cursor-pointer"
                               >
                                 <MessageSquare className="w-4 h-4" />
                                 Open Private Chat Room
                               </button>
                             ) : (
-                              <span className="inline-flex items-center gap-1 text-xs text-stone-500 bg-stone-100 px-3 py-1.5 border border-stone-200">
+                              <span className="inline-flex items-center gap-1 text-xs text-stone-500 bg-stone-100 px-3 py-1.5 border border-stone-200 rounded-full">
                                 <Lock className="w-3.5 h-3.5 text-stone-400" />
                                 Chat room is restricted to project parties
                               </span>
@@ -879,14 +881,14 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
 
           {/* Right Column: Bid Submission Form Sticky Panel */}
           <aside className="lg:sticky lg:top-8 space-y-6">
-            <div className="bg-white border border-[#e8ddd6] p-6 sm:p-8 shadow-sm space-y-6">
+            <div className="bg-white border border-[#e8ddd6] p-6 sm:p-8 rounded-2xl shadow-sm space-y-6">
               <div className="border-b border-[#e8ddd6] pb-4">
-                <p className="text-[10px] uppercase tracking-[0.2em] text-[#8B4434] font-semibold">For Professionals</p>
+                <p className="text-[10px] uppercase tracking-[0.2em] text-[#EA580C] font-semibold">For Professionals</p>
                 <h3 className="font-serif text-2xl text-[#1c1108]">Submit Proposal</h3>
               </div>
               
               {submitted ? (
-                <div className="bg-emerald-50 border border-emerald-200 p-6 text-center space-y-3">
+                <div className="bg-emerald-50 border border-emerald-200 p-6 rounded-2xl text-center space-y-3">
                   <div className="w-10 h-10 bg-emerald-100 text-emerald-800 rounded-full flex items-center justify-center mx-auto text-xl font-bold">Done</div>
                   <h4 className="font-serif text-lg text-emerald-900">Proposal Submitted!</h4>
                   <p className="text-emerald-700 text-xs leading-relaxed">
@@ -911,7 +913,7 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
                       type="number" 
                       value={bidAmount} 
                       onChange={e => setBidAmount(e.target.value)}
-                      className="w-full bg-[#FCFAF7] border-b border-[#c9b8b0] px-4 py-3 text-sm text-[#1c1108] placeholder-[#908078] focus:outline-none focus:border-[#8B4434]" 
+                      className="w-full bg-[#FCFAF7] border border-[#c9b8b0] px-4 py-3 text-sm text-[#1c1108] placeholder-[#908078] focus:outline-none focus:border-[#EA580C] rounded-xl" 
                       placeholder="e.g. 25000000" 
                     />
                   </div>
@@ -925,7 +927,7 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
                       type="number" 
                       value={days} 
                       onChange={e => setDays(e.target.value)}
-                      className="w-full bg-[#FCFAF7] border-b border-[#c9b8b0] px-4 py-3 text-sm text-[#1c1108] placeholder-[#908078] focus:outline-none focus:border-[#8B4434]" 
+                      className="w-full bg-[#FCFAF7] border border-[#c9b8b0] px-4 py-3 text-sm text-[#1c1108] placeholder-[#908078] focus:outline-none focus:border-[#EA580C] rounded-xl" 
                       placeholder="e.g. 180" 
                     />
                   </div>
@@ -939,13 +941,13 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
                       value={coverLetter} 
                       onChange={e => setCoverLetter(e.target.value)} 
                       rows={5}
-                      className="w-full bg-[#FCFAF7] border border-[#e8ddd6] p-4 text-sm text-[#1c1108] placeholder-[#908078] focus:outline-none focus:border-[#8B4434] leading-relaxed" 
+                      className="w-full bg-[#FCFAF7] border border-[#e8ddd6] p-4 text-sm text-[#1c1108] placeholder-[#908078] focus:outline-none focus:border-[#EA580C] leading-relaxed rounded-xl" 
                       placeholder="Explain your approach, timeline, scope included, and past experience..."
                     />
                   </div>
 
                   {bidError && (
-                    <div className="p-4 bg-rose-50 border border-rose-200 text-xs space-y-2 text-rose-800">
+                    <div className="p-4 bg-rose-50 border border-rose-200 rounded-xl text-xs space-y-2 text-rose-800">
                       <div className="flex items-start gap-2">
                         <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
                         <span className="leading-relaxed">{bidError}</span>
@@ -954,7 +956,7 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
                         <div className="pt-2 border-t border-rose-200/60">
                           <Link 
                             href="/dashboard/professional"
-                            className="inline-block bg-[#8B4434] text-white px-4 py-2 text-[10px] font-bold uppercase tracking-widest hover:bg-[#723628] transition-colors"
+                            className="inline-block bg-[#EA580C] text-white px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-[#C2410C] transition-colors"
                           >
                             Manage Professional Plan &rarr;
                           </Link>
@@ -982,7 +984,7 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
       {/* ========================================================================= */}
       {chatOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-3 sm:p-6 animate-fadeIn">
-          <div className="bg-[#FCFAF7] border border-[#322318] shadow-2xl w-full max-w-2xl h-[88vh] max-h-[750px] flex flex-col overflow-hidden relative">
+          <div className="bg-[#FCFAF7] border border-[#322318] shadow-2xl w-full max-w-2xl h-[88vh] max-h-[750px] flex flex-col overflow-hidden relative rounded-3xl">
             
             {/* Chat Header */}
             <div className="bg-[#1c1108] text-[#FCFAF7] px-5 py-4 border-b border-[#322318] flex items-center justify-between gap-3 shrink-0">
@@ -992,10 +994,10 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
                     <img 
                       src={counterpartImage} 
                       alt={counterpartName} 
-                      className="w-10 h-10 object-cover border border-[#8B4434]" 
+                      className="w-10 h-10 object-cover border border-[#EA580C] rounded-xl" 
                     />
                   ) : (
-                    <div className="w-10 h-10 bg-[#8B4434] text-white flex items-center justify-center font-serif text-sm font-bold">
+                    <div className="w-10 h-10 bg-[#EA580C] text-white flex items-center justify-center font-serif text-sm font-bold rounded-xl">
                       {counterpartName.slice(0, 2).toUpperCase()}
                     </div>
                   )}
@@ -1007,7 +1009,7 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
                     <h3 className="font-serif text-base sm:text-lg text-[#FCFAF7] truncate">
                       {counterpartName}
                     </h3>
-                    <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 bg-[#8B4434]/30 text-[#e8ddd6] border border-[#8B4434]/50">
+                    <span className="text-[10px] uppercase font-bold tracking-wider px-2.5 py-0.5 bg-[#EA580C]/30 text-[#e8ddd6] border border-[#EA580C]/50 rounded-full">
                       {counterpartRole}
                     </span>
                   </div>
@@ -1022,7 +1024,7 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
                   type="button"
                   onClick={() => fetchChat(false)}
                   title="Refresh messages"
-                  className="w-8 h-8 flex items-center justify-center text-[#c9b8b0] hover:text-white transition-colors border border-stone-700 hover:border-stone-500 cursor-pointer"
+                  className="w-8 h-8 flex items-center justify-center text-[#c9b8b0] hover:text-white transition-colors border border-stone-700 hover:border-stone-500 rounded-lg cursor-pointer"
                 >
                   <RefreshCw className={`w-3.5 h-3.5 ${chatLoading ? 'animate-spin' : ''}`} />
                 </button>
@@ -1030,7 +1032,7 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
                   type="button"
                   onClick={() => setChatOpen(false)}
                   title="Close chat"
-                  className="w-8 h-8 flex items-center justify-center text-[#c9b8b0] hover:text-white transition-colors border border-stone-700 hover:border-stone-500 cursor-pointer"
+                  className="w-8 h-8 flex items-center justify-center text-[#c9b8b0] hover:text-white transition-colors border border-stone-700 hover:border-stone-500 rounded-lg cursor-pointer"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -1040,13 +1042,13 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
             {/* Privacy & Project Info Bar */}
             <div className="bg-[#f2ece6] px-5 py-2.5 border-b border-[#e8ddd6] flex items-center justify-between text-xs text-[#606060] shrink-0 gap-2">
               <div className="flex items-center gap-2 min-w-0">
-                <Lock className="w-3.5 h-3.5 text-[#8B4434] shrink-0" />
+                <Lock className="w-3.5 h-3.5 text-[#EA580C] shrink-0" />
                 <span className="text-[11px] truncate">
                   Confidential 1-on-1 Room • Restricted strictly to Client &amp; Contractor
                 </span>
               </div>
               {acceptedBid && (
-                <div className="text-[11px] font-semibold text-[#8B4434] shrink-0">
+                <div className="text-[11px] font-semibold text-[#EA580C] shrink-0">
                   Awarded: {fmt(acceptedBid.bid_amount)}
                 </div>
               )}
@@ -1056,12 +1058,12 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
             <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4 bg-[#FCFAF7]">
               {chatLoading && chatMessages.length === 0 ? (
                 <div className="h-full flex flex-col items-center justify-center text-stone-500 space-y-2">
-                  <div className="inline-block animate-spin w-6 h-6 border-2 border-[#8B4434] border-t-transparent" />
+                  <div className="inline-block animate-spin w-6 h-6 border-2 border-[#EA580C] border-t-transparent" />
                   <p className="text-xs">Loading secure message history...</p>
                 </div>
               ) : chatMessages.length === 0 ? (
                 <div className="h-full flex flex-col items-center justify-center text-center p-6 space-y-3">
-                  <div className="w-12 h-12 bg-stone-100 rounded-full flex items-center justify-center text-[#8B4434]">
+                  <div className="w-12 h-12 bg-stone-100 rounded-full flex items-center justify-center text-[#EA580C]">
                     <MessageSquare className="w-6 h-6" />
                   </div>
                   <h4 className="font-serif text-lg text-[#1c1108]">Start the Conversation</h4>
@@ -1082,7 +1084,7 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
                           {isMe ? "You" : msg.sender_name}
                         </span>
                         {!isMe && (
-                          <span className="text-[9px] uppercase px-1.5 py-0.2 bg-stone-200 text-stone-700 font-bold">
+                          <span className="text-[9px] uppercase px-2 py-0.5 bg-stone-200 text-stone-700 font-bold rounded-full">
                             {msg.sender_role}
                           </span>
                         )}
@@ -1094,7 +1096,7 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
                       <div
                         className={`max-w-[82%] sm:max-w-[75%] px-4 py-3 text-xs sm:text-sm leading-relaxed whitespace-pre-wrap ${
                           isMe
-                            ? "bg-[#8B4434] text-white rounded-2xl rounded-tr-none shadow-sm"
+                            ? "bg-[#EA580C] text-white rounded-2xl rounded-tr-none shadow-sm"
                             : "bg-white border border-[#e8ddd6] text-[#1c1108] rounded-2xl rounded-tl-none shadow-sm"
                         }`}
                       >
@@ -1146,12 +1148,12 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
                 onChange={(e) => setChatInput(e.target.value)}
                 placeholder="Type your message here... (Enter to send)"
                 disabled={chatSending}
-                className="flex-1 bg-[#FCFAF7] border border-[#c9b8b0] px-4 py-2.5 text-xs sm:text-sm text-[#1c1108] placeholder-[#908078] focus:outline-none focus:border-[#8B4434] transition-colors"
+                className="flex-1 bg-[#FCFAF7] border border-[#c9b8b0] px-4 py-2.5 text-xs sm:text-sm text-[#1c1108] placeholder-[#908078] focus:outline-none focus:border-[#EA580C] rounded-xl transition-colors"
               />
               <button
                 type="submit"
                 disabled={chatSending || !chatInput.trim()}
-                className="bg-[#8B4434] hover:bg-[#723628] disabled:opacity-50 text-white px-4 sm:px-5 py-2.5 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 transition-colors shrink-0 shadow-sm cursor-pointer"
+                className="bg-[#EA580C] hover:bg-[#C2410C] disabled:opacity-50 text-white px-4 sm:px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 transition-colors shrink-0 shadow-sm cursor-pointer"
               >
                 {chatSending ? (
                   <div className="w-4 h-4 border-2 border-white border-t-transparent animate-spin" />
@@ -1166,7 +1168,7 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
             
             <div className="px-4 py-2 bg-stone-50 border-t border-[#e8ddd6] text-center shrink-0">
               <p className="text-[10px] text-[#908078] flex items-center justify-center gap-1.5">
-                <Shield className="w-3 h-3 text-[#8B4434] shrink-0" />
+                <Shield className="w-3 h-3 text-[#EA580C] shrink-0" />
                 <span>Phone numbers and emails sent in chat are automatically blurred for platform security.</span>
               </p>
             </div>
@@ -1175,4 +1177,4 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
       )}
     </div>
   );
-}
+}

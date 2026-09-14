@@ -75,21 +75,21 @@ export default function ShopsPage() {
       <section className="border-b border-stone-200 bg-[linear-gradient(135deg,rgba(252,250,247,1)_0%,rgba(247,243,239,1)_60%,rgba(244,237,231,1)_100%)]">
         <div className="max-w-7xl mx-auto px-6 py-16 lg:py-20">
           <div className="max-w-3xl space-y-5">
-            <p className="text-[10px] uppercase tracking-[0.35em] text-[#8B4434]/70 font-semibold">Hardware Shops</p>
+            <p className="text-[10px] uppercase tracking-[0.35em] text-[#EA580C]/70 font-semibold">Hardware Shops</p>
             <h1 className="font-serif text-4xl md:text-5xl text-stone-900 leading-tight">Find hardware shops, compare stock, and visit the right supplier faster.</h1>
             <p className="text-stone-600 text-base md:text-lg max-w-2xl">Browse trusted shops across Sri Lanka, open each profile for inventory, contact details, reviews, and quick add-to-cart actions.</p>
           </div>
 
           <div className="mt-10 grid gap-4 sm:grid-cols-3">
-            <div className="bg-white border border-stone-200 rounded-none p-5 shadow-sm">
+            <div className="bg-white border border-stone-200 rounded-2xl p-5 shadow-sm">
               <p className="text-[10px] uppercase tracking-[0.3em] text-stone-500 mb-2">Shops Listed</p>
               <p className="text-3xl font-serif text-stone-900">{shops.length}</p>
             </div>
-            <div className="bg-white border border-stone-200 rounded-none p-5 shadow-sm">
+            <div className="bg-white border border-stone-200 rounded-2xl p-5 shadow-sm">
               <p className="text-[10px] uppercase tracking-[0.3em] text-stone-500 mb-2">Fast Search</p>
               <p className="text-3xl font-serif text-stone-900">Live</p>
             </div>
-            <div className="bg-white border border-stone-200 rounded-none p-5 shadow-sm">
+            <div className="bg-white border border-stone-200 rounded-2xl p-5 shadow-sm">
               <p className="text-[10px] uppercase tracking-[0.3em] text-stone-500 mb-2">Best For</p>
               <p className="text-3xl font-serif text-stone-900">Builders</p>
             </div>
@@ -100,13 +100,13 @@ export default function ShopsPage() {
       <section className="max-w-7xl mx-auto px-6 py-12 space-y-8">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <p className="text-[10px] uppercase tracking-[0.35em] text-[#8B4434]/70 font-semibold mb-3">Search Shops</p>
+            <p className="text-[10px] uppercase tracking-[0.35em] text-[#EA580C]/70 font-semibold mb-3">Search Shops</p>
             <h2 className="font-serif text-3xl text-stone-900">Browse by location, service, or name</h2>
           </div>
 
           <label className="w-full lg:w-105">
             <span className="sr-only">Search hardware shops</span>
-            <div className="flex items-center gap-3 border border-stone-200 bg-white px-4 py-3 rounded-none shadow-sm focus-within:border-[#8B4434]/40">
+            <div className="flex items-center gap-3 border border-stone-200 bg-white px-4 py-3 rounded-xl shadow-sm focus-within:border-[#EA580C]/40">
               <Search className="h-4 w-4 text-stone-400" />
               <input
                 type="search"
@@ -122,7 +122,7 @@ export default function ShopsPage() {
         {filteredShops.length > 0 ? (
           <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             {filteredShops.map((shop) => (
-              <Link key={shop.id} href={`/shops/${shop.id}`} className="group overflow-hidden rounded-none border border-stone-200 bg-white shadow-sm transition-transform hover:-translate-y-1 hover:shadow-xl">
+              <Link key={shop.id} href={`/shops/${shop.id}`} className="group overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm transition-transform hover:-translate-y-1 hover:shadow-xl">
                 <div className="relative h-56 bg-stone-100 overflow-hidden">
                   {shop.banner_image_url ? (
                     <img
@@ -158,7 +158,7 @@ export default function ShopsPage() {
                       <Star className="h-4 w-4 text-orange-500" />
                       View details, items and reviews
                     </div>
-                    <span className="inline-flex items-center gap-2 text-xs uppercase tracking-wide text-[#8B4434] font-semibold">
+                    <span className="inline-flex items-center gap-2 text-xs uppercase tracking-wide text-[#EA580C] font-semibold">
                       Open shop
                       <ArrowRight className="h-4 w-4" />
                     </span>
@@ -168,7 +168,7 @@ export default function ShopsPage() {
             ))}
           </div>
         ) : (
-          <div className="border border-dashed border-stone-300 bg-white p-10 text-center text-stone-600 rounded-none">
+          <div className="border border-dashed border-stone-300 bg-white p-10 text-center text-stone-600 rounded-2xl">
             No hardware shops matched your search.
           </div>
         )}

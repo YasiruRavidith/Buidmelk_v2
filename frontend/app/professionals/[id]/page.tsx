@@ -14,7 +14,7 @@ import { useAuth } from "../../../hooks/useAuth";
 import { API_BASE_URL } from "@/lib/api";
 
 function renderCensoredMessage(text: string, isMe: boolean) {
-  const pattern = /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})|((?:\+?94[\s.-]?)?0?7[0-8][\s.-]?\d{3}[\s.-]?\d{4})|((?:\+?94[\s.-]?)?0?(?:11|2[1-7]|3[1-8]|4[1-7]|5[1-7]|6[3-7]|81|91)[\s.-]?\d{3}[\s.-]?\d{4})|(\b(?:\+?\d{1,3}[\s.-]?)?\(?\d{2,4}\)?[\s.-]?\d{3,4}[\s.-]?\d{3,4}\b)|(\b\d{9,12}\b)/gi;
+  const pattern = /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})|((?:\+?94[\s.-]?)?0?7[0-8][\s.-]?\d{3}[\s.-]?\d{4})|((?:\+?94[\s.-]?)?0?(?:11|2[1-7]|3[1-8]|4[1-7]|5[1-7]|6[3-7]|81|91)[\s.-]?\d{3}[\s.-]?\d{4})|(\b(?:\+?\d{1,3}[\s.-]?)?\(?\d{2,4}\)?[\s.-]?\d{3,4}[\s.-]?\d{3,4}\b)|(\b\d{9,12}\b)|(•{4,})/gi;
 
   const parts = [];
   let lastIndex = 0;
@@ -26,17 +26,19 @@ function renderCensoredMessage(text: string, isMe: boolean) {
     if (match.index > lastIndex) {
       parts.push(text.substring(lastIndex, match.index));
     }
+    // Never expose the matched raw contact info in the DOM to prevent inspection leak
+    const maskedText = "••••••••••••";
     parts.push(
       <span
         key={match.index}
-        className={`inline-block filter blur-[5px] select-none pointer-events-none px-1.5 py-0.5 rounded font-mono text-[11px] mx-0.5 border border-dashed ${
+        className={`inline-block select-none px-2 py-0.5 rounded font-mono text-[11px] mx-0.5 border border-dashed font-bold tracking-widest ${
           isMe
-            ? "bg-white/20 text-transparent border-white/40"
-            : "bg-stone-300/80 text-transparent border-stone-400"
+            ? "bg-white/20 text-white/90 border-white/40"
+            : "bg-stone-200 text-stone-700 border-stone-400"
         }`}
-        title="Contact details automatically blurred for privacy & security"
+        title="Contact details hidden for privacy & safety"
       >
-        {match[0]}
+        {maskedText}
       </span>
     );
     lastIndex = match.index + match[0].length;
@@ -115,7 +117,7 @@ function StarRow({ rating, max = 5 }: { rating: number; max?: number }) {
       {Array.from({ length: max }).map((_, i) => (
         <Star
           key={i}
-          className={`h-3.5 w-3.5 ${i < rating ? "fill-[#8B4434] text-[#8B4434]" : "fill-[#e8ddd6] text-[#e8ddd6]"}`}
+          className={`h-3.5 w-3.5 ${i < rating ? "fill-[#EA580C] text-[#EA580C]" : "fill-[#e8ddd6] text-[#e8ddd6]"}`}
         />
       ))}
     </span>
@@ -157,21 +159,27 @@ export default function ProfessionalProfilePage() {
     title: string;
   } | null>(null);
 
-  useEffect(() => {
+  const fetchProfessional = async () => {
     if (!id) return;
-    async function fetchProfessional() {
-      try {
-        const res = await fetch(`${API_BASE_URL}/users/professionals/${id}/`);
-        if (!res.ok) throw new Error(res.status === 404 ? "Professional not found" : "Failed to fetch");
-        setProf(await res.json());
-      } catch (err: unknown) {
-        setError(err instanceof Error ? err.message : "An error occurred");
-      } finally {
-        setLoading(false);
+    try {
+      const headers: Record<string, string> = {};
+      if (user) {
+        const token = await user.getIdToken();
+        headers["Authorization"] = `Bearer ${token}`;
       }
+      const res = await fetch(`${API_BASE_URL}/users/professionals/${id}/`, { headers });
+      if (!res.ok) throw new Error(res.status === 404 ? "Professional not found" : "Failed to fetch");
+      setProf(await res.json());
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "An error occurred");
+    } finally {
+      setLoading(false);
     }
+  };
+
+  useEffect(() => {
     fetchProfessional();
-  }, [id]);
+  }, [id, user]);
 
   useEffect(() => {
     if (!id) return;
@@ -242,6 +250,7 @@ export default function ProfessionalProfilePage() {
         setQsCredits(uData.qs_credits_remaining || 0);
         setQsSuccessMsg("Successfully connected with Quantity Surveyor! Contact details & private chat unlocked.");
         window.dispatchEvent(new Event("ticketsUpdated"));
+        await fetchProfessional();
         // Automatically open chat room upon unlock
         setChatOpen(true);
       } else {
@@ -383,8 +392,8 @@ export default function ProfessionalProfilePage() {
   if (loading) return (
     <div className="min-h-screen bg-[#FCFAF7] flex items-center justify-center">
       <div className="space-y-3 text-center">
-        <div className="w-12 h-12 border-2 border-[#8B4434]/20 border-t-[#8B4434] rounded-full animate-spin mx-auto" />
-        <p className="text-[11px] uppercase tracking-[0.3em] text-[#8B4434]/50">Loading profile…</p>
+        <div className="w-12 h-12 border-2 border-[#EA580C]/20 border-t-[#EA580C] rounded-full animate-spin mx-auto" />
+        <p className="text-[11px] uppercase tracking-[0.3em] text-[#EA580C]/50">Loading profile…</p>
       </div>
     </div>
   );
@@ -392,7 +401,7 @@ export default function ProfessionalProfilePage() {
   if (error) return (
     <div className="min-h-screen bg-[#FCFAF7] flex items-center justify-center">
       <div className="text-center space-y-4">
-        <p className="text-[#8B4434]">{error}</p>
+        <p className="text-[#EA580C]">{error}</p>
         <button onClick={() => router.back()} className="btn-secondary text-sm">Go Back</button>
       </div>
     </div>
@@ -426,7 +435,7 @@ export default function ProfessionalProfilePage() {
         {/* Decorative architectural grid */}
         <div className="absolute inset-0 opacity-[0.04]"
           style={{ backgroundImage: "repeating-linear-gradient(0deg,#FCFAF7 0,#FCFAF7 1px,transparent 1px,transparent 48px),repeating-linear-gradient(90deg,#FCFAF7 0,#FCFAF7 1px,transparent 1px,transparent 48px)" }} />
-        <div className="absolute top-0 right-0 w-[50%] h-full bg-gradient-to-l from-[#8B4434]/10 to-transparent" />
+        <div className="absolute top-0 right-0 w-[50%] h-full bg-gradient-to-l from-[#EA580C]/10 to-transparent" />
 
         <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-10 pt-8 pb-16 sm:pb-20">
 
@@ -441,7 +450,7 @@ export default function ProfessionalProfilePage() {
           <div className="flex flex-col sm:flex-row items-start gap-8 sm:gap-12">
             {/* Avatar */}
             <div className="relative shrink-0">
-              <div className="w-28 h-28 sm:w-36 sm:h-36 overflow-hidden border-2 border-[#FCFAF7]/10 bg-[#8B4434]/20">
+              <div className="w-28 h-28 sm:w-36 sm:h-36 overflow-hidden border-2 border-[#FCFAF7]/10 bg-[#EA580C]/20 rounded-2xl">
                 {prof.profile_image ? (
                   <img
                     src={prof.profile_image}
@@ -458,7 +467,7 @@ export default function ProfessionalProfilePage() {
                 )}
               </div>
               {profile?.availability && (
-                <div className="absolute -bottom-3 -right-3 bg-[#8B4434] px-2.5 py-1 text-[9px] uppercase tracking-[0.25em] text-white font-semibold">
+                <div className="absolute -bottom-3 -right-3 bg-[#EA580C] px-3 py-1 rounded-full text-[9px] uppercase tracking-[0.25em] text-white font-semibold shadow-sm">
                   {profile.availability.length > 12 ? "Available" : profile.availability}
                 </div>
               )}
@@ -466,13 +475,13 @@ export default function ProfessionalProfilePage() {
 
             {/* Identity */}
             <div className="flex-1 min-w-0">
-              <p className="text-[10px] uppercase tracking-[0.35em] text-[#8B4434] font-semibold mb-2">
+              <p className="text-[10px] uppercase tracking-[0.35em] text-[#EA580C] font-semibold mb-2">
                 {profile?.profession_type?.replace(/_/g, " ") || "Professional"}
               </p>
               <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl text-[#FCFAF7] leading-[1.02] flex items-center gap-3 flex-wrap">
                 <span>{displayName}</span>
                 {profile?.is_verified && (
-                  <span className="inline-flex items-center gap-1 bg-[#8B4434] text-white px-3 py-1 text-xs font-semibold uppercase tracking-widest rounded-none shadow-sm">
+                  <span className="inline-flex items-center gap-1 bg-[#EA580C] text-white px-3 py-1 text-xs font-semibold uppercase tracking-widest rounded-full shadow-sm">
                     <CheckCircle2 className="w-4 h-4 text-white" /> Verified Professional
                   </span>
                 )}
@@ -485,19 +494,19 @@ export default function ProfessionalProfilePage() {
               <div className="mt-5 flex flex-wrap gap-4 sm:gap-6">
                 {profile?.location && (
                   <span className="inline-flex items-center gap-1.5 text-[#FCFAF7]/50 text-xs">
-                    <MapPin className="h-3.5 w-3.5 text-[#8B4434]" />
+                    <MapPin className="h-3.5 w-3.5 text-[#EA580C]" />
                     {profile.location}
                   </span>
                 )}
                 {avgRating && (
                   <span className="inline-flex items-center gap-1.5 text-[#FCFAF7]/50 text-xs">
-                    <Star className="h-3.5 w-3.5 fill-[#8B4434] text-[#8B4434]" />
+                    <Star className="h-3.5 w-3.5 fill-[#EA580C] text-[#EA580C]" />
                     {avgRating} avg from {reviews.length} review{reviews.length !== 1 ? "s" : ""}
                   </span>
                 )}
                 {profile?.pricing_range && (
                   <span className="inline-flex items-center gap-1.5 text-[#FCFAF7]/50 text-xs">
-                    <Clock className="h-3.5 w-3.5 text-[#8B4434]" />
+                    <Clock className="h-3.5 w-3.5 text-[#EA580C]" />
                     {profile.pricing_range}
                   </span>
                 )}
@@ -506,7 +515,7 @@ export default function ProfessionalProfilePage() {
           </div>
 
           {/* Stats strip */}
-          <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-px bg-[#FCFAF7]/5 border border-[#FCFAF7]/5">
+          <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-px bg-[#FCFAF7]/5 border border-[#FCFAF7]/5 rounded-2xl overflow-hidden">
             {stats.map((s) => (
               <div key={s.label} className="bg-[#1c1108] px-5 py-5">
                 <p className="text-[10px] uppercase tracking-[0.28em] text-[#FCFAF7]/30 mb-1.5">{s.label}</p>
@@ -526,7 +535,7 @@ export default function ProfessionalProfilePage() {
 
             {/* About */}
             <section>
-              <p className="text-[10px] uppercase tracking-[0.35em] text-[#8B4434]/60 font-semibold mb-3">About</p>
+              <p className="text-[10px] uppercase tracking-[0.35em] text-[#EA580C]/60 font-semibold mb-3">About</p>
               <h2 className="font-serif text-3xl sm:text-4xl text-[#1c1108] mb-6">About the Practice</h2>
               <p className="text-[#3a2820] leading-[1.9] text-sm sm:text-base whitespace-pre-wrap">
                 {profile?.about || "This professional hasn't added a bio yet."}
@@ -536,11 +545,11 @@ export default function ProfessionalProfilePage() {
             {/* Skills */}
             {skills.length > 0 && (
               <section>
-                <p className="text-[10px] uppercase tracking-[0.35em] text-[#8B4434]/60 font-semibold mb-3">Expertise</p>
+                <p className="text-[10px] uppercase tracking-[0.35em] text-[#EA580C]/60 font-semibold mb-3">Expertise</p>
                 <h2 className="font-serif text-3xl sm:text-4xl text-[#1c1108] mb-6">Skills &amp; Specialization</h2>
                 <div className="flex flex-wrap gap-2.5">
                   {skills.map((skill, i) => (
-                    <span key={i} className="border border-[#8B4434]/20 bg-[#FAEBE7]/60 text-[#8B4434] px-4 py-2 text-[10px] tracking-[0.22em] uppercase font-semibold">
+                    <span key={i} className="border border-[#EA580C]/20 bg-[#FFEDD5]/60 text-[#EA580C] px-4 py-2 rounded-full text-[10px] tracking-[0.22em] uppercase font-semibold">
                       {skill}
                     </span>
                   ))}
@@ -556,7 +565,7 @@ export default function ProfessionalProfilePage() {
               <section>
                 <div className="flex items-end justify-between gap-4 mb-6 flex-wrap">
                   <div>
-                    <p className="text-[10px] uppercase tracking-[0.35em] text-[#8B4434]/60 font-semibold mb-2">Past Projects</p>
+                    <p className="text-[10px] uppercase tracking-[0.35em] text-[#EA580C]/60 font-semibold mb-2">Past Projects</p>
                     <h2 className="font-serif text-3xl sm:text-4xl text-[#1c1108]">Project Portfolio</h2>
                   </div>
                   <span className="text-xs text-stone-500 uppercase tracking-widest font-medium">
@@ -571,7 +580,7 @@ export default function ProfessionalProfilePage() {
                       <div
                         key={item.id || index}
                         onClick={() => setSelectedImageModal({ url: imgUrl, title: `${displayName} — Project #${index + 1}` })}
-                        className="group relative aspect-[4/3] bg-stone-100 border border-[#e8ddd6] overflow-hidden cursor-pointer shadow-xs"
+                        className="group relative aspect-[4/3] bg-stone-100 border border-[#e8ddd6] rounded-2xl overflow-hidden cursor-pointer shadow-xs"
                       >
                         <img
                           src={imgUrl}
@@ -585,7 +594,7 @@ export default function ProfessionalProfilePage() {
                           <span className="text-xs uppercase tracking-wider font-semibold flex items-center gap-1.5">
                             <Sparkles className="w-3.5 h-3.5" /> View Photo
                           </span>
-                          <span className="text-[10px] bg-[#8B4434] px-2 py-0.5 tracking-widest uppercase font-bold">
+                          <span className="text-[10px] bg-[#EA580C] px-2.5 py-0.5 rounded-full tracking-widest uppercase font-bold">
                             Watermarked
                           </span>
                         </div>
@@ -601,18 +610,18 @@ export default function ProfessionalProfilePage() {
               <section>
                 <div className="flex items-end justify-between gap-4 mb-6 flex-wrap">
                   <div>
-                    <p className="text-[10px] uppercase tracking-[0.35em] text-[#8B4434]/60 font-semibold mb-2">Qualifications</p>
+                    <p className="text-[10px] uppercase tracking-[0.35em] text-[#EA580C]/60 font-semibold mb-2">Qualifications</p>
                     <h2 className="font-serif text-3xl sm:text-4xl text-[#1c1108]">Certifications &amp; Licenses</h2>
                   </div>
-                  <span className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-wider font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-1">
+                  <span className="inline-flex items-center gap-1.5 text-[11px] uppercase tracking-wider font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
                     <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
                     Verified Credentials
                   </span>
                 </div>
 
                 {profile?.certifications && (
-                  <div className="bg-[#FCFAF7] border border-[#e8ddd6] p-5 sm:p-6 mb-6">
-                    <div className="flex items-center gap-2 mb-2 text-[#8B4434] font-semibold text-xs uppercase tracking-wider">
+                  <div className="bg-[#FCFAF7] border border-[#e8ddd6] p-5 sm:p-6 rounded-2xl mb-6 shadow-xs">
+                    <div className="flex items-center gap-2 mb-2 text-[#EA580C] font-semibold text-xs uppercase tracking-wider">
                       <Award className="w-4 h-4" />
                       <span>Accreditations &amp; Registrations</span>
                     </div>
@@ -630,7 +639,7 @@ export default function ProfessionalProfilePage() {
                         <div
                           key={cert.id || index}
                           onClick={() => setSelectedImageModal({ url: imgUrl, title: `${displayName} — Verified Certificate #${index + 1}` })}
-                          className="group relative aspect-[3/4] bg-white border border-[#e8ddd6] overflow-hidden p-2.5 shadow-xs cursor-pointer hover:border-[#8B4434] transition-colors"
+                          className="group relative aspect-[3/4] bg-white border border-[#e8ddd6] rounded-2xl overflow-hidden p-2.5 shadow-xs cursor-pointer hover:border-[#EA580C] transition-colors"
                         >
                           <div className="relative w-full h-full bg-stone-50 overflow-hidden flex items-center justify-center">
                             <img
@@ -642,7 +651,7 @@ export default function ProfessionalProfilePage() {
                               }}
                             />
                           </div>
-                          <div className="absolute top-3 right-3 bg-[#8B4434] text-white text-[9px] font-bold px-1.5 py-0.5 tracking-wider uppercase shadow-xs">
+                          <div className="absolute top-3 right-3 bg-[#EA580C] text-white text-[9px] font-bold px-2 py-0.5 rounded-full tracking-wider uppercase shadow-xs">
                             Verified
                           </div>
                         </div>
@@ -656,12 +665,12 @@ export default function ProfessionalProfilePage() {
             {/* ── Academic & Technical Education ── */}
             {profile?.education && (
               <section>
-                <div className="flex items-center gap-2 mb-2 text-[#8B4434]/60 font-semibold text-[10px] uppercase tracking-[0.35em]">
-                  <GraduationCap className="w-4 h-4 text-[#8B4434]" />
+                <div className="flex items-center gap-2 mb-2 text-[#EA580C]/60 font-semibold text-[10px] uppercase tracking-[0.35em]">
+                  <GraduationCap className="w-4 h-4 text-[#EA580C]" />
                   <span>Academic &amp; Vocational</span>
                 </div>
                 <h2 className="font-serif text-3xl sm:text-4xl text-[#1c1108] mb-4">Education &amp; Background</h2>
-                <div className="bg-white border border-[#e8ddd6] p-5 sm:p-6 shadow-xs">
+                <div className="bg-white border border-[#e8ddd6] p-5 sm:p-6 rounded-2xl shadow-xs">
                   <p className="text-sm text-[#3a2820] leading-relaxed whitespace-pre-wrap">
                     {profile.education}
                   </p>
@@ -672,12 +681,12 @@ export default function ProfessionalProfilePage() {
             {/* ── Service Areas ── */}
             {profile?.service_areas && profile.service_areas.length > 0 && (
               <section>
-                <p className="text-[10px] uppercase tracking-[0.35em] text-[#8B4434]/60 font-semibold mb-2">Coverage</p>
+                <p className="text-[10px] uppercase tracking-[0.35em] text-[#EA580C]/60 font-semibold mb-2">Coverage</p>
                 <h2 className="font-serif text-3xl sm:text-4xl text-[#1c1108] mb-4">Service Locations</h2>
                 <div className="flex flex-wrap gap-2">
                   {profile.service_areas.map((area, i) => (
-                    <span key={i} className="inline-flex items-center gap-1.5 border border-[#e8ddd6] bg-white px-3.5 py-2 text-xs font-medium text-[#281713] shadow-2xs">
-                      <MapPin className="w-3 h-3 text-[#8B4434]" />
+                    <span key={i} className="inline-flex items-center gap-1.5 border border-[#e8ddd6] bg-white px-3.5 py-2 rounded-full text-xs font-medium text-[#281713] shadow-2xs">
+                      <MapPin className="w-3 h-3 text-[#EA580C]" />
                       {area}
                     </span>
                   ))}
@@ -687,8 +696,8 @@ export default function ProfessionalProfilePage() {
 
             {/* ── Hardware Storefront Details (if HARDWARE) ── */}
             {profile?.hardware_profile && (
-              <section className="border border-[#e8ddd6] bg-[#FCFAF7] p-6 sm:p-8 space-y-4 shadow-xs">
-                <div className="flex items-center gap-2 text-[#8B4434] text-xs uppercase tracking-widest font-semibold">
+              <section className="border border-[#e8ddd6] bg-[#FCFAF7] p-6 sm:p-8 rounded-2xl space-y-4 shadow-xs">
+                <div className="flex items-center gap-2 text-[#EA580C] text-xs uppercase tracking-widest font-semibold">
                   <Building2 className="w-4 h-4" />
                   <span>Hardware Merchant Storefront</span>
                 </div>
@@ -697,13 +706,13 @@ export default function ProfessionalProfilePage() {
                 </h3>
                 {profile.hardware_profile.shop_address && (
                   <p className="text-xs text-[#606060] flex items-center gap-2">
-                    <MapPin className="w-3.5 h-3.5 text-[#8B4434]" />
+                    <MapPin className="w-3.5 h-3.5 text-[#EA580C]" />
                     {profile.hardware_profile.shop_address}
                   </p>
                 )}
                 {profile.hardware_profile.opening_hours && (
                   <p className="text-xs text-[#606060] flex items-center gap-2">
-                    <Clock className="w-3.5 h-3.5 text-[#8B4434]" />
+                    <Clock className="w-3.5 h-3.5 text-[#EA580C]" />
                     Hours: {profile.hardware_profile.opening_hours}
                   </p>
                 )}
@@ -714,13 +723,13 @@ export default function ProfessionalProfilePage() {
                 )}
                 {profile.hardware_profile.gallery_images && profile.hardware_profile.gallery_images.length > 0 && (
                   <div className="pt-2">
-                    <p className="text-[10px] uppercase tracking-wider text-[#8B4434]/60 font-semibold mb-2">Shop Gallery</p>
+                    <p className="text-[10px] uppercase tracking-wider text-[#EA580C]/60 font-semibold mb-2">Shop Gallery</p>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                       {profile.hardware_profile.gallery_images.map((g, idx) => (
                         <div
                           key={g.id || idx}
                           onClick={() => setSelectedImageModal({ url: g.image_url || "", title: `${profile.hardware_profile?.shop_name || "Shop"} — Photo ${idx + 1}` })}
-                          className="aspect-square bg-stone-100 border border-[#e8ddd6] overflow-hidden cursor-pointer"
+                          className="aspect-square bg-stone-100 border border-[#e8ddd6] rounded-xl overflow-hidden cursor-pointer"
                         >
                           <img src={g.image_url || ""} alt="Shop" className="w-full h-full object-cover" />
                         </div>
@@ -732,7 +741,7 @@ export default function ProfessionalProfilePage() {
                   <div className="pt-2">
                     <iframe
                       src={profile.hardware_profile.google_maps_link}
-                      className="w-full h-56 border border-[#e8ddd6]"
+                      className="w-full h-56 border border-[#e8ddd6] rounded-xl overflow-hidden"
                       loading="lazy"
                     />
                   </div>
@@ -747,7 +756,7 @@ export default function ProfessionalProfilePage() {
             <section>
               <div className="flex items-end justify-between gap-4 mb-6 flex-wrap">
                 <div>
-                  <p className="text-[10px] uppercase tracking-[0.35em] text-[#8B4434]/60 font-semibold mb-3">Client Feedback</p>
+                  <p className="text-[10px] uppercase tracking-[0.35em] text-[#EA580C]/60 font-semibold mb-3">Client Feedback</p>
                   <h2 className="font-serif text-3xl sm:text-4xl text-[#1c1108]">Reviews</h2>
                 </div>
                 {avgRating && (
@@ -755,15 +764,15 @@ export default function ProfessionalProfilePage() {
                     <span className="font-serif text-4xl text-[#1c1108]">{avgRating}</span>
                     <div>
                       <StarRow rating={Math.round(Number(avgRating))} />
-                      <p className="text-[11px] text-[#8B4434]/50 mt-0.5">{reviews.length} review{reviews.length !== 1 ? "s" : ""}</p>
+                      <p className="text-[11px] text-[#EA580C]/50 mt-0.5">{reviews.length} review{reviews.length !== 1 ? "s" : ""}</p>
                     </div>
                   </div>
                 )}
               </div>
 
               {/* Write review */}
-              <div className="border border-[#e8ddd6] bg-white p-5 sm:p-7 mb-6">
-                <p className="text-[11px] uppercase tracking-[0.28em] text-[#8B4434]/60 font-semibold mb-5">Leave a Review</p>
+              <div className="border border-[#e8ddd6] bg-white p-5 sm:p-7 rounded-2xl mb-6 shadow-xs">
+                <p className="text-[11px] uppercase tracking-[0.28em] text-[#EA580C]/60 font-semibold mb-5">Leave a Review</p>
 
                 {/* Interactive star picker */}
                 <div className="flex items-center gap-1 mb-5">
@@ -776,10 +785,10 @@ export default function ProfessionalProfilePage() {
                       onMouseLeave={() => setHoverRating(0)}
                       className="p-0.5 focus:outline-none"
                     >
-                      <Star className={`h-6 w-6 transition-colors ${star <= (hoverRating || reviewRating) ? "fill-[#8B4434] text-[#8B4434]" : "fill-[#e8ddd6] text-[#e8ddd6]"}`} />
+                      <Star className={`h-6 w-6 transition-colors ${star <= (hoverRating || reviewRating) ? "fill-[#EA580C] text-[#EA580C]" : "fill-[#e8ddd6] text-[#e8ddd6]"}`} />
                     </button>
                   ))}
-                  <span className="ml-2 text-xs text-[#8B4434]/60">{reviewRating} star{reviewRating !== 1 ? "s" : ""}</span>
+                  <span className="ml-2 text-xs text-[#EA580C]/60">{reviewRating} star{reviewRating !== 1 ? "s" : ""}</span>
                 </div>
 
                 <textarea
@@ -787,13 +796,13 @@ export default function ProfessionalProfilePage() {
                   onChange={(e) => setReviewComment(e.target.value)}
                   rows={3}
                   placeholder="Share your experience working with this professional…"
-                  className="w-full border-b border-[#c9b8b0] bg-transparent px-0 py-2.5 text-[#1c1108] placeholder:text-[#8B4434]/25 focus:outline-none focus:border-[#8B4434] transition-colors text-sm resize-none mb-5"
+                  className="w-full border border-[#e8ddd6] bg-[#FCFAF7] p-3.5 text-[#1c1108] placeholder:text-[#EA580C]/25 focus:outline-none focus:border-[#EA580C] transition-colors text-sm resize-none mb-5 rounded-xl"
                 />
 
                 <button
                   onClick={handleSubmitReview}
                   disabled={reviewSaving || !reviewComment.trim()}
-                  className="inline-flex items-center gap-2 bg-[#1c1108] text-[#FCFAF7] px-6 py-3 text-[10px] tracking-[0.28em] uppercase font-semibold hover:bg-[#8B4434] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="inline-flex items-center gap-2 bg-[#1c1108] text-[#FCFAF7] px-6 py-3 rounded-xl text-[10px] tracking-[0.28em] uppercase font-semibold hover:bg-[#EA580C] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   <Send className="h-3.5 w-3.5" />
                   {reviewSaving ? "Submitting…" : "Submit Review"}
@@ -803,19 +812,19 @@ export default function ProfessionalProfilePage() {
               {/* Review list */}
               <div className="space-y-4">
                 {reviews.length === 0 ? (
-                  <div className="border border-dashed border-[#e8ddd6] p-8 text-center text-sm text-[#8B4434]/40">
+                  <div className="border border-dashed border-[#e8ddd6] p-8 text-center text-sm text-[#EA580C]/40">
                     No reviews yet — be the first to review this professional.
                   </div>
                 ) : reviews.map((review) => (
-                  <div key={review.id} className="border border-[#e8ddd6] bg-white p-5 sm:p-6">
+                  <div key={review.id} className="border border-[#e8ddd6] bg-white p-5 sm:p-6 rounded-2xl shadow-xs">
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-[#FAEBE7] border border-[#8B4434]/10 flex items-center justify-center shrink-0">
-                          <span className="text-[#8B4434] text-xs font-semibold font-serif">{review.author_name[0]?.toUpperCase()}</span>
+                        <div className="w-8 h-8 bg-[#FFEDD5] border border-[#EA580C]/10 flex items-center justify-center shrink-0 rounded-xl">
+                          <span className="text-[#EA580C] text-xs font-semibold font-serif">{review.author_name[0]?.toUpperCase()}</span>
                         </div>
                         <div>
                           <p className="text-sm font-semibold text-[#1c1108]">{review.author_name}</p>
-                          <p className="text-[10px] text-[#8B4434]/40">
+                          <p className="text-[10px] text-[#EA580C]/40">
                             {new Date(review.created_at).toLocaleDateString("en-LK", { year: "numeric", month: "short", day: "numeric" })}
                           </p>
                         </div>
@@ -835,7 +844,7 @@ export default function ProfessionalProfilePage() {
           <aside className="space-y-5 lg:sticky lg:top-8">
 
             {/* ── TICKET-GATED CONTACT CARD ── */}
-            <div className="border border-[#e8ddd6] bg-white overflow-hidden">
+            <div className="border border-[#e8ddd6] bg-white rounded-2xl overflow-hidden shadow-xs">
               <div className="bg-[#1c1108] px-6 py-5">
                 <p className="text-[10px] uppercase tracking-[0.3em] text-[#FCFAF7]/40 font-semibold">Get in Touch</p>
                 <p className="font-serif text-xl text-[#FCFAF7] mt-1">Contact Details</p>
@@ -845,24 +854,24 @@ export default function ProfessionalProfilePage() {
               <div className="p-6 space-y-3">
                 {profile?.location && (
                   <div className="flex items-center gap-3 text-sm text-[#1c1108]">
-                    <div className="w-8 h-8 border border-[#e8ddd6] flex items-center justify-center shrink-0">
-                      <MapPin className="h-3.5 w-3.5 text-[#8B4434]" />
+                    <div className="w-8 h-8 border border-[#e8ddd6] flex items-center justify-center shrink-0 rounded-xl">
+                      <MapPin className="h-3.5 w-3.5 text-[#EA580C]" />
                     </div>
                     <span className="text-xs">{profile.location}</span>
                   </div>
                 )}
                 {profile?.availability && (
                   <div className="flex items-center gap-3 text-sm text-[#1c1108]">
-                    <div className="w-8 h-8 border border-[#e8ddd6] flex items-center justify-center shrink-0">
-                      <Clock className="h-3.5 w-3.5 text-[#8B4434]" />
+                    <div className="w-8 h-8 border border-[#e8ddd6] flex items-center justify-center shrink-0 rounded-xl">
+                      <Clock className="h-3.5 w-3.5 text-[#EA580C]" />
                     </div>
                     <span className="text-xs">{profile.availability}</span>
                   </div>
                 )}
                 {profile?.company_name && (
                   <div className="flex items-center gap-3 text-sm text-[#1c1108]">
-                    <div className="w-8 h-8 border border-[#e8ddd6] flex items-center justify-center shrink-0">
-                      <Building2 className="h-3.5 w-3.5 text-[#8B4434]" />
+                    <div className="w-8 h-8 border border-[#e8ddd6] flex items-center justify-center shrink-0 rounded-xl">
+                      <Building2 className="h-3.5 w-3.5 text-[#EA580C]" />
                     </div>
                     <span className="text-xs">{profile.company_name}</span>
                   </div>
@@ -876,22 +885,22 @@ export default function ProfessionalProfilePage() {
                       {isOwner || (backendUser && prof && backendUser.id === prof.id) ? (
                         // Owner viewing their own QS profile
                         <div className="space-y-3">
-                          <div className="flex items-center gap-1.5 text-[10px] text-stone-800 font-semibold uppercase tracking-wider bg-stone-100 border border-stone-300 p-2.5">
-                            <ShieldCheck className="w-3.5 h-3.5 text-[#8B4434] shrink-0" />
+                          <div className="flex items-center gap-1.5 text-[10px] text-stone-800 font-semibold uppercase tracking-wider bg-stone-100 border border-stone-300 p-2.5 rounded-xl">
+                            <ShieldCheck className="w-3.5 h-3.5 text-[#EA580C] shrink-0" />
                             <span>Your Public Professional Profile</span>
                           </div>
 
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 border border-[#e8ddd6] flex items-center justify-center shrink-0">
-                              <Mail className="h-3.5 w-3.5 text-[#8B4434]" />
+                            <div className="w-8 h-8 border border-[#e8ddd6] flex items-center justify-center shrink-0 rounded-xl">
+                              <Mail className="h-3.5 w-3.5 text-[#EA580C]" />
                             </div>
                             <span className="text-xs text-[#1c1108] truncate font-medium">{prof.email}</span>
                           </div>
 
                           {prof.phone_number && (
                             <div className="flex items-center gap-3">
-                              <div className="w-8 h-8 border border-[#e8ddd6] flex items-center justify-center shrink-0">
-                                <Phone className="h-3.5 w-3.5 text-[#8B4434]" />
+                              <div className="w-8 h-8 border border-[#e8ddd6] flex items-center justify-center shrink-0 rounded-xl">
+                                <Phone className="h-3.5 w-3.5 text-[#EA580C]" />
                               </div>
                               <span className="text-xs text-[#1c1108] font-medium">{prof.phone_number}</span>
                             </div>
@@ -899,26 +908,26 @@ export default function ProfessionalProfilePage() {
 
                           <Link
                             href="/dashboard/professional"
-                            className="w-full bg-[#1c1108] text-[#FCFAF7] py-3 text-[10px] tracking-[0.22em] uppercase font-bold hover:bg-[#8B4434] transition-colors flex items-center justify-center gap-2 shadow-sm text-center"
+                            className="w-full bg-[#1c1108] text-[#FCFAF7] py-3 rounded-xl text-[10px] tracking-[0.22em] uppercase font-bold hover:bg-[#EA580C] transition-colors flex items-center justify-center gap-2 shadow-sm text-center"
                           >
-                            <MessageSquare className="w-4 h-4 text-[#8B4434]" />
+                            <MessageSquare className="w-4 h-4 text-[#EA580C]" />
                             <span>View Inquiries &amp; Consultations in Dashboard</span>
                           </Link>
                         </div>
                       ) : qsUnlocked ? (
                         // Unlocked QS: Revealed contact details
                         <div className="space-y-3">
-                          <div className="flex items-center gap-1.5 text-[10px] text-emerald-800 font-semibold uppercase tracking-wider bg-emerald-50 border border-emerald-200 p-2.5">
+                          <div className="flex items-center gap-1.5 text-[10px] text-emerald-800 font-semibold uppercase tracking-wider bg-emerald-50 border border-emerald-200 p-2.5 rounded-xl">
                             <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                             <span>Connected via QS Ticket &bull; Direct Consultation Active</span>
                           </div>
 
                           <a
                             href={`mailto:${prof.email}`}
-                            className="flex items-center gap-3 hover:text-[#8B4434] transition-colors group"
+                            className="flex items-center gap-3 hover:text-[#EA580C] transition-colors group"
                           >
-                            <div className="w-8 h-8 border border-[#e8ddd6] flex items-center justify-center group-hover:border-[#8B4434]/30 transition-colors shrink-0">
-                              <Mail className="h-3.5 w-3.5 text-[#8B4434]" />
+                            <div className="w-8 h-8 border border-[#e8ddd6] flex items-center justify-center group-hover:border-[#EA580C]/30 transition-colors shrink-0">
+                              <Mail className="h-3.5 w-3.5 text-[#EA580C]" />
                             </div>
                             <span className="text-xs text-[#1c1108] truncate font-medium">{prof.email}</span>
                           </a>
@@ -926,10 +935,10 @@ export default function ProfessionalProfilePage() {
                           {prof.phone_number ? (
                             <a
                               href={`tel:${prof.phone_number}`}
-                              className="flex items-center gap-3 hover:text-[#8B4434] transition-colors group"
+                              className="flex items-center gap-3 hover:text-[#EA580C] transition-colors group"
                             >
-                              <div className="w-8 h-8 border border-[#e8ddd6] flex items-center justify-center group-hover:border-[#8B4434]/30 transition-colors shrink-0">
-                                <Phone className="h-3.5 w-3.5 text-[#8B4434]" />
+                              <div className="w-8 h-8 border border-[#e8ddd6] flex items-center justify-center group-hover:border-[#EA580C]/30 transition-colors shrink-0">
+                                <Phone className="h-3.5 w-3.5 text-[#EA580C]" />
                               </div>
                               <span className="text-xs text-[#1c1108] font-medium">{prof.phone_number}</span>
                             </a>
@@ -940,15 +949,15 @@ export default function ProfessionalProfilePage() {
                           <button
                             type="button"
                             onClick={() => setChatOpen(true)}
-                            className="w-full bg-[#1c1108] text-[#FCFAF7] py-3 text-[10px] tracking-[0.22em] uppercase font-bold hover:bg-[#8B4434] transition-colors flex items-center justify-center gap-2 shadow-sm cursor-pointer"
+                            className="w-full bg-[#1c1108] text-[#FCFAF7] py-3 rounded-xl text-[10px] tracking-[0.22em] uppercase font-bold hover:bg-[#EA580C] transition-colors flex items-center justify-center gap-2 shadow-sm cursor-pointer"
                           >
-                            <MessageSquare className="w-4 h-4 text-[#8B4434]" />
+                            <MessageSquare className="w-4 h-4 text-[#EA580C]" />
                             <span>Open Private QS Chat Room</span>
                           </button>
 
                           <a
                             href={`mailto:${prof.email}?subject=BOQ%20Estimation%20Consultation%20via%20BuildMe.lk`}
-                            className="block w-full border border-[#8B4434] text-[#8B4434] hover:bg-[#8B4434] hover:text-white py-2.5 text-[10px] tracking-[0.22em] uppercase font-bold transition-colors text-center"
+                            className="block w-full border border-[#EA580C] text-[#EA580C] hover:bg-[#EA580C] hover:text-white py-2.5 rounded-xl text-[10px] tracking-[0.22em] uppercase font-bold transition-colors text-center"
                           >
                             Email Consultation Request
                           </a>
@@ -956,28 +965,28 @@ export default function ProfessionalProfilePage() {
                       ) : (
                         // Gated QS: Blurred details + Unlock CTA
                         <div className="space-y-3.5">
-                          {/* Blurred contact previews */}
+                          {/* Blurred contact previews — completely masked so inspecting DOM reveals no numbers/emails */}
                           <div className="space-y-2 select-none relative">
                             <div className="flex items-center gap-3">
-                              <div className="w-8 h-8 border border-[#e8ddd6] flex items-center justify-center shrink-0">
-                                <Mail className="h-3.5 w-3.5 text-[#8B4434]" />
+                              <div className="w-8 h-8 border border-[#e8ddd6] flex items-center justify-center shrink-0 rounded-xl">
+                                <Mail className="h-3.5 w-3.5 text-[#EA580C]" />
                               </div>
-                              <span className="text-xs text-[#1c1108] filter blur-sm truncate pointer-events-none select-none">
-                                {prof.email || "qs.expert@buildmelk.lk"}
+                              <span className="text-xs text-[#1c1108] font-mono tracking-wider filter blur-[2px] truncate pointer-events-none select-none">
+                                ••••••••••••@••••••.lk
                               </span>
                             </div>
                             <div className="flex items-center gap-3">
-                              <div className="w-8 h-8 border border-[#e8ddd6] flex items-center justify-center shrink-0">
-                                <Phone className="h-3.5 w-3.5 text-[#8B4434]" />
+                              <div className="w-8 h-8 border border-[#e8ddd6] flex items-center justify-center shrink-0 rounded-xl">
+                                <Phone className="h-3.5 w-3.5 text-[#EA580C]" />
                               </div>
-                              <span className="text-xs text-[#1c1108] filter blur-sm pointer-events-none select-none">
-                                {prof.phone_number || "+94 77 123 4567"}
+                              <span className="text-xs text-[#1c1108] font-mono tracking-wider filter blur-[2px] pointer-events-none select-none">
+                                +94 •• ••• ••••
                               </span>
                             </div>
                           </div>
 
-                          <div className="bg-[#1c1108] text-[#FCFAF7] p-4 space-y-2 border border-[#322318]">
-                            <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-widest text-[#8B4434] font-bold">
+                          <div className="bg-[#1c1108] text-[#FCFAF7] p-4 space-y-2 border border-[#322318] rounded-xl">
+                            <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-widest text-[#EA580C] font-bold">
                               <Lock className="w-3.5 h-3.5" /> QS Consultation Ticket Required
                             </div>
                             <p className="text-xs text-[#c9b8b0] leading-relaxed">
@@ -994,7 +1003,7 @@ export default function ProfessionalProfilePage() {
                               <button
                                 onClick={handleUnlockQS}
                                 disabled={unlockingQS}
-                                className="w-full bg-[#8B4434] text-white py-3 text-xs font-bold uppercase tracking-widest hover:bg-[#723628] disabled:opacity-70 transition-colors shadow-sm cursor-pointer"
+                                className="w-full bg-[#EA580C] text-white py-3 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-[#C2410C] disabled:opacity-70 transition-colors shadow-sm cursor-pointer"
                               >
                                 {unlockingQS
                                   ? "Unlocking..."
@@ -1004,7 +1013,7 @@ export default function ProfessionalProfilePage() {
                               </button>
                               <Link
                                 href="/tickets"
-                                className="block text-center text-[10px] uppercase tracking-wider text-[#8B4434] hover:underline font-semibold"
+                                className="block text-center text-[10px] uppercase tracking-wider text-[#EA580C] hover:underline font-semibold"
                               >
                                 View Ticket Pro Plans (Bundle &amp; Save) &rarr;
                               </Link>
@@ -1012,7 +1021,7 @@ export default function ProfessionalProfilePage() {
                           ) : (
                             <Link
                               href={`/login?redirect=/professionals/${id}`}
-                              className="block w-full bg-[#8B4434] text-white py-3 text-[10px] tracking-[0.26em] uppercase font-bold hover:bg-[#723628] transition-colors text-center cursor-pointer"
+                              className="block w-full bg-[#EA580C] text-white py-3 rounded-xl text-[10px] tracking-[0.26em] uppercase font-bold hover:bg-[#C2410C] transition-colors text-center cursor-pointer"
                             >
                               Login to Connect with QS
                             </Link>
@@ -1024,29 +1033,29 @@ export default function ProfessionalProfilePage() {
                     // ── ALL OTHER PROFESSIONALS (CONTRACTOR, ENGINEER, ARCHITECT, TRADES) ──
                     // Contact details blurred to protect platform communication & bidding
                     <div className="space-y-4">
-                      {/* Blurred details preview */}
+                      {/* Blurred details preview — completely masked so inspecting DOM reveals no numbers/emails */}
                       <div className="space-y-2 select-none relative">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 border border-[#e8ddd6] flex items-center justify-center shrink-0">
-                            <Mail className="h-3.5 w-3.5 text-[#8B4434]" />
+                          <div className="w-8 h-8 border border-[#e8ddd6] flex items-center justify-center shrink-0 rounded-xl">
+                            <Mail className="h-3.5 w-3.5 text-[#EA580C]" />
                           </div>
-                          <span className="text-xs text-[#1c1108] filter blur-sm truncate pointer-events-none select-none">
-                            {prof.email || "professional@buildmelk.lk"}
+                          <span className="text-xs text-[#1c1108] font-mono tracking-wider filter blur-[2px] truncate pointer-events-none select-none">
+                            ••••••••••••@••••••.lk
                           </span>
                         </div>
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 border border-[#e8ddd6] flex items-center justify-center shrink-0">
-                            <Phone className="h-3.5 w-3.5 text-[#8B4434]" />
+                          <div className="w-8 h-8 border border-[#e8ddd6] flex items-center justify-center shrink-0 rounded-xl">
+                            <Phone className="h-3.5 w-3.5 text-[#EA580C]" />
                           </div>
-                          <span className="text-xs text-[#1c1108] filter blur-sm pointer-events-none select-none">
-                            {prof.phone_number || "+94 77 123 4567"}
+                          <span className="text-xs text-[#1c1108] font-mono tracking-wider filter blur-[2px] pointer-events-none select-none">
+                            +94 •• ••• ••••
                           </span>
                         </div>
                       </div>
 
-                      <div className="bg-[#FCFAF7] border border-[#e8ddd6] p-4 space-y-2">
-                        <div className="flex items-center gap-1.5 text-[10px] text-[#8B4434] font-bold uppercase tracking-wider">
-                          <Lock className="w-3.5 h-3.5 text-[#8B4434]" /> Contact Details Protected
+                      <div className="bg-[#FCFAF7] border border-[#e8ddd6] p-4 space-y-2 rounded-xl">
+                        <div className="flex items-center gap-1.5 text-[10px] text-[#EA580C] font-bold uppercase tracking-wider">
+                          <Lock className="w-3.5 h-3.5 text-[#EA580C]" /> Contact Details Protected
                         </div>
                         <p className="text-xs text-[#606060] leading-relaxed">
                           Direct phone numbers and emails are kept confidential. To hire or collaborate with this professional, invite them to submit a proposal on your tender.
@@ -1055,7 +1064,7 @@ export default function ProfessionalProfilePage() {
 
                       <Link
                         href="/estimation"
-                        className="block w-full bg-[#1c1108] text-[#FCFAF7] py-3 text-[10px] tracking-[0.24em] uppercase font-bold hover:bg-[#8B4434] transition-colors text-center cursor-pointer"
+                        className="block w-full bg-[#1c1108] text-[#FCFAF7] py-3 rounded-xl text-[10px] tracking-[0.24em] uppercase font-bold hover:bg-[#EA580C] transition-colors text-center cursor-pointer"
                       >
                         Post Tender &bull; Invite to Bid
                       </Link>
@@ -1066,8 +1075,8 @@ export default function ProfessionalProfilePage() {
             </div>
 
             {/* Full Details Card — always public */}
-            <div className="border border-[#e8ddd6] bg-white p-6 space-y-5">
-              <p className="text-[10px] uppercase tracking-[0.3em] text-[#8B4434]/60 font-semibold">Profile Details</p>
+            <div className="border border-[#e8ddd6] bg-white p-6 space-y-5 rounded-2xl shadow-xs">
+              <p className="text-[10px] uppercase tracking-[0.3em] text-[#EA580C]/60 font-semibold">Profile Details</p>
               <dl className="space-y-4">
                 {[
                   { label: "Profession", value: profile?.profession_type?.replace(/_/g, " ") },
@@ -1080,7 +1089,7 @@ export default function ProfessionalProfilePage() {
                   { label: "Availability", value: profile?.availability || null },
                 ].filter(item => item.value).map(item => (
                   <div key={item.label} className="flex justify-between items-start gap-3 text-sm pb-4 border-b border-[#e8ddd6] last:border-0 last:pb-0">
-                    <dt className="text-[10px] uppercase tracking-[0.22em] text-[#8B4434]/50 font-semibold shrink-0">{item.label}</dt>
+                    <dt className="text-[10px] uppercase tracking-[0.22em] text-[#EA580C]/50 font-semibold shrink-0">{item.label}</dt>
                     <dd className="text-[#1c1108] text-right text-xs">{item.value}</dd>
                   </div>
                 ))}
@@ -1089,26 +1098,26 @@ export default function ProfessionalProfilePage() {
 
             {/* Education / Certifications — always public */}
             {(profile?.education || profile?.certifications) && (
-              <div className="border border-[#e8ddd6] bg-white p-6 space-y-4">
-                <p className="text-[10px] uppercase tracking-[0.3em] text-[#8B4434]/60 font-semibold">Education & Credentials</p>
+              <div className="border border-[#e8ddd6] bg-white p-6 space-y-4 rounded-2xl shadow-xs">
+                <p className="text-[10px] uppercase tracking-[0.3em] text-[#EA580C]/60 font-semibold">Education & Credentials</p>
                 {profile?.education && (
                   <div>
-                    <p className="text-[10px] uppercase tracking-wider text-[#8B4434]/50 font-semibold mb-1">Education</p>
+                    <p className="text-[10px] uppercase tracking-wider text-[#EA580C]/50 font-semibold mb-1">Education</p>
                     <p className="text-xs text-[#606060] leading-relaxed">{profile.education}</p>
                   </div>
                 )}
                 {profile?.certifications && (
                   <div>
-                    <p className="text-[10px] uppercase tracking-wider text-[#8B4434]/50 font-semibold mb-1">Certifications</p>
+                    <p className="text-[10px] uppercase tracking-wider text-[#EA580C]/50 font-semibold mb-1">Certifications</p>
                     <p className="text-xs text-[#606060] leading-relaxed">{profile.certifications}</p>
                   </div>
                 )}
                 {profile?.service_areas && profile.service_areas.length > 0 && (
                   <div>
-                    <p className="text-[10px] uppercase tracking-wider text-[#8B4434]/50 font-semibold mb-2">Service Areas</p>
+                    <p className="text-[10px] uppercase tracking-wider text-[#EA580C]/50 font-semibold mb-2">Service Areas</p>
                     <div className="flex flex-wrap gap-1.5">
                       {profile.service_areas.map((area, i) => (
-                        <span key={i} className="text-[10px] bg-[#FCFAF7] border border-[#e8ddd6] px-2 py-1 text-[#1c1108]">
+                        <span key={i} className="text-[10px] bg-[#FCFAF7] border border-[#e8ddd6] px-2.5 py-1 rounded-full text-[#1c1108]">
                           {area}
                         </span>
                       ))}
@@ -1131,7 +1140,7 @@ export default function ProfessionalProfilePage() {
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="relative max-w-4xl max-h-[90vh] bg-[#1c1108] border border-[#8B4434]/40 overflow-hidden flex flex-col shadow-2xl"
+            className="relative max-w-4xl max-h-[90vh] bg-[#1c1108] border border-[#EA580C]/40 overflow-hidden flex flex-col shadow-2xl rounded-3xl"
           >
             <div className="flex items-center justify-between px-5 py-3 border-b border-[#FCFAF7]/10 bg-black/40">
               <span className="text-xs font-serif text-[#FCFAF7] tracking-wider truncate">
@@ -1159,7 +1168,7 @@ export default function ProfessionalProfilePage() {
       {/* ── QS PRIVATE 1-ON-1 CHAT ROOM MODAL ── */}
       {chatOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-200">
-          <div className="bg-white border border-[#e8ddd6] shadow-2xl w-full max-w-2xl h-[90vh] sm:h-[600px] max-h-[700px] flex flex-col overflow-hidden relative">
+          <div className="bg-white border border-[#e8ddd6] shadow-2xl w-full max-w-2xl h-[90vh] sm:h-[600px] max-h-[700px] flex flex-col overflow-hidden relative rounded-3xl">
             
             {/* Header */}
             <div className="p-4 bg-[#1c1108] text-white flex items-center justify-between border-b border-[#322318] shrink-0">
@@ -1169,10 +1178,10 @@ export default function ProfessionalProfilePage() {
                     <img
                       src={prof.profile_image}
                       alt={displayName}
-                      className="w-10 h-10 object-cover border border-[#8B4434]/40"
+                      className="w-10 h-10 object-cover border border-[#EA580C]/40 rounded-xl"
                     />
                   ) : (
-                    <div className="w-10 h-10 bg-[#8B4434] text-white font-serif flex items-center justify-center font-bold">
+                    <div className="w-10 h-10 bg-[#EA580C] text-white font-serif flex items-center justify-center font-bold rounded-xl">
                       {displayName.charAt(0).toUpperCase()}
                     </div>
                   )}
@@ -1183,7 +1192,7 @@ export default function ProfessionalProfilePage() {
                     <h3 className="font-serif text-base text-[#FCFAF7] leading-none">
                       {displayName}
                     </h3>
-                    <span className="text-[9px] uppercase tracking-wider font-bold bg-[#8B4434] text-white px-1.5 py-0.5">
+                    <span className="text-[9px] uppercase tracking-wider font-bold bg-[#EA580C] text-white px-2 py-0.5 rounded-full">
                       Quantity Surveyor
                     </span>
                   </div>
@@ -1198,7 +1207,7 @@ export default function ProfessionalProfilePage() {
                   type="button"
                   onClick={() => fetchQSChat(false)}
                   disabled={chatLoading}
-                  className="text-stone-400 hover:text-white p-1.5 transition-colors cursor-pointer"
+                  className="text-stone-400 hover:text-white p-1.5 transition-colors rounded-lg cursor-pointer"
                   title="Refresh chat"
                 >
                   <RefreshCw className={`w-3.5 h-3.5 ${chatLoading ? 'animate-spin' : ''}`} />
@@ -1206,7 +1215,7 @@ export default function ProfessionalProfilePage() {
                 <button
                   type="button"
                   onClick={() => setChatOpen(false)}
-                  className="text-stone-400 hover:text-white p-1.5 transition-colors cursor-pointer"
+                  className="text-stone-400 hover:text-white p-1.5 transition-colors rounded-lg cursor-pointer"
                   title="Close chat"
                 >
                   <X className="w-5 h-5" />
@@ -1218,12 +1227,12 @@ export default function ProfessionalProfilePage() {
             <div className="flex-1 p-4 overflow-y-auto space-y-4 bg-[#FCFAF7]">
               {chatLoading && chatMessages.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full gap-2 text-stone-400">
-                  <RefreshCw className="w-5 h-5 animate-spin text-[#8B4434]" />
+                  <RefreshCw className="w-5 h-5 animate-spin text-[#EA580C]" />
                   <p className="text-xs">Loading consultation messages...</p>
                 </div>
               ) : chatMessages.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full text-center p-6 space-y-2">
-                  <div className="w-12 h-12 bg-[#8B4434]/10 rounded-full flex items-center justify-center text-[#8B4434]">
+                  <div className="w-12 h-12 bg-[#EA580C]/10 rounded-full flex items-center justify-center text-[#EA580C]">
                     <MessageSquare className="w-6 h-6" />
                   </div>
                   <h4 className="font-serif text-lg text-[#1c1108]">Start Private Consultation</h4>
@@ -1244,7 +1253,7 @@ export default function ProfessionalProfilePage() {
                           {isMe ? "You" : msg.sender_name}
                         </span>
                         {!isMe && (
-                          <span className="text-[9px] uppercase px-1.5 py-0.2 bg-stone-200 text-stone-700 font-bold">
+                          <span className="text-[9px] uppercase px-2 py-0.5 bg-stone-200 text-stone-700 font-bold rounded-full">
                             {msg.sender_role}
                           </span>
                         )}
@@ -1256,7 +1265,7 @@ export default function ProfessionalProfilePage() {
                       <div
                         className={`max-w-[82%] sm:max-w-[75%] px-4 py-3 text-xs sm:text-sm leading-relaxed whitespace-pre-wrap ${
                           isMe
-                            ? "bg-[#8B4434] text-white rounded-2xl rounded-tr-none shadow-sm"
+                            ? "bg-[#EA580C] text-white rounded-2xl rounded-tr-none shadow-sm"
                             : "bg-white border border-[#e8ddd6] text-[#1c1108] rounded-2xl rounded-tl-none shadow-sm"
                         }`}
                       >
@@ -1308,12 +1317,12 @@ export default function ProfessionalProfilePage() {
                 onChange={(e) => setChatInput(e.target.value)}
                 placeholder="Ask about BOQ, rates, material estimations..."
                 disabled={chatSending}
-                className="flex-1 bg-[#FCFAF7] border border-[#c9b8b0] px-4 py-2.5 text-xs sm:text-sm text-[#1c1108] placeholder-[#908078] focus:outline-none focus:border-[#8B4434] transition-colors"
+                className="flex-1 bg-[#FCFAF7] border border-[#c9b8b0] px-4 py-2.5 text-xs sm:text-sm text-[#1c1108] placeholder-[#908078] focus:outline-none focus:border-[#EA580C] rounded-xl transition-colors"
               />
               <button
                 type="submit"
                 disabled={chatSending || !chatInput.trim()}
-                className="bg-[#8B4434] hover:bg-[#723628] disabled:opacity-50 text-white px-4 sm:px-5 py-2.5 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 transition-colors shrink-0 shadow-sm cursor-pointer"
+                className="bg-[#EA580C] hover:bg-[#C2410C] disabled:opacity-50 text-white px-4 sm:px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 transition-colors shrink-0 shadow-sm cursor-pointer"
               >
                 {chatSending ? (
                   <div className="w-4 h-4 border-2 border-white border-t-transparent animate-spin" />
@@ -1328,7 +1337,7 @@ export default function ProfessionalProfilePage() {
 
             <div className="px-4 py-2 bg-stone-50 border-t border-[#e8ddd6] text-center shrink-0">
               <p className="text-[10px] text-[#908078] flex items-center justify-center gap-1.5">
-                <Shield className="w-3 h-3 text-[#8B4434] shrink-0" />
+                <Shield className="w-3 h-3 text-[#EA580C] shrink-0" />
                 <span>Phone numbers and emails in consultation chats are automatically blurred for platform security.</span>
               </p>
             </div>

@@ -173,19 +173,19 @@ export default function MarketplaceFeed() {
         <header className="border-b border-[#e8ddd6] pb-6 sm:pb-8 lg:pb-10">
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-5">
             <div>
-              <p className="text-[10px] uppercase tracking-[0.35em] text-[#8B4434]/70 font-semibold mb-3">Hardware Store</p>
+              <p className="text-[10px] uppercase tracking-[0.35em] text-[#EA580C]/70 font-semibold mb-3">Hardware Store</p>
               <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl leading-[1.02]">Material Marketplace</h1>
               <p className="mt-4 text-[#606060] text-sm sm:text-base max-w-2xl">
                 Find the best construction materials from verified suppliers, curated in a quiet-luxury marketplace.
               </p>
             </div>
             <div className="grid grid-cols-2 gap-3 sm:gap-4 shrink-0">
-              <div className="border border-[#e8ddd6] bg-white p-4 sm:p-5 rounded-none shadow-sm">
-                <p className="text-[10px] uppercase tracking-[0.25em] text-[#8B4434]/70">Materials</p>
+              <div className="border border-[#e8ddd6] bg-white p-4 sm:p-5 rounded-2xl shadow-sm">
+                <p className="text-[10px] uppercase tracking-[0.25em] text-[#EA580C]/70">Materials</p>
                 <p className="mt-1 font-serif text-2xl sm:text-3xl text-[#281713]">{materials.length}</p>
               </div>
-              <div className="border border-[#e8ddd6] bg-white p-4 sm:p-5 rounded-none shadow-sm">
-                <p className="text-[10px] uppercase tracking-[0.25em] text-[#8B4434]/70">Verified Supply</p>
+              <div className="border border-[#e8ddd6] bg-white p-4 sm:p-5 rounded-2xl shadow-sm">
+                <p className="text-[10px] uppercase tracking-[0.25em] text-[#EA580C]/70">Verified Supply</p>
                 <p className="mt-1 font-serif text-2xl sm:text-3xl text-[#281713]">24/7</p>
               </div>
             </div>
@@ -199,7 +199,7 @@ export default function MarketplaceFeed() {
           </p>
           <button
             onClick={() => setFiltersOpen(true)}
-            className="flex items-center gap-2 border border-[#8B4434] px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#8B4434] hover:bg-[#8B4434] hover:text-white transition-colors"
+            className="flex items-center gap-2 border border-[#EA580C] px-4 py-2.5 rounded-xl text-[11px] font-semibold uppercase tracking-[0.22em] text-[#EA580C] hover:bg-[#EA580C] hover:text-white transition-colors"
           >
             <SlidersHorizontal className="h-4 w-4" />
             Filters
@@ -213,62 +213,62 @@ export default function MarketplaceFeed() {
             ${filtersOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
         />
         {/* Mobile filter bottom-sheet */}
-        <aside className={`fixed bottom-0 left-0 right-0 z-[70] bg-[#FCFAF7] shadow-2xl flex flex-col max-h-[88vh] rounded-t-2xl transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] lg:hidden
+        <aside className={`fixed bottom-0 left-0 right-0 z-[70] bg-[#FCFAF7] shadow-2xl flex flex-col max-h-[88vh] rounded-t-3xl transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] lg:hidden
           ${filtersOpen ? 'translate-y-0' : 'translate-y-full'}`}>
           <div className="flex items-center justify-between px-5 py-4 border-b border-[#efe6df] shrink-0">
             <div>
-              <p className="text-[10px] uppercase tracking-[0.3em] text-[#8B4434]/70 font-semibold">Filters</p>
+              <p className="text-[10px] uppercase tracking-[0.3em] text-[#EA580C]/70 font-semibold">Filters</p>
               <h2 className="mt-1 font-serif text-xl text-[#281713]">Refine results</h2>
             </div>
             <div className="flex items-center gap-3">
-              <button onClick={clearFilters} className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#8B4434] hover:underline">Reset</button>
-              <button onClick={() => setFiltersOpen(false)} className="p-2 text-[#8B4434]"><X className="h-5 w-5" /></button>
+              <button onClick={clearFilters} className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#EA580C] hover:underline">Reset</button>
+              <button onClick={() => setFiltersOpen(false)} className="p-2 text-[#EA580C]"><X className="h-5 w-5" /></button>
             </div>
           </div>
           <div className="overflow-y-auto p-5 flex-1 space-y-5">
             <label className="block">
-              <span className="block text-[10px] uppercase tracking-[0.25em] text-[#8B4434]/70 mb-2">Search</span>
-              <input value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Search materials, brands, suppliers..." className="w-full border border-[#e2d8d0] bg-[#FCFAF7] px-4 py-3 text-sm outline-none focus:border-[#8B4434]" />
+              <span className="block text-[10px] uppercase tracking-[0.25em] text-[#EA580C]/70 mb-2">Search</span>
+              <input value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Search materials, brands, suppliers..." className="w-full border border-[#e2d8d0] bg-[#FCFAF7] px-4 py-3 text-sm outline-none focus:border-[#EA580C] rounded-xl" />
             </label>
             <label className="block">
-              <span className="block text-[10px] uppercase tracking-[0.25em] text-[#8B4434]/70 mb-2">Category</span>
-              <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)} className="w-full border border-[#e2d8d0] bg-[#FCFAF7] px-4 py-3 text-sm outline-none focus:border-[#8B4434]">
+              <span className="block text-[10px] uppercase tracking-[0.25em] text-[#EA580C]/70 mb-2">Category</span>
+              <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)} className="w-full border border-[#e2d8d0] bg-[#FCFAF7] px-4 py-3 text-sm outline-none focus:border-[#EA580C] rounded-xl">
                 <option value="all">All categories</option>
                 {categories.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
             </label>
             <label className="block">
-              <span className="block text-[10px] uppercase tracking-[0.25em] text-[#8B4434]/70 mb-2">Brand</span>
-              <select value={selectedBrand} onChange={(e) => setSelectedBrand(e.target.value)} className="w-full border border-[#e2d8d0] bg-[#FCFAF7] px-4 py-3 text-sm outline-none focus:border-[#8B4434]">
+              <span className="block text-[10px] uppercase tracking-[0.25em] text-[#EA580C]/70 mb-2">Brand</span>
+              <select value={selectedBrand} onChange={(e) => setSelectedBrand(e.target.value)} className="w-full border border-[#e2d8d0] bg-[#FCFAF7] px-4 py-3 text-sm outline-none focus:border-[#EA580C] rounded-xl">
                 <option value="all">All brands</option>
                 {brands.map(b => <option key={b} value={b}>{b}</option>)}
               </select>
             </label>
             <label className="block">
-              <span className="block text-[10px] uppercase tracking-[0.25em] text-[#8B4434]/70 mb-2">Supplier</span>
-              <select value={selectedSupplier} onChange={(e) => setSelectedSupplier(e.target.value)} className="w-full border border-[#e2d8d0] bg-[#FCFAF7] px-4 py-3 text-sm outline-none focus:border-[#8B4434]">
+              <span className="block text-[10px] uppercase tracking-[0.25em] text-[#EA580C]/70 mb-2">Supplier</span>
+              <select value={selectedSupplier} onChange={(e) => setSelectedSupplier(e.target.value)} className="w-full border border-[#e2d8d0] bg-[#FCFAF7] px-4 py-3 text-sm outline-none focus:border-[#EA580C] rounded-xl">
                 <option value="all">All suppliers</option>
                 {suppliers.map(s => <option key={s} value={s}>{s}</option>)}
               </select>
             </label>
-            <label className="flex items-center gap-3 border border-[#e2d8d0] px-4 py-3 text-sm text-[#606060]">
-              <input type="checkbox" checked={inStockOnly} onChange={(e) => setInStockOnly(e.target.checked)} className="h-4 w-4 accent-[#8B4434]" />
+            <label className="flex items-center gap-3 border border-[#e2d8d0] px-4 py-3 text-sm text-[#606060] rounded-xl">
+              <input type="checkbox" checked={inStockOnly} onChange={(e) => setInStockOnly(e.target.checked)} className="h-4 w-4 accent-[#EA580C]" />
               Show in-stock only
             </label>
             <div>
-              <span className="block text-[10px] uppercase tracking-[0.25em] text-[#8B4434]/70 mb-2">Price Range (Rs.)</span>
+              <span className="block text-[10px] uppercase tracking-[0.25em] text-[#EA580C]/70 mb-2">Price Range (Rs.)</span>
               <div className="flex gap-2">
-                <input type="number" min={0} placeholder="Min" value={minPrice} onChange={(e) => setMinPrice(e.target.value)} className="w-full border border-[#e2d8d0] bg-[#FCFAF7] px-3 py-3 text-sm outline-none focus:border-[#8B4434]" />
-                <input type="number" min={0} placeholder="Max" value={maxPrice} onChange={(e) => setMaxPrice(e.target.value)} className="w-full border border-[#e2d8d0] bg-[#FCFAF7] px-3 py-3 text-sm outline-none focus:border-[#8B4434]" />
+                <input type="number" min={0} placeholder="Min" value={minPrice} onChange={(e) => setMinPrice(e.target.value)} className="w-full border border-[#e2d8d0] bg-[#FCFAF7] px-3 py-3 text-sm outline-none focus:border-[#EA580C] rounded-xl" />
+                <input type="number" min={0} placeholder="Max" value={maxPrice} onChange={(e) => setMaxPrice(e.target.value)} className="w-full border border-[#e2d8d0] bg-[#FCFAF7] px-3 py-3 text-sm outline-none focus:border-[#EA580C] rounded-xl" />
               </div>
             </div>
             <label className="block">
-              <span className="block text-[10px] uppercase tracking-[0.25em] text-[#8B4434]/70 mb-2">Supplier Location</span>
-              <input type="text" placeholder="Colombo, Gampaha..." value={locationFilter} onChange={(e) => setLocationFilter(e.target.value)} className="w-full border border-[#e2d8d0] bg-[#FCFAF7] px-4 py-3 text-sm outline-none focus:border-[#8B4434]" />
+              <span className="block text-[10px] uppercase tracking-[0.25em] text-[#EA580C]/70 mb-2">Supplier Location</span>
+              <input type="text" placeholder="Colombo, Gampaha..." value={locationFilter} onChange={(e) => setLocationFilter(e.target.value)} className="w-full border border-[#e2d8d0] bg-[#FCFAF7] px-4 py-3 text-sm outline-none focus:border-[#EA580C] rounded-xl" />
             </label>
             <label className="block">
-              <span className="block text-[10px] uppercase tracking-[0.25em] text-[#8B4434]/70 mb-2">Minimum Rating</span>
-              <select value={minRating} onChange={(e) => setMinRating(Number(e.target.value))} className="w-full border border-[#e2d8d0] bg-[#FCFAF7] px-4 py-3 text-sm outline-none focus:border-[#8B4434]">
+              <span className="block text-[10px] uppercase tracking-[0.25em] text-[#EA580C]/70 mb-2">Minimum Rating</span>
+              <select value={minRating} onChange={(e) => setMinRating(Number(e.target.value))} className="w-full border border-[#e2d8d0] bg-[#FCFAF7] px-4 py-3 text-sm outline-none focus:border-[#EA580C] rounded-xl">
                 <option value={0}>Any Rating</option>
                 <option value={1}>⭐ 1 &amp; above</option>
                 <option value={2}>⭐⭐ 2 &amp; above</option>
@@ -278,13 +278,13 @@ export default function MarketplaceFeed() {
               </select>
             </label>
             <label className="block">
-              <span className="block text-[10px] uppercase tracking-[0.25em] text-[#8B4434]/70 mb-2">Min. Stock Qty (units)</span>
-              <input type="number" min={1} placeholder="e.g. 100 bags" value={minStock} onChange={(e) => setMinStock(e.target.value)} className="w-full border border-[#e2d8d0] bg-[#FCFAF7] px-4 py-3 text-sm outline-none focus:border-[#8B4434]" />
-              <p className="mt-1 text-[11px] text-[#8B4434]/50">Only show suppliers with at least this much in stock</p>
+              <span className="block text-[10px] uppercase tracking-[0.25em] text-[#EA580C]/70 mb-2">Min. Stock Qty (units)</span>
+              <input type="number" min={1} placeholder="e.g. 100 bags" value={minStock} onChange={(e) => setMinStock(e.target.value)} className="w-full border border-[#e2d8d0] bg-[#FCFAF7] px-4 py-3 text-sm outline-none focus:border-[#EA580C] rounded-xl" />
+              <p className="mt-1 text-[11px] text-[#EA580C]/50">Only show suppliers with at least this much in stock</p>
             </label>
           </div>
           <div className="p-4 border-t border-[#efe6df] shrink-0">
-            <button onClick={() => setFiltersOpen(false)} className="w-full bg-[#8B4434] text-white py-3.5 text-[11px] tracking-[0.22em] uppercase font-semibold hover:bg-[#6c3426] transition-colors">
+            <button onClick={() => setFiltersOpen(false)} className="w-full bg-[#EA580C] text-white py-3.5 rounded-xl text-[11px] tracking-[0.22em] uppercase font-semibold hover:bg-[#C2410C] transition-colors">
               Show {filteredMaterials.length} Results
             </button>
           </div>
@@ -292,58 +292,58 @@ export default function MarketplaceFeed() {
 
         <div className="grid gap-8 lg:grid-cols-[280px_minmax(0,1fr)] items-start">
           {/* Desktop sidebar */}
-          <aside className="hidden lg:block border border-[#e8ddd6] bg-white shadow-sm p-6 lg:sticky lg:top-8">
+          <aside className="hidden lg:block border border-[#e8ddd6] bg-white shadow-sm p-6 rounded-2xl lg:sticky lg:top-8">
             <div className="flex items-start justify-between gap-4 border-b border-[#efe6df] pb-5">
               <div>
-                <p className="text-[10px] uppercase tracking-[0.3em] text-[#8B4434]/70 font-semibold">Filters</p>
+                <p className="text-[10px] uppercase tracking-[0.3em] text-[#EA580C]/70 font-semibold">Filters</p>
                 <h2 className="mt-2 font-serif text-2xl text-[#281713]">Refine results</h2>
               </div>
-              <button type="button" onClick={clearFilters} className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#8B4434] hover:underline">Reset</button>
+              <button type="button" onClick={clearFilters} className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#EA580C] hover:underline">Reset</button>
             </div>
             <div className="mt-5 space-y-5">
               <label className="block">
-                <span className="block text-[10px] uppercase tracking-[0.25em] text-[#8B4434]/70 mb-2">Search</span>
-                <input value={searchTerm} onChange={(event) => setSearchTerm(event.target.value)} placeholder="Search materials, brands, suppliers..." className="w-full border border-[#e2d8d0] bg-[#FCFAF7] px-4 py-3 text-sm outline-none transition-colors focus:border-[#8B4434]" />
+                <span className="block text-[10px] uppercase tracking-[0.25em] text-[#EA580C]/70 mb-2">Search</span>
+                <input value={searchTerm} onChange={(event) => setSearchTerm(event.target.value)} placeholder="Search materials, brands, suppliers..." className="w-full border border-[#e2d8d0] bg-[#FCFAF7] px-4 py-3 text-sm outline-none transition-colors focus:border-[#EA580C] rounded-xl" />
               </label>
               <label className="block">
-                <span className="block text-[10px] uppercase tracking-[0.25em] text-[#8B4434]/70 mb-2">Category</span>
-                <select value={selectedCategory} onChange={(event) => setSelectedCategory(event.target.value)} className="w-full border border-[#e2d8d0] bg-[#FCFAF7] px-4 py-3 text-sm outline-none transition-colors focus:border-[#8B4434]">
+                <span className="block text-[10px] uppercase tracking-[0.25em] text-[#EA580C]/70 mb-2">Category</span>
+                <select value={selectedCategory} onChange={(event) => setSelectedCategory(event.target.value)} className="w-full border border-[#e2d8d0] bg-[#FCFAF7] px-4 py-3 text-sm outline-none transition-colors focus:border-[#EA580C] rounded-xl">
                   <option value="all">All categories</option>
                   {categories.map((category) => <option key={category} value={category}>{category}</option>)}
                 </select>
               </label>
               <label className="block">
-                <span className="block text-[10px] uppercase tracking-[0.25em] text-[#8B4434]/70 mb-2">Brand</span>
-                <select value={selectedBrand} onChange={(event) => setSelectedBrand(event.target.value)} className="w-full border border-[#e2d8d0] bg-[#FCFAF7] px-4 py-3 text-sm outline-none transition-colors focus:border-[#8B4434]">
+                <span className="block text-[10px] uppercase tracking-[0.25em] text-[#EA580C]/70 mb-2">Brand</span>
+                <select value={selectedBrand} onChange={(event) => setSelectedBrand(event.target.value)} className="w-full border border-[#e2d8d0] bg-[#FCFAF7] px-4 py-3 text-sm outline-none transition-colors focus:border-[#EA580C] rounded-xl">
                   <option value="all">All brands</option>
                   {brands.map((brand) => <option key={brand} value={brand}>{brand}</option>)}
                 </select>
               </label>
               <label className="block">
-                <span className="block text-[10px] uppercase tracking-[0.25em] text-[#8B4434]/70 mb-2">Supplier</span>
-                <select value={selectedSupplier} onChange={(event) => setSelectedSupplier(event.target.value)} className="w-full border border-[#e2d8d0] bg-[#FCFAF7] px-4 py-3 text-sm outline-none transition-colors focus:border-[#8B4434]">
+                <span className="block text-[10px] uppercase tracking-[0.25em] text-[#EA580C]/70 mb-2">Supplier</span>
+                <select value={selectedSupplier} onChange={(event) => setSelectedSupplier(event.target.value)} className="w-full border border-[#e2d8d0] bg-[#FCFAF7] px-4 py-3 text-sm outline-none transition-colors focus:border-[#EA580C] rounded-xl">
                   <option value="all">All suppliers</option>
                   {suppliers.map((supplier) => <option key={supplier} value={supplier}>{supplier}</option>)}
                 </select>
               </label>
-              <label className="flex items-center gap-3 rounded-none border border-[#e2d8d0] px-4 py-3 text-sm text-[#606060]">
-                <input type="checkbox" checked={inStockOnly} onChange={(event) => setInStockOnly(event.target.checked)} className="h-4 w-4 accent-[#8B4434]" />
+              <label className="flex items-center gap-3 rounded-xl border border-[#e2d8d0] px-4 py-3 text-sm text-[#606060]">
+                <input type="checkbox" checked={inStockOnly} onChange={(event) => setInStockOnly(event.target.checked)} className="h-4 w-4 accent-[#EA580C]" />
                 Show in-stock only
               </label>
               <div>
-                <span className="block text-[10px] uppercase tracking-[0.25em] text-[#8B4434]/70 mb-2">Price Range (Rs.)</span>
+                <span className="block text-[10px] uppercase tracking-[0.25em] text-[#EA580C]/70 mb-2">Price Range (Rs.)</span>
                 <div className="flex gap-2">
-                  <input type="number" min={0} placeholder="Min" value={minPrice} onChange={(e) => setMinPrice(e.target.value)} className="w-full border border-[#e2d8d0] bg-[#FCFAF7] px-3 py-3 text-sm outline-none transition-colors focus:border-[#8B4434]" />
-                  <input type="number" min={0} placeholder="Max" value={maxPrice} onChange={(e) => setMaxPrice(e.target.value)} className="w-full border border-[#e2d8d0] bg-[#FCFAF7] px-3 py-3 text-sm outline-none transition-colors focus:border-[#8B4434]" />
+                  <input type="number" min={0} placeholder="Min" value={minPrice} onChange={(e) => setMinPrice(e.target.value)} className="w-full border border-[#e2d8d0] bg-[#FCFAF7] px-3 py-3 text-sm outline-none transition-colors focus:border-[#EA580C] rounded-xl" />
+                  <input type="number" min={0} placeholder="Max" value={maxPrice} onChange={(e) => setMaxPrice(e.target.value)} className="w-full border border-[#e2d8d0] bg-[#FCFAF7] px-3 py-3 text-sm outline-none transition-colors focus:border-[#EA580C] rounded-xl" />
                 </div>
               </div>
               <label className="block">
-                <span className="block text-[10px] uppercase tracking-[0.25em] text-[#8B4434]/70 mb-2">Supplier Location</span>
-                <input type="text" placeholder="Colombo, Gampaha..." value={locationFilter} onChange={(e) => setLocationFilter(e.target.value)} className="w-full border border-[#e2d8d0] bg-[#FCFAF7] px-4 py-3 text-sm outline-none transition-colors focus:border-[#8B4434]" />
+                <span className="block text-[10px] uppercase tracking-[0.25em] text-[#EA580C]/70 mb-2">Supplier Location</span>
+                <input type="text" placeholder="Colombo, Gampaha..." value={locationFilter} onChange={(e) => setLocationFilter(e.target.value)} className="w-full border border-[#e2d8d0] bg-[#FCFAF7] px-4 py-3 text-sm outline-none transition-colors focus:border-[#EA580C] rounded-xl" />
               </label>
               <label className="block">
-                <span className="block text-[10px] uppercase tracking-[0.25em] text-[#8B4434]/70 mb-2">Minimum Rating</span>
-                <select value={minRating} onChange={(e) => setMinRating(Number(e.target.value))} className="w-full border border-[#e2d8d0] bg-[#FCFAF7] px-4 py-3 text-sm outline-none transition-colors focus:border-[#8B4434]">
+                <span className="block text-[10px] uppercase tracking-[0.25em] text-[#EA580C]/70 mb-2">Minimum Rating</span>
+                <select value={minRating} onChange={(e) => setMinRating(Number(e.target.value))} className="w-full border border-[#e2d8d0] bg-[#FCFAF7] px-4 py-3 text-sm outline-none transition-colors focus:border-[#EA580C] rounded-xl">
                   <option value={0}>Any Rating</option>
                   <option value={1}>⭐ 1 &amp; above</option>
                   <option value={2}>⭐⭐ 2 &amp; above</option>
@@ -353,9 +353,9 @@ export default function MarketplaceFeed() {
                 </select>
               </label>
               <label className="block">
-                <span className="block text-[10px] uppercase tracking-[0.25em] text-[#8B4434]/70 mb-2">Min. Stock Qty (units)</span>
-                <input type="number" min={1} placeholder="e.g. 100 bags" value={minStock} onChange={(e) => setMinStock(e.target.value)} className="w-full border border-[#e2d8d0] bg-[#FCFAF7] px-4 py-3 text-sm outline-none transition-colors focus:border-[#8B4434]" />
-                <p className="mt-1 text-[11px] text-[#8B4434]/50">Only show suppliers with at least this much in stock</p>
+                <span className="block text-[10px] uppercase tracking-[0.25em] text-[#EA580C]/70 mb-2">Min. Stock Qty (units)</span>
+                <input type="number" min={1} placeholder="e.g. 100 bags" value={minStock} onChange={(e) => setMinStock(e.target.value)} className="w-full border border-[#e2d8d0] bg-[#FCFAF7] px-4 py-3 text-sm outline-none transition-colors focus:border-[#EA580C] rounded-xl" />
+                <p className="mt-1 text-[11px] text-[#EA580C]/50">Only show suppliers with at least this much in stock</p>
               </label>
               <div className="border-t border-[#efe6df] pt-5 text-sm text-[#606060]">
                 <p>Showing <span className="font-semibold text-[#281713]">{filteredMaterials.length}</span> of {materials.length}</p>
@@ -365,15 +365,15 @@ export default function MarketplaceFeed() {
 
           <main>
             {loading ? (
-              <div className="py-24 text-center text-[#606060] border border-[#e8ddd6] bg-white shadow-sm">Loading materials...</div>
+              <div className="py-24 text-center text-[#606060] border border-[#e8ddd6] bg-white rounded-2xl shadow-sm">Loading materials...</div>
             ) : filteredMaterials.length === 0 ? (
-              <div className="text-center py-24 bg-white border border-[#e8ddd6] shadow-sm">
+              <div className="text-center py-24 bg-white border border-[#e8ddd6] rounded-2xl shadow-sm">
                 <p className="text-[#606060]">No materials match the selected filters.</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-3 gap-5 sm:gap-8">
                 {filteredMaterials.map((material) => (
-                  <article key={material.id} className="group overflow-hidden rounded-none border border-[#e8ddd6] bg-white shadow-sm transition-transform duration-300 hover:-translate-y-1 hover:shadow-xl flex flex-col h-full">
+                  <article key={material.id} className="group overflow-hidden rounded-2xl border border-[#e8ddd6] bg-white shadow-sm transition-transform duration-300 hover:-translate-y-1 hover:shadow-xl flex flex-col h-full">
                     {/* Top Image Container */}
                     <div className="relative aspect-4/3 bg-[#f8f5f2] border-b border-[#e8ddd6] overflow-hidden flex items-center justify-center">
                       {material.images && material.images.length > 0 && material.images[0].image_url ? (
@@ -386,20 +386,20 @@ export default function MarketplaceFeed() {
                           }}
                         />
                       ) : (
-                        <div className="flex flex-col items-center justify-center text-[#8B4434]/40 gap-2">
+                        <div className="flex flex-col items-center justify-center text-[#EA580C]/40 gap-2">
                           <Package className="w-10 h-10" />
                           <span className="text-[10px] uppercase tracking-wider font-medium">No image</span>
                         </div>
                       )}
                       {/* Floating Category Badge */}
                       <div className="absolute top-3 left-3 z-10">
-                        <span className="inline-flex rounded-none border border-[#8B4434]/30 bg-white/90 backdrop-blur-xs px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#8B4434] shadow-xs">
+                        <span className="inline-flex rounded-full border border-[#EA580C]/30 bg-white/90 backdrop-blur-xs px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#EA580C] shadow-xs">
                           {material.category_name}
                         </span>
                       </div>
                       {material.stock_available <= 0 && (
                         <div className="absolute top-3 right-3 z-10">
-                          <span className="inline-flex rounded-none bg-red-600 text-white px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider shadow-xs">
+                          <span className="inline-flex rounded-full bg-red-600 text-white px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider shadow-xs">
                             Out of Stock
                           </span>
                         </div>
@@ -409,11 +409,11 @@ export default function MarketplaceFeed() {
                     {/* Content Section */}
                     <div className="p-5 sm:p-6 flex flex-col flex-1 justify-between gap-4">
                       <div className="space-y-2">
-                        <div className="flex items-center justify-between gap-2 text-[11px] uppercase tracking-[0.2em] text-[#8B4434]/70">
+                        <div className="flex items-center justify-between gap-2 text-[11px] uppercase tracking-[0.2em] text-[#EA580C]/70">
                           <span className="font-semibold">{material.brand || 'Generic'}</span>
                           <span className="truncate max-w-[140px] text-stone-500">{material.supplier_name}</span>
                         </div>
-                        <h2 className="font-serif text-xl sm:text-2xl font-semibold leading-snug text-[#281713] line-clamp-2 group-hover:text-[#8B4434] transition-colors">
+                        <h2 className="font-serif text-xl sm:text-2xl font-semibold leading-snug text-[#281713] line-clamp-2 group-hover:text-[#EA580C] transition-colors">
                           {material.name}
                         </h2>
                         <p className="text-xs leading-relaxed text-[#606060] line-clamp-2">
@@ -424,8 +424,8 @@ export default function MarketplaceFeed() {
                       <div className="pt-4 border-t border-[#efe6df] space-y-4">
                         <div className="space-y-1">
                           <div className="flex items-center gap-1.5">
-                            <span className="text-[10px] uppercase tracking-[0.25em] text-[#8B4434]/70 font-semibold">Price</span>
-                            <span className="inline-flex items-center gap-1 text-[9px] uppercase tracking-wider font-semibold text-[#8B4434] bg-[#8B4434]/10 px-1.5 py-0.5 rounded-none">
+                            <span className="text-[10px] uppercase tracking-[0.25em] text-[#EA580C]/70 font-semibold">Price</span>
+                            <span className="inline-flex items-center gap-1 text-[9px] uppercase tracking-wider font-semibold text-[#EA580C] bg-[#EA580C]/10 px-1.5 py-0.5 rounded-full">
                               <Sparkles className="w-2.5 h-2.5" />
                               AI Index
                             </span>
@@ -438,7 +438,7 @@ export default function MarketplaceFeed() {
                             className="pt-1 flex items-center gap-1.5 text-[10px] text-stone-500"
                             title={material.last_ai_update ? `Last AI price update: ${new Date(material.last_ai_update).toLocaleString('en-LK')}` : "Automated AI market price sync"}
                           >
-                            <Clock className="w-3 h-3 text-[#8B4434]/70 shrink-0" />
+                            <Clock className="w-3 h-3 text-[#EA580C]/70 shrink-0" />
                             <span className="font-medium tracking-tight">
                               {formatAiUpdateTime(material.last_ai_update || material.created_at)}
                             </span>
@@ -450,13 +450,13 @@ export default function MarketplaceFeed() {
                             type="button"
                             onClick={() => addToCart(material)}
                             disabled={cartBusyId === material.id || material.stock_available <= 0}
-                            className="w-full rounded-none border border-[#8B4434] bg-[#8B4434] px-4 py-2.5 text-center text-[10px] font-semibold uppercase tracking-[0.2em] text-white transition-colors hover:bg-[#6e3528] disabled:opacity-50 cursor-pointer"
+                            className="w-full rounded-xl border border-[#EA580C] bg-[#EA580C] px-4 py-2.5 text-center text-[10px] font-semibold uppercase tracking-[0.2em] text-white transition-colors hover:bg-[#C2410C] disabled:opacity-50 cursor-pointer"
                           >
                             {cartBusyId === material.id ? 'Adding...' : 'Add to Cart'}
                           </button>
                           <Link
                             href={`/marketplace/${material.id}`}
-                            className="w-full rounded-none border border-[#8B4434] px-4 py-2.5 text-center text-[10px] font-semibold uppercase tracking-[0.2em] text-[#8B4434] transition-colors hover:bg-[#8B4434] hover:text-white"
+                            className="w-full rounded-xl border border-[#EA580C] px-4 py-2.5 text-center text-[10px] font-semibold uppercase tracking-[0.2em] text-[#EA580C] transition-colors hover:bg-[#EA580C] hover:text-white"
                           >
                             View Details
                           </Link>
