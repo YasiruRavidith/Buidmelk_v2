@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import DashboardShell from "../components/DashboardShell";
@@ -17,8 +17,64 @@ import {
   Crown,
   ChevronRight,
   X,
-  MessageSquare
+  MessageSquare,
+  Send,
+  Check,
+  CheckCheck,
+  RefreshCw,
+  Shield,
+  ShieldAlert
 } from "lucide-react";
+
+function renderCensoredMessage(text: string, isMe: boolean) {
+  const pattern = /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})|((?:\+?94[\s.-]?)?0?7[0-8][\s.-]?\d{3}[\s.-]?\d{4})|((?:\+?94[\s.-]?)?0?(?:11|2[1-7]|3[1-8]|4[1-7]|5[1-7]|6[3-7]|81|91)[\s.-]?\d{3}[\s.-]?\d{4})|(\b(?:\+?\d{1,3}[\s.-]?)?\(?\d{2,4}\)?[\s.-]?\d{3,4}[\s.-]?\d{3,4}\b)|(\b\d{9,12}\b)/gi;
+
+  const parts = [];
+  let lastIndex = 0;
+  let match;
+  let hasContact = false;
+
+  while ((match = pattern.exec(text)) !== null) {
+    hasContact = true;
+    if (match.index > lastIndex) {
+      parts.push(text.substring(lastIndex, match.index));
+    }
+    parts.push(
+      <span
+        key={match.index}
+        className={`inline-block filter blur-[5px] select-none pointer-events-none px-1.5 py-0.5 rounded font-mono text-[11px] mx-0.5 border border-dashed ${
+          isMe
+            ? "bg-white/20 text-transparent border-white/40"
+            : "bg-stone-300/80 text-transparent border-stone-400"
+        }`}
+        title="Contact details automatically blurred for privacy & security"
+      >
+        {match[0]}
+      </span>
+    );
+    lastIndex = match.index + match[0].length;
+  }
+
+  if (lastIndex < text.length) {
+    parts.push(text.substring(lastIndex));
+  }
+
+  return (
+    <>
+      <span>{parts}</span>
+      {hasContact && (
+        <span
+          className={`block text-[9px] mt-1.5 font-medium flex items-center gap-1 ${
+            isMe ? "text-rose-100/90" : "text-amber-700"
+          }`}
+        >
+          <ShieldAlert className="w-3 h-3 inline shrink-0" />
+          <span>Contact details hidden for privacy &amp; safety</span>
+        </span>
+      )}
+    </>
+  );
+}
 
 interface MembershipData {
   registration_fee_paid: boolean;
@@ -34,11 +90,16 @@ interface MembershipData {
 }
 
 type ChatConversation = {
-  project_id: number;
+  conversation_type?: string;
+  unlock_id?: number;
+  qs_id?: number;
+  client_id?: number;
+  chat_url?: string;
+  project_id?: number | null;
   project_title: string;
   project_status: string;
   location: string;
-  accepted_bid: {
+  accepted_bid?: {
     id: number;
     bid_amount: string;
     estimated_days: number;
@@ -75,6 +136,104 @@ export default function ProfessionalDashboard() {
   // Chat conversations state
   const [chats, setChats] = useState<ChatConversation[]>([]);
   const [chatsLoading, setChatsLoading] = useState(true);
+
+  // QS Consultation Chat Modal state
+  const [activeQSChat, setActiveQSChat] = useState<ChatConversation | null>(null);
+  const [qsChatMessages, setQsChatMessages] = useState<any[]>([]);
+  const [qsChatLoading, setQsChatLoading] = useState(false);
+  const [qsChatSending, setQsChatSending] = useState(false);
+  const [qsChatInput, setQsChatInput] = useState("");
+  const [qsChatError, setQsChatError] = useState<string | null>(null);
+  const qsMessagesEndRef = useRef<HTMLDivElement | null>(null);
+
+  const fetchActiveQSChat = async (conversation: ChatConversation, silent = false) => {
+    if (!user || !conversation.unlock_id) return;
+    if (!silent) setQsChatLoading(true);
+    setQsChatError(null);
+    try {
+      const token = await user.getIdToken();
+      const res = await fetch(`${backendUrl}/bidding/qs-chat/${conversation.unlock_id}/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setQsChatMessages(data.messages || []);
+        if (!silent) {
+          window.dispatchEvent(new Event("chatUpdated"));
+        }
+      } else {
+        const errData = await res.json();
+        if (!silent) setQsChatError(errData.error || "Failed to load messages.");
+      }
+    } catch {
+      if (!silent) setQsChatError("Could not connect to chat server.");
+    } finally {
+      if (!silent) setQsChatLoading(false);
+    }
+  };
+
+  // Poll active QS chat every 3 seconds while modal is open
+  useEffect(() => {
+    if (!activeQSChat || !user) return;
+    fetchActiveQSChat(activeQSChat, false);
+    const timer = setInterval(() => {
+      fetchActiveQSChat(activeQSChat, true);
+    }, 3000);
+    return () => clearInterval(timer);
+  }, [activeQSChat, user]);
+
+  // Auto-scroll QS chat to bottom
+  useEffect(() => {
+    if (activeQSChat && qsMessagesEndRef.current) {
+      qsMessagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [qsChatMessages, activeQSChat]);
+
+  // Send message in QS chat
+  const handleSendQSMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const text = qsChatInput.trim();
+    if (!text || !user || !activeQSChat?.unlock_id || qsChatSending) return;
+    setQsChatSending(true);
+    setQsChatError(null);
+    try {
+      const token = await user.getIdToken();
+      const res = await fetch(`${backendUrl}/bidding/qs-chat/${activeQSChat.unlock_id}/`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ message: text }),
+      });
+      if (res.ok) {
+        setQsChatInput("");
+        await fetchActiveQSChat(activeQSChat, true);
+        window.dispatchEvent(new Event("chatUpdated"));
+      } else {
+        const errData = await res.json();
+        setQsChatError(errData.error || "Failed to send message.");
+      }
+    } catch {
+      setQsChatError("Network error while sending message.");
+    } finally {
+      setQsChatSending(false);
+    }
+  };
+
+  // Check URL query param ?chat_unlock=... to auto-open modal
+  useEffect(() => {
+    if (typeof window !== "undefined" && chats.length > 0) {
+      const search = new URLSearchParams(window.location.search);
+      const unlockIdParam = search.get("chat_unlock");
+      if (unlockIdParam) {
+        const match = chats.find(c => String(c.unlock_id) === unlockIdParam);
+        if (match) {
+          setActiveQSChat(match);
+        }
+      }
+    }
+  }, [chats]);
 
   // Membership & Plans state
   const [membership, setMembership] = useState<MembershipData | null>(null);
@@ -517,7 +676,7 @@ export default function ProfessionalDashboard() {
 
               return (
                 <div
-                  key={chat.project_id}
+                  key={chat.project_id ? `proj-${chat.project_id}` : `unlock-${chat.unlock_id}`}
                   className={`flex flex-col md:flex-row md:items-center justify-between gap-4 border p-5 transition-all bg-[#FCFAF7] ${
                     chat.unread_count > 0 ? "border-emerald-500 ring-1 ring-emerald-500 bg-emerald-50/20" : "border-[#efe6df] hover:border-[#8B4434]/40"
                   }`}
@@ -550,7 +709,7 @@ export default function ProfessionalDashboard() {
                           {chat.counterpart?.name}
                         </span>
                         <span className="px-2 py-0.5 text-[9px] uppercase tracking-wider font-bold bg-amber-100 text-amber-900 border border-amber-200">
-                          Project Client
+                          {chat.counterpart?.role || "Project Client"}
                         </span>
                         {chat.location && (
                           <span className="text-[11px] text-stone-500">
@@ -596,13 +755,24 @@ export default function ProfessionalDashboard() {
                         {chat.unread_count} Unread
                       </span>
                     )}
-                    <Link
-                      href={`/bidding/${chat.project_id}?chat=open`}
-                      className="inline-flex items-center gap-2 bg-[#8B4434] hover:bg-[#6f3829] text-white px-5 py-2.5 text-xs font-semibold uppercase tracking-wider transition-colors shadow-sm"
-                    >
-                      <MessageSquare className="w-3.5 h-3.5" />
-                      Open Chat
-                    </Link>
+                    {chat.conversation_type === "QS_CONSULTATION" ? (
+                      <button
+                        type="button"
+                        onClick={() => setActiveQSChat(chat)}
+                        className="inline-flex items-center gap-2 bg-[#1c1108] hover:bg-[#8B4434] text-white px-5 py-2.5 text-xs font-semibold uppercase tracking-wider transition-colors shadow-sm cursor-pointer"
+                      >
+                        <MessageSquare className="w-3.5 h-3.5 text-[#8B4434]" />
+                        Open Consultation Chat
+                      </button>
+                    ) : (
+                      <Link
+                        href={`/bidding/${chat.project_id}?chat=open`}
+                        className="inline-flex items-center gap-2 bg-[#8B4434] hover:bg-[#6f3829] text-white px-5 py-2.5 text-xs font-semibold uppercase tracking-wider transition-colors shadow-sm"
+                      >
+                        <MessageSquare className="w-3.5 h-3.5" />
+                        Open Chat
+                      </Link>
+                    )}
                   </div>
                 </div>
               );
@@ -814,6 +984,185 @@ export default function ProfessionalDashboard() {
               >
                 Close Window
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* QS Consultation Chat Modal */}
+      {activeQSChat && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="bg-white border border-[#e8ddd6] w-full max-w-2xl h-[620px] flex flex-col shadow-2xl overflow-hidden">
+            {/* Header */}
+            <div className="bg-[#1c1108] text-[#FCFAF7] p-4 flex items-center justify-between shrink-0 border-b border-[#322318]">
+              <div className="flex items-center gap-3">
+                <div className="relative">
+                  {activeQSChat.counterpart?.profile_image ? (
+                    <img
+                      src={activeQSChat.counterpart.profile_image}
+                      alt={activeQSChat.counterpart.name}
+                      className="w-10 h-10 object-cover border border-[#8B4434]/40"
+                    />
+                  ) : (
+                    <div className="w-10 h-10 bg-[#8B4434] text-white font-serif font-bold text-sm flex items-center justify-center">
+                      {activeQSChat.counterpart?.name ? activeQSChat.counterpart.name.substring(0, 2).toUpperCase() : "CL"}
+                    </div>
+                  )}
+                  <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 rounded-full border border-black"></span>
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-serif text-base text-[#FCFAF7] font-semibold">
+                      {activeQSChat.counterpart?.name}
+                    </h3>
+                    <span className="text-[9px] uppercase px-1.5 py-0.5 bg-emerald-900/60 text-emerald-300 font-bold tracking-wider border border-emerald-700/60">
+                      Client Consultation
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-[#c9b8b0] mt-0.5">
+                    Quantity Surveyor Ticket Direct Chat &bull; Confidential
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => fetchActiveQSChat(activeQSChat, false)}
+                  disabled={qsChatLoading}
+                  className="text-stone-400 hover:text-white p-1.5 transition-colors cursor-pointer"
+                  title="Refresh chat"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${qsChatLoading ? 'animate-spin' : ''}`} />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveQSChat(null)}
+                  className="text-stone-400 hover:text-white p-1.5 transition-colors cursor-pointer"
+                  title="Close chat"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Message Feed */}
+            <div className="flex-1 p-4 overflow-y-auto space-y-4 bg-[#FCFAF7]">
+              {qsChatLoading && qsChatMessages.length === 0 ? (
+                <div className="flex flex-col items-center justify-center h-full gap-2 text-stone-400">
+                  <RefreshCw className="w-5 h-5 animate-spin text-[#8B4434]" />
+                  <p className="text-xs">Loading consultation messages...</p>
+                </div>
+              ) : qsChatMessages.length === 0 ? (
+                <div className="flex flex-col items-center justify-center h-full text-center p-6 space-y-2">
+                  <div className="w-12 h-12 bg-[#8B4434]/10 rounded-full flex items-center justify-center text-[#8B4434]">
+                    <MessageSquare className="w-6 h-6" />
+                  </div>
+                  <h4 className="font-serif text-lg text-[#1c1108]">QS Consultation Room</h4>
+                  <p className="text-xs text-[#606060] max-w-sm leading-relaxed">
+                    Connected with {activeQSChat.counterpart?.name}. Provide expert advice on BOQ, rates, material estimates, and construction budgets.
+                  </p>
+                </div>
+              ) : (
+                qsChatMessages.map((msg) => {
+                  const isMe = msg.is_me;
+                  return (
+                    <div
+                      key={msg.id}
+                      className={`flex flex-col ${isMe ? "items-end" : "items-start"}`}
+                    >
+                      <div className="flex items-center gap-1.5 mb-1 px-1">
+                        <span className="text-[10px] font-semibold text-[#908078]">
+                          {isMe ? "You" : msg.sender_name}
+                        </span>
+                        {!isMe && (
+                          <span className="text-[9px] uppercase px-1.5 py-0.2 bg-stone-200 text-stone-700 font-bold">
+                            {msg.sender_role}
+                          </span>
+                        )}
+                        <span className="text-[9px] text-[#c9b8b0]">
+                          {new Date(msg.created_at).toLocaleTimeString("en-LK", { hour: "2-digit", minute: "2-digit" })}
+                        </span>
+                      </div>
+
+                      <div
+                        className={`max-w-[82%] sm:max-w-[75%] px-4 py-3 text-xs sm:text-sm leading-relaxed whitespace-pre-wrap ${
+                          isMe
+                            ? "bg-[#8B4434] text-white rounded-2xl rounded-tr-none shadow-sm"
+                            : "bg-white border border-[#e8ddd6] text-[#1c1108] rounded-2xl rounded-tl-none shadow-sm"
+                        }`}
+                      >
+                        {renderCensoredMessage(msg.message, isMe)}
+                      </div>
+
+                      {isMe && (
+                        <div className="flex items-center gap-1 text-[9px] text-[#908078] mt-0.5 px-1">
+                          {msg.is_read ? (
+                            <span className="flex items-center gap-0.5 text-emerald-600">
+                              <CheckCheck className="w-3 h-3" /> Read
+                            </span>
+                          ) : (
+                            <span className="flex items-center gap-0.5">
+                              <Check className="w-3 h-3" /> Sent
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })
+              )}
+              <div ref={qsMessagesEndRef} />
+            </div>
+
+            {/* Error banner if any */}
+            {qsChatError && (
+              <div className="bg-rose-50 border-t border-rose-200 px-4 py-2 text-xs text-rose-800 flex items-center justify-between">
+                <span>{qsChatError}</span>
+                <button
+                  type="button"
+                  onClick={() => setQsChatError(null)}
+                  className="text-rose-600 font-bold text-sm cursor-pointer"
+                >
+                  &times;
+                </button>
+              </div>
+            )}
+
+            {/* Input Form */}
+            <form
+              onSubmit={handleSendQSMessage}
+              className="p-3 sm:p-4 bg-white border-t border-[#e8ddd6] flex items-center gap-2 shrink-0"
+            >
+              <input
+                type="text"
+                value={qsChatInput}
+                onChange={(e) => setQsChatInput(e.target.value)}
+                placeholder="Type your reply to the client..."
+                disabled={qsChatSending}
+                className="flex-1 bg-[#FCFAF7] border border-[#c9b8b0] px-4 py-2.5 text-xs sm:text-sm text-[#1c1108] placeholder-[#908078] focus:outline-none focus:border-[#8B4434] transition-colors"
+              />
+              <button
+                type="submit"
+                disabled={qsChatSending || !qsChatInput.trim()}
+                className="bg-[#8B4434] hover:bg-[#723628] disabled:opacity-50 text-white px-4 sm:px-5 py-2.5 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 transition-colors shrink-0 shadow-sm cursor-pointer"
+              >
+                {qsChatSending ? (
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent animate-spin" />
+                ) : (
+                  <>
+                    <span>Send</span>
+                    <Send className="w-3.5 h-3.5" />
+                  </>
+                )}
+              </button>
+            </form>
+
+            <div className="px-4 py-2 bg-stone-50 border-t border-[#e8ddd6] text-center shrink-0">
+              <p className="text-[10px] text-[#908078] flex items-center justify-center gap-1.5">
+                <Shield className="w-3 h-3 text-[#8B4434] shrink-0" />
+                <span>Phone numbers and emails in consultation chats are automatically blurred for platform security.</span>
+              </p>
             </div>
           </div>
         </div>

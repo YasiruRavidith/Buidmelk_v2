@@ -45,13 +45,18 @@ class Bid(models.Model):
 
 
 class TicketBundle(models.Model):
-    """A purchased ticket or bundle of tickets for posting bidding projects."""
+    """A purchased ticket or bundle of tickets for posting bidding projects or consulting QS."""
     BUNDLE_STATUS_CHOICES = (
         ('ACTIVE', 'Active'),
         ('EXHAUSTED', 'Exhausted'),
         ('EXPIRED', 'Expired'),
     )
+    TICKET_TYPE_CHOICES = (
+        ('BIDDING', 'Bidding Ticket'),
+        ('QS', 'QS Consultation Ticket'),
+    )
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='ticket_bundles')
+    ticket_type = models.CharField(max_length=20, choices=TICKET_TYPE_CHOICES, default='BIDDING')
     unlocks_total = models.PositiveIntegerField(default=1)
     unlocks_used = models.PositiveIntegerField(default=0)
     price_paid = models.DecimalField(max_digits=10, decimal_places=2, default=1500.00)
@@ -66,7 +71,21 @@ class TicketBundle(models.Model):
         return self.status == 'ACTIVE' and self.unlocks_remaining() > 0
 
     def __str__(self):
-        return f"BiddingTicket#{self.id} — {self.owner.email} ({self.unlocks_remaining()} credits remaining)"
+        return f"{self.get_ticket_type_display()}#{self.id} — {self.owner.email} ({self.unlocks_remaining()} credits remaining)"
+
+
+class QSConnectionUnlock(models.Model):
+    """Records which QS professionals a client has unlocked using a QS ticket."""
+    client = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='qs_unlocks')
+    qs_professional = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='client_qs_unlocks')
+    bundle = models.ForeignKey(TicketBundle, on_delete=models.SET_NULL, null=True, blank=True, related_name='qs_unlocks')
+    unlocked_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('client', 'qs_professional')
+
+    def __str__(self):
+        return f"{self.client.email} unlocked QS {self.qs_professional.email}"
 
 
 class ProjectUnlock(models.Model):
@@ -83,6 +102,7 @@ class ProjectUnlock(models.Model):
         return f"{self.user.email} unlocked '{self.project.title}'"
 
 
+
 class ProjectChatMessage(models.Model):
     """Private chat message between project client and accepted professional."""
     project = models.ForeignKey(ProjectPost, on_delete=models.CASCADE, related_name='chat_messages')
@@ -96,4 +116,20 @@ class ProjectChatMessage(models.Model):
 
     def __str__(self):
         return f"Message by {self.sender.email} in '{self.project.title}' at {self.created_at}"
+
+
+class QSChatMessage(models.Model):
+    """Private consultation chat message between client and unlocked Quantity Surveyor."""
+    unlock = models.ForeignKey(QSConnectionUnlock, on_delete=models.CASCADE, related_name='chat_messages')
+    sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='qs_chat_messages')
+    message = models.TextField()
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['created_at']
+
+    def __str__(self):
+        return f"QS Chat from {self.sender.email} in Unlock#{self.unlock.id} at {self.created_at}"
+
 

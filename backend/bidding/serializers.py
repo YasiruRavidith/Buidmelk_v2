@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import ProjectPost, Bid, ProjectChatMessage
+from .models import ProjectPost, Bid, ProjectChatMessage, QSChatMessage
 from users.serializers import CustomUserSerializer
 from estimations.serializers import EstimationHistorySerializer
 
@@ -92,4 +92,40 @@ class ProjectChatMessageSerializer(serializers.ModelSerializer):
         if request_user:
             return obj.sender_id == request_user.id
         return False
+
+
+class QSChatMessageSerializer(serializers.ModelSerializer):
+    sender_id = serializers.IntegerField(source='sender.id', read_only=True)
+    sender_name = serializers.SerializerMethodField()
+    sender_role = serializers.CharField(source='sender.role', read_only=True)
+    sender_profile_image = serializers.SerializerMethodField()
+    is_me = serializers.SerializerMethodField()
+
+    class Meta:
+        model = QSChatMessage
+        fields = [
+            'id', 'unlock', 'sender_id', 'sender_name', 'sender_role',
+            'sender_profile_image', 'is_me', 'message', 'is_read', 'created_at'
+        ]
+        read_only_fields = ['unlock', 'sender', 'created_at']
+
+    def get_sender_name(self, obj):
+        name = f"{obj.sender.first_name} {obj.sender.last_name}".strip()
+        return name or obj.sender.username or obj.sender.email
+
+    def get_sender_profile_image(self, obj):
+        request = self.context.get('request')
+        img = obj.sender.profile_image
+        if img and hasattr(img, 'url'):
+            if request:
+                return request.build_absolute_uri(img.url)
+            return img.url
+        return None
+
+    def get_is_me(self, obj):
+        request_user = self.context.get('request_user')
+        if request_user:
+            return obj.sender_id == request_user.id
+        return False
+
 

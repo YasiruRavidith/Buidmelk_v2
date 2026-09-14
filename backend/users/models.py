@@ -103,6 +103,8 @@ class PaymentTransaction(models.Model):
         ('PRO_PLAN_MONTHLY', 'Pro Plan Monthly (LKR 550)'),
         ('PRO_PLAN_YEARLY', 'Pro Plan Yearly (LKR 5,000)'),
         ('BIDDING_TICKET', 'Client Bidding Ticket (LKR 1,500)'),
+        ('QS_TICKET', 'Client QS Consultation Ticket (LKR 2,500)'),
+        ('TICKET_PRO_PLAN', 'Client Ticket Pro Plan'),
     )
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='payment_transactions')
     transaction_type = models.CharField(max_length=50, choices=TRANSACTION_TYPE_CHOICES)

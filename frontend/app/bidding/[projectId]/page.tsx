@@ -6,8 +6,60 @@ import { useAuth } from "../../../hooks/useAuth";
 import { API_BASE_URL } from "@/lib/api";
 import { 
   Lock, Ticket, ShieldCheck, ArrowRight, AlertCircle, 
-  MessageSquare, Send, X, Check, CheckCheck, RefreshCw 
+  MessageSquare, Send, X, Check, CheckCheck, RefreshCw,
+  Shield, ShieldAlert 
 } from "lucide-react";
+
+function renderCensoredMessage(text: string, isMe: boolean) {
+  // Regex to match emails, mobile/landline numbers, spaced/hyphenated numbers, or 9-12 digit sequences
+  const pattern = /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})|((?:\+?94[\s.-]?)?0?7[0-8][\s.-]?\d{3}[\s.-]?\d{4})|((?:\+?94[\s.-]?)?0?(?:11|2[1-7]|3[1-8]|4[1-7]|5[1-7]|6[3-7]|81|91)[\s.-]?\d{3}[\s.-]?\d{4})|(\b(?:\+?\d{1,3}[\s.-]?)?\(?\d{2,4}\)?[\s.-]?\d{3,4}[\s.-]?\d{3,4}\b)|(\b\d{9,12}\b)/gi;
+
+  const parts = [];
+  let lastIndex = 0;
+  let match;
+  let hasContact = false;
+
+  while ((match = pattern.exec(text)) !== null) {
+    hasContact = true;
+    if (match.index > lastIndex) {
+      parts.push(text.substring(lastIndex, match.index));
+    }
+    parts.push(
+      <span
+        key={match.index}
+        className={`inline-block filter blur-[5px] select-none pointer-events-none px-1.5 py-0.5 rounded font-mono text-[11px] mx-0.5 border border-dashed ${
+          isMe
+            ? "bg-white/20 text-transparent border-white/40"
+            : "bg-stone-300/80 text-transparent border-stone-400"
+        }`}
+        title="Contact details automatically blurred for privacy & security"
+      >
+        {match[0]}
+      </span>
+    );
+    lastIndex = match.index + match[0].length;
+  }
+
+  if (lastIndex < text.length) {
+    parts.push(text.substring(lastIndex));
+  }
+
+  return (
+    <>
+      <span>{parts}</span>
+      {hasContact && (
+        <span
+          className={`block text-[9px] mt-1.5 font-medium flex items-center gap-1 ${
+            isMe ? "text-rose-100/90" : "text-amber-700"
+          }`}
+        >
+          <ShieldAlert className="w-3 h-3 inline shrink-0" />
+          <span>Contact details hidden for privacy &amp; safety</span>
+        </span>
+      )}
+    </>
+  );
+}
 
 export default function ProjectDetail({ params }: { params: Promise<{ projectId: string }> }) {
   const { projectId } = use(params);
@@ -1046,7 +1098,7 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
                             : "bg-white border border-[#e8ddd6] text-[#1c1108] rounded-2xl rounded-tl-none shadow-sm"
                         }`}
                       >
-                        {msg.message}
+                        {renderCensoredMessage(msg.message, isMe)}
                       </div>
 
                       {isMe && (
@@ -1111,6 +1163,13 @@ export default function ProjectDetail({ params }: { params: Promise<{ projectId:
                 )}
               </button>
             </form>
+            
+            <div className="px-4 py-2 bg-stone-50 border-t border-[#e8ddd6] text-center shrink-0">
+              <p className="text-[10px] text-[#908078] flex items-center justify-center gap-1.5">
+                <Shield className="w-3 h-3 text-[#8B4434] shrink-0" />
+                <span>Phone numbers and emails sent in chat are automatically blurred for platform security.</span>
+              </p>
+            </div>
           </div>
         </div>
       )}

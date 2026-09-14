@@ -23,11 +23,16 @@ type EstimationHistoryItem = {
 };
 
 type ChatConversation = {
-  project_id: number;
+  conversation_type?: string;
+  unlock_id?: number;
+  qs_id?: number;
+  client_id?: number;
+  chat_url?: string;
+  project_id?: number | null;
   project_title: string;
   project_status: string;
   location: string;
-  accepted_bid: {
+  accepted_bid?: {
     id: number;
     bid_amount: string;
     estimated_days: number;
@@ -364,7 +369,7 @@ export default function ClientDashboard() {
 
               return (
                 <div
-                  key={chat.project_id}
+                  key={chat.project_id ? `proj-${chat.project_id}` : `unlock-${chat.unlock_id}`}
                   className={`flex flex-col md:flex-row md:items-center justify-between gap-4 border p-5 transition-all bg-[#FCFAF7] ${
                     chat.unread_count > 0 ? "border-emerald-500 ring-1 ring-emerald-500 bg-emerald-50/20" : "border-[#efe6df] hover:border-[#8B4434]/40"
                   }`}
@@ -407,7 +412,7 @@ export default function ClientDashboard() {
                       </div>
 
                       <p className="text-xs font-medium text-[#8B4434] truncate">
-                        Project: {chat.project_title}
+                        {chat.project_title}
                         {chat.accepted_bid?.bid_amount && (
                           <span className="text-[#606060] font-normal ml-2">
                             (Awarded: LKR {Number(chat.accepted_bid.bid_amount).toLocaleString()})
@@ -444,7 +449,7 @@ export default function ClientDashboard() {
                       </span>
                     )}
                     <Link
-                      href={`/bidding/${chat.project_id}?chat=open`}
+                      href={chat.chat_url || (chat.qs_id ? `/professionals/${chat.qs_id}?chat=open` : `/bidding/${chat.project_id}?chat=open`)}
                       className="btn-primary inline-flex items-center gap-2 px-5 py-2.5 text-xs font-semibold uppercase tracking-wider shadow-sm"
                     >
                       <MessageSquare className="w-3.5 h-3.5" />
